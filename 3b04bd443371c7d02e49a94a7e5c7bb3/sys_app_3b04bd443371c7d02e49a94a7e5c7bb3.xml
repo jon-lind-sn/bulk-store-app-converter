@@ -23,7 +23,7 @@
         <runtime_access_tracking>permissive</runtime_access_tracking>
         <scope>global</scope>
         <scoped_administration>false</scoped_administration>
-        <short_description>Used to update multiple store apps to Dev Mode at once.</short_description>
+        <short_description>Used to update multiple store apps to Dev Mode and Back.</short_description>
         <source>3b04bd443371c7d02e49a94a7e5c7bb3</source>
         <store_correlation_id/>
         <store_url/>
@@ -33,9 +33,9 @@
         <sys_created_by>jon.lind</sys_created_by>
         <sys_created_on>2026-06-25 21:29:14</sys_created_on>
         <sys_id>3b04bd443371c7d02e49a94a7e5c7bb3</sys_id>
-        <sys_mod_count>2</sys_mod_count>
+        <sys_mod_count>3</sys_mod_count>
         <sys_updated_by>jon.lind</sys_updated_by>
-        <sys_updated_on>2026-06-29 22:54:16</sys_updated_on>
+        <sys_updated_on>2026-06-29 22:57:18</sys_updated_on>
         <template/>
         <trackable>true</trackable>
         <uninstall_blocked>false</uninstall_blocked>
