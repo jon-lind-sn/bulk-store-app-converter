@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_app_module">
+    <sys_app_module action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <application display_value="System Applications">9e329333c33220001875addbdfba8f56</application>
+        <assessment/>
+        <device_type/>
+        <filter/>
+        <hint>Bulk convert store apps to development mode.</hint>
+        <homepage/>
+        <image/>
+        <link_type>DIRECT</link_type>
+        <map_page/>
+        <mobile_title>Bulk Convert Store Apps</mobile_title>
+        <mobile_view_name>Mobile</mobile_view_name>
+        <name/>
+        <order>106</order>
+        <override_menu_roles>false</override_menu_roles>
+        <query>bulk_convert_store_app_confirm.do</query>
+        <report/>
+        <require_confirmation>false</require_confirmation>
+        <roles>admin</roles>
+        <route/>
+        <screen/>
+        <sys_class_name>sys_app_module</sys_class_name>
+        <sys_created_by>jon.lind</sys_created_by>
+        <sys_created_on>2026-06-26 16:26:12</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>0733e5a91a7247b39c8d2b650f060a31</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>Bulk Convert Store Apps</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Global" source="global">global</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
+        <sys_update_name>sys_app_module_0733e5a91a7247b39c8d2b650f060a31</sys_update_name>
+        <sys_updated_by>jon.lind</sys_updated_by>
+        <sys_updated_on>2026-06-29 22:24:51</sys_updated_on>
+        <timeline_page/>
+        <title>Bulk Convert Store Apps</title>
+        <uncancelable>false</uncancelable>
+        <ux_list/>
+        <view_name/>
+        <window_name/>
+    </sys_app_module>
+    <sys_claim action="INSERT_OR_UPDATE">
+        <claim_owner_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</claim_owner_scope>
+        <claim_timestamp>19f157c3de60000001</claim_timestamp>
+        <metadata_update_name>sys_app_module_0733e5a91a7247b39c8d2b650f060a31</metadata_update_name>
+        <previous_claim_app_version>1.0.0</previous_claim_app_version>
+        <previous_claim_name>Bulk Store App Converter</previous_claim_name>
+        <previous_claim_scope>3b04bd443371c7d02e49a94a7e5c7bb3</previous_claim_scope>
+        <sys_created_by>jon.lind</sys_created_by>
+        <sys_created_on>2026-06-29 22:24:51</sys_created_on>
+        <sys_id>1127a29d9331cb10244af07e2803d6af</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>jon.lind</sys_updated_by>
+        <sys_updated_on>2026-06-29 22:24:51</sys_updated_on>
+    </sys_claim>
+</record_update>
