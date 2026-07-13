@@ -283,7 +283,7 @@ function convertDevNext(sysIds, index) {
               </div>
               <div class="panel-body">
                 <p class="text-muted">Select store apps to convert to development mode.</p>
-                <div id="store-app-checklist" style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background: #fafafa;">
+                <div id="store-app-checklist" style="">
                   <j2:if test="$[jvar_store_apps.length == 0]">
                     <p class="text-muted">
                       <em>No convertible store applications found.</em>
@@ -322,7 +322,7 @@ function convertDevNext(sysIds, index) {
               </div>
               <div class="panel-body">
                 <p class="text-muted">Select development apps to convert back to store apps.</p>
-                <div id="dev-app-checklist" style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background: #fafafa;">
+                <div id="dev-app-checklist" style="">
                   <j2:if test="$[jvar_dev_apps.length == 0]">
                     <p class="text-muted">
                       <em>No custom-scoped development applications found.</em>
@@ -365,28 +365,28 @@ function convertDevNext(sysIds, index) {
         <sys_created_by>jon.lind</sys_created_by>
         <sys_created_on>2026-06-25 21:45:44</sys_created_on>
         <sys_id>e50a5b297999422a982ce43dd4e39791</sys_id>
-        <sys_mod_count>8</sys_mod_count>
+        <sys_mod_count>11</sys_mod_count>
         <sys_name>bulk_convert_store_app_confirm</sys_name>
         <sys_package display_value="Global" source="global">global</sys_package>
         <sys_policy/>
         <sys_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
         <sys_update_name>sys_ui_page_e50a5b297999422a982ce43dd4e39791</sys_update_name>
         <sys_updated_by>jon.lind</sys_updated_by>
-        <sys_updated_on>2026-06-29 22:23:51</sys_updated_on>
+        <sys_updated_on>2026-07-13 22:13:43</sys_updated_on>
     </sys_ui_page>
     <sys_claim action="INSERT_OR_UPDATE">
         <claim_owner_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</claim_owner_scope>
-        <claim_timestamp>19f157b529e0000001</claim_timestamp>
+        <claim_timestamp>19f1a422e0c0000001</claim_timestamp>
         <metadata_update_name>sys_ui_page_e50a5b297999422a982ce43dd4e39791</metadata_update_name>
-        <previous_claim_app_version>1.0.0</previous_claim_app_version>
+        <previous_claim_app_version>1.0.1</previous_claim_app_version>
         <previous_claim_name>Bulk Store App Converter</previous_claim_name>
         <previous_claim_scope>3b04bd443371c7d02e49a94a7e5c7bb3</previous_claim_scope>
         <sys_created_by>jon.lind</sys_created_by>
-        <sys_created_on>2026-06-29 22:23:51</sys_created_on>
-        <sys_id>76e66a5d9331cb10244af07e2803d610</sys_id>
+        <sys_created_on>2026-06-30 20:39:32</sys_created_on>
+        <sys_id>d4a897ed93bd4f10244af07e2803d610</sys_id>
         <sys_mod_count>0</sys_mod_count>
         <sys_updated_by>jon.lind</sys_updated_by>
-        <sys_updated_on>2026-06-29 22:23:51</sys_updated_on>
+        <sys_updated_on>2026-06-30 20:39:32</sys_updated_on>
     </sys_claim>
     <sys_es_latest_script action="INSERT_OR_UPDATE">
         <id>e50a5b297999422a982ce43dd4e39791</id>
