@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>global.BulkUpgradeMyCompanyApps</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>Script to bulk upgrade your company's applications to the latest versions.  It will either use the system property bulk_convert_store_app.convertible_apps (containing scope names) or you may call it yourself and pass a filter for the apps you wish to upgrade (e.g. "is_store_app=false" will usually return all of your custom apps).</description>
+        <mobile_callable>false</mobile_callable>
+        <name>BulkUpgradeMyCompanyApps</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[var BulkUpgradeMyCompanyApps = Class.create();
+BulkUpgradeMyCompanyApps.prototype = (function() {
+    function updateAvailable(appGR) {
+        var installedVersion = appGR.getValue("version");
+        var latestVersion = appGR.getValue("latest_version");
+        if (!latestVersion) return false;
+        var installedArray = installedVersion.split(".");
+        var latestArray = latestVersion.split(".");
+        var len = Math.max(installedArray.length, latestArray.length);
+        for (var i = 0; i < len; i++) {
+            var installed = installedArray[i] ? parseInt(installedArray[i]) : 0;
+            var latest = latestArray[i] ? parseInt(latestArray[i]) : 0;
+            if (installed < latest) {
+                return true;
+            } else if (installed > latest) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    function upgradeByFilter(encodedQuery) {
+        if (!encodedQuery) throw "Must pass in a valid encoded query, e.g. is_store_app=false or vendor=ServiceNow to use this.";
+        var loadDemoData = false;
+        var updateCheck = false; //this can take some time to run and adds a LOT of stuff to the log making the important bit harder to find
+
+        if (updateCheck) new sn_appclient.UpdateChecker().checkAvailableUpdates();
+
+        var prevName;
+        var appsArray = [];
+
+        var appGR = new GlideRecord('sys_store_app');
+        if (encodedQuery)
+            appGR.addEncodedQuery(encodedQuery);
+        else return;
+        appGR.query();
+        gs.info("Candidate Upgrades Found: " + appGR.getRowCount() + " in table sys_store_app. Query: " + encodedQuery);
+        while (appGR.next()) {
+            gs.info("Candidate Upgrade: " + appGR.name + " " + appGR.scope + " " + appGR.version + " -> " + appGR.latest_version);
+            var curName = appGR.getValue("name");
+            var latestVersion = updateAvailable(appGR);
+            if (curName == prevName) {
+                continue;
+            }
+            if (latestVersion) {
+                prevName = curName;
+                var appObject = {
+                    displayName: curName,
+                    id: appGR.getUniqueValue(),
+                    load_demo_data: loadDemoData,
+                    type: "application",
+                    requested_version: appGR.getValue("latest_version"),
+                };
+                appsArray.push(appObject);
+            }
+
+        }
+
+        if (appsArray.length > 0) {
+            gs.info("\n\n------------------------------------------------\n\nLinks to track progress below the payload information\n\n(scroll down)\n\n-----------------------------------------------\n\n");
+
+            var appsPackages = {};
+            appsPackages.packages = appsArray;
+            appsPackages.name = "Update Apps";
+            var data = new global.JSON().encode(appsPackages);
+
+            var baseUrl = gs.getProperty("glide.servlet.uri");
+            var update = new sn_appclient.AppUpgrader().installBatch(data);
+            var updateObj = JSON.parse(update);
+            gs.info(
+                "\n\n------------------------------------------------\n\nOpen the Batch install link to monitor the installation progress. It may take some time for the apps to all populate in the related list. After all apps have populated the install will start and the State will change to In progress.\n\nBatch install:\n" +
+                baseUrl +
+                "nav_to.do?uri=sys_batch_install_plan.do?sys_id=" +
+                updateObj.batch_installation_id +
+                "\n\nExecution tracker:\n" +
+                baseUrl +
+                "nav_to.do?uri=sys_progress_worker.do?sys_id=" +
+                updateObj.execution_tracker_id +
+                "\n\n-----------------------------------------------\n\n"
+            );
+            var grSBIP = new GlideRecord('sys_batch_install_plan');
+            if (grSBIP.get(updateObj.batch_installation_id)) {
+                grSBIP.setValue('notes', 'It may take some time for the apps to all populate in the related list below (you can refresh the list as needed to see them populating). \n\nAfter all apps have populated the install will start and the State (above) will change to In progress. \n\nWhen the batch is done the state will update to Installed');
+                grSBIP.update();
+            }
+        } else {
+            gs.info(
+                "\n\n-----------------------------------------------\n\nAll apps appear to be up-to-date. \n\nIf you think this is incorrect please try running this script again with `updateCheck` set to `true`. This will check the store for any new updates.\n(sometimes there are apps in the Application Manager that say that there are updates but you can't actually update them)\n\n-----------------------------------------------\n\n"
+            );
+        }
+    };
+
+    return {
+        initialize: function() {},
+
+        /**
+         * upgradeByFilter
+         * Batch upgrades company apps matching the provided encoded query.
+         * 
+         * @param {String} encodedQuery - Encoded query to filter sys_store_app records.
+         * @returns {void}
+         * 
+         * Example queries:
+         *   All ServiceNow Store Apps: "install_dateISNOTEMPTY^hide_on_ui=false^vendor=ServiceNow^ORvendorISEMPTY^latest_version!="
+         *   My company's apps: is_store_app=false
+         *   Specific apps: scopeINx_snc_daniels_app,x_snc_aso,x_snc_agent_home_0
+         *   By company key: scopeSTARTSWITHx_snc // Change to your company prefix!!
+         * Error Handling: Logs errors and handles missing records gracefully.
+         * Response: Saves status information in system log 
+         * NOTE: Be sure to got My Company Applications and refresh or else this utility may
+         * not see any available upgrades.
+         * 
+         * Inspired by The ServiceNow Wizard: https://snwizard.com/update-apps/
+         */
+        upgradeByFilter: upgradeByFilter,
+
+        /**
+         * upgradeSavedApps
+         * Batch upgrades apps in the system property bulk_convert_store_app.convertible_apps. 
+         * Place a comma delimited list of scope names in that property before calling this method.
+         * 
+         * @returns {void}
+         */
+        upgradeSavedApps: function() {
+            const convertibleApps = gs.getProperty('bulk_convert_store_app.convertible_apps');
+            if (!convertibleApps.trim()) throw "No values in system property bulk_convert_store_app.convertible_apps. This should be a comma delimited list of scope names that you own.";
+            const encodedQuery = "scopeIN" + convertibleApps;
+
+            return upgradeByFilter(encodedQuery);
+        },
+
+        type: 'BulkUpgradeMyCompanyApps'
+    };
+})();]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>jon.lind</sys_created_by>
+        <sys_created_on>2026-07-21 18:50:35</sys_created_on>
+        <sys_id>0dd88b5493924b50244af07e2803d6e7</sys_id>
+        <sys_mod_count>7</sys_mod_count>
+        <sys_name>BulkUpgradeMyCompanyApps</sys_name>
+        <sys_package display_value="Bulk Store App Converter" source="3b04bd443371c7d02e49a94a7e5c7bb3">3b04bd443371c7d02e49a94a7e5c7bb3</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
+        <sys_update_name>sys_script_include_0dd88b5493924b50244af07e2803d6e7</sys_update_name>
+        <sys_updated_by>jon.lind</sys_updated_by>
+        <sys_updated_on>2026-07-21 19:31:07</sys_updated_on>
+    </sys_script_include>
+    <sys_es_latest_script action="INSERT_OR_UPDATE">
+        <id>0dd88b5493924b50244af07e2803d6e7</id>
+        <sys_created_by>jon.lind</sys_created_by>
+        <sys_created_on>2026-07-21 18:50:34</sys_created_on>
+        <sys_id>09190f5493924b50244af07e2803d66d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>jon.lind</sys_updated_by>
+        <sys_updated_on>2026-07-21 18:50:34</sys_updated_on>
+        <table>sys_script_include</table>
+        <use_es_latest>true</use_es_latest>
+    </sys_es_latest_script>
+</record_update>

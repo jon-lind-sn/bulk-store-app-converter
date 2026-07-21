@@ -273,20 +273,23 @@ function convertDevNext(sysIds, index) {
         <div id="page-messages" class="col-sm-12"></div>
         <div class="col-sm-12">
           <h3>Bidirectional App Conversion</h3>
-          <p class="text-muted">Convert store apps to development mode or development apps back to store apps.</p>
+          <p class="text-muted">${gs.getMessage("Convert store apps to development mode or development apps back to store apps.")}</p>
+		  <p>
+		  ${gs.getMessage("Have apps that you think you should be able to convert to Dev mode but don't see here? Make sure that `sn_appauthor.all_company_keys` system property has your company app key, e.g. for `x_snc` it is `snc`. Use")}$[SP]
+		  <a target="_blank" href='https://www.servicenow.com/community/servicenow-ide-sdk-and-fluent/now-sdk-amp-cli-sn-appauthor-all-company-keys-issue-resolution/m-p/3525707'> ${gs.getMessage("this script")}</a> $[SP] ${gs.getMessage("to modify it.")}</p>
         </div>
         <div class="row">
           <div class="col-sm-6">
             <div class="panel panel-info">
               <div class="panel-heading">
-                <h4 class="panel-title">Convertible Store Apps</h4>
+                <h4 class="panel-title">${gs.getMessage("Convertible Store Apps")}</h4>
               </div>
               <div class="panel-body">
-                <p class="text-muted">Select store apps to convert to development mode.</p>
+                <p class="text-muted">${gs.getMessage("Select store apps to convert to development mode.")}</p>
                 <div id="store-app-checklist" style="">
                   <j2:if test="$[jvar_store_apps.length == 0]">
                     <p class="text-muted">
-                      <em>No convertible store applications found.</em>
+                      <em>${gs.getMessage("No convertible store applications found.")}</em>
                     </p>
                   </j2:if>
                   <j2:forEach items="$[jvar_store_apps]" var="jvar_sapp">
@@ -318,14 +321,14 @@ function convertDevNext(sysIds, index) {
           <div class="col-sm-6">
             <div class="panel panel-warning">
               <div class="panel-heading">
-                <h4 class="panel-title">Development Mode Apps</h4>
+                <h4 class="panel-title">${gs.getMessage("Development Mode Apps")}</h4>
               </div>
               <div class="panel-body">
-                <p class="text-muted">Select development apps to convert back to store apps.</p>
+                <p class="text-muted">${gs.getMessage("Select development apps to convert back to store apps.")}</p>
                 <div id="dev-app-checklist" style="">
                   <j2:if test="$[jvar_dev_apps.length == 0]">
                     <p class="text-muted">
-                      <em>No custom-scoped development applications found.</em>
+                      <em>${gs.getMessage("No custom-scoped development applications found.")}</em>
                     </p>
                   </j2:if>
                   <j2:forEach items="$[jvar_dev_apps]" var="jvar_dapp">
@@ -365,14 +368,14 @@ function convertDevNext(sysIds, index) {
         <sys_created_by>jon.lind</sys_created_by>
         <sys_created_on>2026-06-25 21:45:44</sys_created_on>
         <sys_id>e50a5b297999422a982ce43dd4e39791</sys_id>
-        <sys_mod_count>11</sys_mod_count>
+        <sys_mod_count>19</sys_mod_count>
         <sys_name>bulk_convert_store_app_confirm</sys_name>
         <sys_package display_value="Global" source="global">global</sys_package>
         <sys_policy/>
         <sys_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
         <sys_update_name>sys_ui_page_e50a5b297999422a982ce43dd4e39791</sys_update_name>
         <sys_updated_by>jon.lind</sys_updated_by>
-        <sys_updated_on>2026-07-13 22:13:43</sys_updated_on>
+        <sys_updated_on>2026-07-21 15:52:41</sys_updated_on>
     </sys_ui_page>
     <sys_claim action="INSERT_OR_UPDATE">
         <claim_owner_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</claim_owner_scope>
