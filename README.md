@@ -2,6 +2,8 @@
 
 A global-scope ServiceNow utility for administrators to bulk-convert applications between store mode (`sys_store_app`) and development mode (`sys_app`).
 
+See a demo and more information at [Bulk upgrade and convert store apps](https://sn.works/aemc/bulkupgradeconvert).
+
 ## What It Does
 
 This app provides a single UI page with two side-by-side panels for bidirectional app conversion:
