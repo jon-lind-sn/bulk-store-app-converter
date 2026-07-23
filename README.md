@@ -2,7 +2,7 @@
 
 A global-scope ServiceNow utility for administrators to bulk-convert applications between store mode (`sys_store_app`) and development mode (`sys_app`).
 
-See a demo and more information at [Bulk upgrade and convert store apps](https://sn.works/aemc/bulkupgradeconvert).
+See a demo and more information on ServiceNow Community at [https://sn.works/aemc/bulkupgradeconvert]([https://sn.works/aemc/bulkupgradeconvert](https://www.servicenow.com/community/app-engine-blog/bulk-upgrade-and-convert-app-repo-apps-after-clone/ba-p/3577455)).
 
 ## What It Does
 
