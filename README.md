@@ -54,8 +54,15 @@ The page queries `sys_scope` (parent table of both `sys_store_app` and `sys_app`
 
 ## Bundling / Export
 
-Since this is a global-scope app, there is no "Publish to Source Control" option. To transport to another instance:
+- **Fork**: Feel free to fork this repo and install it into your instance directly.
+- **Copy Pasta**: There are two main files, the script include and the UI Page and a couple of modules.  You may wish to just manually create your own files and copy paste the code.
 
-1. Find the update sets containing the latest versions of each component (see table above).
-2. Merge them into a single update set.
-3. Export that update set as XML and import on the target instance.
+## Contributions
+
+If you fork it, they will come. Please reach out to request to be a contributor if you are planning to make changes to this code. I would love to see what you're doing and learn from you.
+
+## Use this as inspiration
+
+This is meant to be inspiration for you to build your own solution. There is no warranty and teh expectation is that you can support this yourself.  If you have an issue please feel free to become a contributor and submit the solution and/or create an issue.  
+
+Happy coding!
