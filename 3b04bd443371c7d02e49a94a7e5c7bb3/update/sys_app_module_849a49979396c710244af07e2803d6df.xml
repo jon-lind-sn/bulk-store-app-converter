@@ -5,56 +5,56 @@
         <assessment/>
         <device_type/>
         <filter/>
-        <hint>Bulk convert store apps to development mode.</hint>
+        <hint>Upgrades all apps where is_store_app = false.  Works on apps in Store mode, then you can convert them to dev mode.</hint>
         <homepage/>
         <image/>
-        <link_type>DIRECT</link_type>
+        <link_type>SCRIPT</link_type>
         <map_page/>
-        <mobile_title>Bulk Convert Store Apps</mobile_title>
+        <mobile_title>Bulk Upgrade My Apps</mobile_title>
         <mobile_view_name>Mobile</mobile_view_name>
         <name/>
         <order>106</order>
         <override_menu_roles>false</override_menu_roles>
-        <query>bulk_convert_store_app_confirm.do</query>
+        <query>(new global.BulkUpgradeMyCompanyApps()).upgradeMyCompanyApps();</query>
         <report/>
-        <require_confirmation>false</require_confirmation>
-        <roles>admin</roles>
+        <require_confirmation>true</require_confirmation>
+        <roles/>
         <route/>
         <screen/>
         <sys_class_name>sys_app_module</sys_class_name>
         <sys_created_by>jon.lind</sys_created_by>
-        <sys_created_on>2026-06-26 16:26:12</sys_created_on>
+        <sys_created_on>2026-07-30 17:19:35</sys_created_on>
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
-        <sys_id>0733e5a91a7247b39c8d2b650f060a31</sys_id>
-        <sys_mod_count>4</sys_mod_count>
-        <sys_name>Bulk Convert My Company Apps</sys_name>
+        <sys_id>849a49979396c710244af07e2803d6df</sys_id>
+        <sys_mod_count>5</sys_mod_count>
+        <sys_name>Bulk Upgrade ALL My Company Apps</sys_name>
         <sys_overrides/>
         <sys_package display_value="Global" source="global">global</sys_package>
         <sys_policy/>
         <sys_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
-        <sys_update_name>sys_app_module_0733e5a91a7247b39c8d2b650f060a31</sys_update_name>
+        <sys_update_name>sys_app_module_849a49979396c710244af07e2803d6df</sys_update_name>
         <sys_updated_by>jon.lind</sys_updated_by>
-        <sys_updated_on>2026-07-21 21:43:21</sys_updated_on>
+        <sys_updated_on>2026-07-30 17:24:43</sys_updated_on>
         <timeline_page/>
-        <title>Bulk Convert My Company Apps</title>
+        <title>Bulk Upgrade ALL My Company Apps</title>
         <uncancelable>false</uncancelable>
         <ux_list/>
         <view_name/>
-        <window_name/>
+        <window_name>upgrade_company_apps</window_name>
     </sys_app_module>
     <sys_claim action="INSERT_OR_UPDATE">
         <claim_owner_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</claim_owner_scope>
-        <claim_timestamp>19f1a42f2960000001</claim_timestamp>
-        <metadata_update_name>sys_app_module_0733e5a91a7247b39c8d2b650f060a31</metadata_update_name>
-        <previous_claim_app_version>1.0.1</previous_claim_app_version>
+        <claim_timestamp>19fb40e9abe0000001</claim_timestamp>
+        <metadata_update_name>sys_app_module_849a49979396c710244af07e2803d6df</metadata_update_name>
+        <previous_claim_app_version>1.0.4</previous_claim_app_version>
         <previous_claim_name>Bulk Store App Converter</previous_claim_name>
         <previous_claim_scope>3b04bd443371c7d02e49a94a7e5c7bb3</previous_claim_scope>
         <sys_created_by>jon.lind</sys_created_by>
-        <sys_created_on>2026-06-30 20:40:22</sys_created_on>
-        <sys_id>b8d89fed93bd4f10244af07e2803d660</sys_id>
+        <sys_created_on>2026-07-30 17:24:43</sys_created_on>
+        <sys_id>17bb055f9396c710244af07e2803d609</sys_id>
         <sys_mod_count>0</sys_mod_count>
         <sys_updated_by>jon.lind</sys_updated_by>
-        <sys_updated_on>2026-06-30 20:40:22</sys_updated_on>
+        <sys_updated_on>2026-07-30 17:24:43</sys_updated_on>
     </sys_claim>
 </record_update>

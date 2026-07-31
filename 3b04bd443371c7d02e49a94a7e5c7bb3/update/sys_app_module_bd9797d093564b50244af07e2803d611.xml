@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_app_module">
+    <sys_app_module action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <application display_value="System Applications">9e329333c33220001875addbdfba8f56</application>
+        <assessment/>
+        <device_type/>
+        <filter/>
+        <hint>Upgrades eligible apps by comma delimited scope name in sys property `bulk_convert_store_app.convertible_apps`. BE SURE TO REFRESH MY COMPANY APPS!</hint>
+        <homepage/>
+        <image/>
+        <link_type>SCRIPT</link_type>
+        <map_page/>
+        <mobile_title>Bulk Upgrade My Apps</mobile_title>
+        <mobile_view_name>Mobile</mobile_view_name>
+        <name/>
+        <order>106</order>
+        <override_menu_roles>false</override_menu_roles>
+        <query>(new global.BulkUpgradeMyCompanyApps()).upgradeSavedApps();</query>
+        <report/>
+        <require_confirmation>true</require_confirmation>
+        <roles/>
+        <route/>
+        <screen/>
+        <sys_class_name>sys_app_module</sys_class_name>
+        <sys_created_by>jon.lind</sys_created_by>
+        <sys_created_on>2026-07-21 19:55:48</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>bd9797d093564b50244af07e2803d611</sys_id>
+        <sys_mod_count>5</sys_mod_count>
+        <sys_name>Bulk Upgrade My Company Apps from Property</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Bulk Store App Converter" source="3b04bd443371c7d02e49a94a7e5c7bb3">3b04bd443371c7d02e49a94a7e5c7bb3</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
+        <sys_update_name>sys_app_module_bd9797d093564b50244af07e2803d611</sys_update_name>
+        <sys_updated_by>jon.lind</sys_updated_by>
+        <sys_updated_on>2026-07-30 17:26:44</sys_updated_on>
+        <timeline_page/>
+        <title>Bulk Upgrade My Company Apps from Property</title>
+        <uncancelable>false</uncancelable>
+        <ux_list/>
+        <view_name/>
+        <window_name>upgrade_company_apps</window_name>
+    </sys_app_module>
+</record_update>

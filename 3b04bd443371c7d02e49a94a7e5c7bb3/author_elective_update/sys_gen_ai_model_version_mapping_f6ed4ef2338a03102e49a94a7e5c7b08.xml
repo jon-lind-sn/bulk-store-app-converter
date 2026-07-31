@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_gen_ai_model_version_mapping">
+    <sys_gen_ai_model_version_mapping action="DELETE">
+        <active>true</active>
+        <control>skill</control>
+        <gen_ai_provider display_value="Google Gemini">dc851269ff3566100158ffffffffffe4</gen_ai_provider>
+        <model_type>GENERIC</model_type>
+        <resource>f4920c03ff6d6210509bfffffffffff7</resource>
+        <resource_type>sn_nowassist_skill_config</resource_type>
+        <skill_type>ootb</skill_type>
+        <source>customer</source>
+        <source_model_name display_value="gemini_large">4ccd425e7f842210c0e9a2a22d86655a</source_model_name>
+        <sys_class_name>sys_gen_ai_model_version_mapping</sys_class_name>
+        <sys_created_by>jon.lind</sys_created_by>
+        <sys_created_on>2026-07-16 22:41:13</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_id>f6ed4ef2338a03102e49a94a7e5c7b08</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>4ccd425e7f842210c0e9a2a22d86655a</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Bulk Store App Converter" source="3b04bd443371c7d02e49a94a7e5c7bb3">3b04bd443371c7d02e49a94a7e5c7bb3</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
+        <sys_update_name>sys_gen_ai_model_version_mapping_f6ed4ef2338a03102e49a94a7e5c7b08</sys_update_name>
+        <sys_updated_by>jon.lind</sys_updated_by>
+        <sys_updated_on>2026-07-16 22:41:13</sys_updated_on>
+        <target_model_name display_value="gemini-pro">55b1bffb2d427510f877b951e3e5bfc0</target_model_name>
+    </sys_gen_ai_model_version_mapping>
+<sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application>
+        <file_path/>
+        <instance_id>ae36301d2b7e2218e2e6fcd2ce91bf0d</instance_id>
+        <instance_name>zorb</instance_name>
+        <name>sys_gen_ai_model_version_mapping_f6ed4ef2338a03102e49a94a7e5c7b08</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_gen_ai_model_version_mapping">
+    <sys_gen_ai_model_version_mapping action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <control>skill</control>
+        <gen_ai_provider display_value="Google Gemini">dc851269ff3566100158ffffffffffe4</gen_ai_provider>
+        <model_type>GENERIC</model_type>
+        <resource>f4920c03ff6d6210509bfffffffffff7</resource>
+        <resource_type>sn_nowassist_skill_config</resource_type>
+        <skill_type>ootb</skill_type>
+        <source>customer</source>
+        <source_model_name display_value="gemini_large">4ccd425e7f842210c0e9a2a22d86655a</source_model_name>
+        <sys_class_name>sys_gen_ai_model_version_mapping</sys_class_name>
+        <sys_created_by>jon.lind</sys_created_by>
+        <sys_created_on>2026-07-16 22:41:13</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_id>f6ed4ef2338a03102e49a94a7e5c7b08</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>4ccd425e7f842210c0e9a2a22d86655a</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Bulk Store App Converter" source="3b04bd443371c7d02e49a94a7e5c7bb3">3b04bd443371c7d02e49a94a7e5c7bb3</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
+        <sys_update_name>sys_gen_ai_model_version_mapping_f6ed4ef2338a03102e49a94a7e5c7b08</sys_update_name>
+        <sys_updated_by>jon.lind</sys_updated_by>
+        <sys_updated_on>2026-07-16 22:41:13</sys_updated_on>
+        <target_model_name display_value="gemini-pro">55b1bffb2d427510f877b951e3e5bfc0</target_model_name>
+    </sys_gen_ai_model_version_mapping>
+</record_update>]]></payload>
+        <payload_hash>451370933</payload_hash>
+        <record_name>4ccd425e7f842210c0e9a2a22d86655a</record_name>
+        <reverted_from/>
+        <source>acf8dbe393d28bd0633ff1cc0903d670</source>
+        <source_table>sys_upgrade_history</source_table>
+        <state>previous</state>
+        <sys_created_by>jon.lind</sys_created_by>
+        <sys_created_on>2026-07-31 22:20:12</sys_created_on>
+        <sys_id>05f81fe393d28bd0633ff1cc0903d6ba</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19fba437b3a0000001</sys_recorded_at>
+        <sys_updated_by>jon.lind</sys_updated_by>
+        <sys_updated_on>2026-07-31 22:20:12</sys_updated_on>
+        <type>Gen AI Model Version Mapping</type>
+        <update_guid>4df81fe39fd28bd000d1618ceae145b9</update_guid>
+        <update_guid_history>4df81fe39fd28bd000d1618ceae145b9:0,05ac23188c1a4b5087143c70a4392b76:-1343503249,d9a1dba335128bd057537e56a8b1b4d9:0,05ac23188c1a4b5087143c70a4392b76:-1343503249,7f85ba80c01687504e9b1b61c62fcc02:451370933</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete/>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>jon.lind</sys_created_by>
+        <sys_created_on>2026-07-31 22:20:38</sys_created_on>
+        <sys_db_object display_value="" name="sys_gen_ai_model_version_mapping">sys_gen_ai_model_version_mapping</sys_db_object>
+        <sys_id>4a2ae0d96a8e40ae9eb5e9cc8aaf1d04</sys_id>
+        <sys_metadata>f6ed4ef2338a03102e49a94a7e5c7b08</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>4ccd425e7f842210c0e9a2a22d86655a</sys_name>
+        <sys_package display_value="Bulk Store App Converter" source="3b04bd443371c7d02e49a94a7e5c7bb3">3b04bd443371c7d02e49a94a7e5c7bb3</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
+        <sys_scope_delete display_value="">01b0c1c41e054d2b80917166816f0fa9</sys_scope_delete>
+        <sys_update_name>sys_gen_ai_model_version_mapping_f6ed4ef2338a03102e49a94a7e5c7b08</sys_update_name>
+        <sys_update_version display_value="sys_gen_ai_model_version_mapping_f6ed4ef2338a03102e49a94a7e5c7b08">05f81fe393d28bd0633ff1cc0903d6ba</sys_update_version>
+        <sys_updated_by>jon.lind</sys_updated_by>
+        <sys_updated_on>2026-07-31 22:20:38</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

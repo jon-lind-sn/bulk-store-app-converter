@@ -275,8 +275,16 @@ function convertDevNext(sysIds, index) {
           <h3>Bidirectional App Conversion</h3>
           <p class="text-muted">${gs.getMessage("Convert store apps to development mode or development apps back to store apps.")}</p>
 		  <p>
-		  ${gs.getMessage("Have apps that you think you should be able to convert to Dev mode but don't see here? Make sure that `sn_appauthor.all_company_keys` system property has your company app key, e.g. for `x_snc` it is `snc`. Use")}$[SP]
+		  ${gs.getMessage("Have apps that you think you should be able to convert to Dev mode but don't see here? Make sure that `sn_appauthor.all_company_keys` system property has your company app key, e.g. for `x_snc` it is `snc`. Use")}
+		  $[SP]
 		  <a target="_blank" href='https://www.servicenow.com/community/servicenow-ide-sdk-and-fluent/now-sdk-amp-cli-sn-appauthor-all-company-keys-issue-resolution/m-p/3525707'> ${gs.getMessage("this script")}</a> $[SP] ${gs.getMessage("to modify it.")}</p>
+		  <p id="how-to-section">
+		  <h3>How to use this</h3>
+		  <ol>
+		  	<li>Usually after a clone you need to upgrade the apps before converting them to dev mode. From the System Applications menu use the $[SP]<b>Bulk Upgrade ALL My Company Apps</b>$[SP] link to upgrade every app where "is_store_app=false" to the latest version. Or use $[SP]<b>Bulk Upgrade My Company Apps from System Property</b>$[SP] link to only upgrade the apps listed in the system property `bulk_convert_store_app.convertible_apps`.</li>
+			<li>On this page select the Store apps that you want to convert to dev mode.</li>
+		  </ol>
+		  </p>
         </div>
         <div class="row">
           <div class="col-sm-6">
@@ -368,14 +376,14 @@ function convertDevNext(sysIds, index) {
         <sys_created_by>jon.lind</sys_created_by>
         <sys_created_on>2026-06-25 21:45:44</sys_created_on>
         <sys_id>e50a5b297999422a982ce43dd4e39791</sys_id>
-        <sys_mod_count>19</sys_mod_count>
+        <sys_mod_count>28</sys_mod_count>
         <sys_name>bulk_convert_store_app_confirm</sys_name>
         <sys_package display_value="Global" source="global">global</sys_package>
         <sys_policy/>
         <sys_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
         <sys_update_name>sys_ui_page_e50a5b297999422a982ce43dd4e39791</sys_update_name>
         <sys_updated_by>jon.lind</sys_updated_by>
-        <sys_updated_on>2026-07-21 15:52:41</sys_updated_on>
+        <sys_updated_on>2026-07-31 22:16:47</sys_updated_on>
     </sys_ui_page>
     <sys_claim action="INSERT_OR_UPDATE">
         <claim_owner_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</claim_owner_scope>

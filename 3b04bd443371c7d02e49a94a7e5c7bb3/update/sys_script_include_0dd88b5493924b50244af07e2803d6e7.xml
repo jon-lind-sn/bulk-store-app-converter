@@ -10,7 +10,8 @@
         <name>BulkUpgradeMyCompanyApps</name>
         <sandbox_callable>false</sandbox_callable>
         <script><![CDATA[var BulkUpgradeMyCompanyApps = Class.create();
-BulkUpgradeMyCompanyApps.prototype = (function() {
+BulkUpgradeMyCompanyApps.prototype = Object.extendsObject(global.AbstractAjaxProcessor, (function(){  
+
     function updateAvailable(appGR) {
         var installedVersion = appGR.getValue("version");
         var latestVersion = appGR.getValue("latest_version");
@@ -99,7 +100,7 @@ BulkUpgradeMyCompanyApps.prototype = (function() {
                 "\n\n-----------------------------------------------\n\nAll apps appear to be up-to-date. \n\nIf you think this is incorrect please try running this script again with `updateCheck` set to `true`. This will check the store for any new updates.\n(sometimes there are apps in the Application Manager that say that there are updates but you can't actually update them)\n\n-----------------------------------------------\n\n"
             );
         }
-    };
+    }
 
     return {
         initialize: function() {},
@@ -108,7 +109,7 @@ BulkUpgradeMyCompanyApps.prototype = (function() {
          * upgradeByFilter
          * Batch upgrades company apps matching the provided encoded query.
          * 
-         * @param {String} encodedQuery - Encoded query to filter sys_store_app records.
+         * @param {String} encodedQuery - Encoded query to filter sys_store_app records. You may also calls this as GlideAjax with ga.addParam('encoded_query', '...');
          * @returns {void}
          * 
          * Example queries:
@@ -123,7 +124,28 @@ BulkUpgradeMyCompanyApps.prototype = (function() {
          * 
          * Inspired by The ServiceNow Wizard: https://snwizard.com/update-apps/
          */
-        upgradeByFilter: upgradeByFilter,
+		upgradeByFilter: function(encodedQuery) {
+			var query = encodedQuery || this.getParameter('sysparm_encoded_query');
+			return upgradeByFilter(query);
+		},
+
+		/**
+		 * upgradeMyCompanyApps
+		 * Convenience method that batch upgrades all company-owned (non-store)
+		 * applications to their latest available versions. Internally calls
+		 * `upgradeByFilter` with the query `is_store_app=false`.
+		 *
+		 * @returns {void} Results are logged to the system log via `upgradeByFilter`.
+		 *
+		 * @example
+		 * new BulkUpgradeMyCompanyApps().upgradeMyCompanyApps();
+		 *
+		 * @see upgradeByFilter
+		 */
+		upgradeMyCompanyApps: function() {
+			const query = 'is_store_app=false';
+			return upgradeByFilter(query);
+		},
 
         /**
          * upgradeSavedApps
@@ -142,19 +164,19 @@ BulkUpgradeMyCompanyApps.prototype = (function() {
 
         type: 'BulkUpgradeMyCompanyApps'
     };
-})();]]></script>
+})());]]></script>
         <sys_class_name>sys_script_include</sys_class_name>
         <sys_created_by>jon.lind</sys_created_by>
         <sys_created_on>2026-07-21 18:50:35</sys_created_on>
         <sys_id>0dd88b5493924b50244af07e2803d6e7</sys_id>
-        <sys_mod_count>7</sys_mod_count>
+        <sys_mod_count>28</sys_mod_count>
         <sys_name>BulkUpgradeMyCompanyApps</sys_name>
         <sys_package display_value="Bulk Store App Converter" source="3b04bd443371c7d02e49a94a7e5c7bb3">3b04bd443371c7d02e49a94a7e5c7bb3</sys_package>
         <sys_policy/>
         <sys_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
         <sys_update_name>sys_script_include_0dd88b5493924b50244af07e2803d6e7</sys_update_name>
         <sys_updated_by>jon.lind</sys_updated_by>
-        <sys_updated_on>2026-07-21 19:31:07</sys_updated_on>
+        <sys_updated_on>2026-07-31 21:53:28</sys_updated_on>
     </sys_script_include>
     <sys_es_latest_script action="INSERT_OR_UPDATE">
         <id>0dd88b5493924b50244af07e2803d6e7</id>
