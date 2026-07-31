@@ -6,11 +6,14 @@ See a demo and more information on ServiceNow Community at https://sn.works/aemc
 
 ## Bulk Upgrade Feature
 
-The upgrade script automatically retrieves and installs the latest versions of your Application Repo store apps on a cloned instance. This is configured via the `bulk_convert_store_app.convertible_apps` system property, which contains a comma-separated list of app scope names (e.g., `x_myapp_1,x_myapp_2`) that should be auto-upgraded.
+The upgrade script automatically retrieves and installs the latest versions of your Application Repo store apps on a cloned instance. There are two ways to run it, exposed as separate modules under **System Applications**:
 
-Run **System Applications > Bulk Upgrade My Company Apps** which will check for new versions and install the latest version. This ensures cloned instances have any versions which may have been stashed as part of the clone process but not deployed to prod yet.
+- **Bulk Upgrade ALL My Company Apps**: Upgrades every app where `is_store_app = false` to its latest available version. No configuration required — use this if you want everything company-owned brought current.
+- **Bulk Upgrade My Company Apps from Property**: Upgrades only the app scopes listed in the `bulk_convert_store_app.convertible_apps` system property, a comma-separated list of app scope names (e.g., `x_myapp_1,x_myapp_2`). Use this if you want to target a specific set of apps.
 
-**Prerequisite**: Configure the `bulk_convert_store_app.convertible_apps` property in production with the list of scopes you want to auto-upgrade on every clone.
+Either option ensures cloned instances have any versions which may have been stashed as part of the clone process but not deployed to prod yet. After running either, be sure to refresh **My Company Apps** so the updated versions are reflected.
+
+**Prerequisite** (property-based option only): Configure the `bulk_convert_store_app.convertible_apps` property in production with the list of scopes you want to auto-upgrade on every clone.
 
 ## Bulk Convert Feature
 
@@ -31,7 +34,7 @@ The page polls `sys_execution_tracker` every 3 seconds to track completion of ea
 ## How to use it
 For the conversion UI specifically, ensure your application scope is set to **Global** (required for conversion operations). Select apps in either panel and click **Convert to Dev Mode** (left) or **Convert to Store App** (right). The interface tracks progress in real-time, and after refresh, apps will appear in their new panel.
 
-1. Navigate to **System Applications > Bulk Convert Store Apps** in the application navigator.
+1. Navigate to **System Applications > Bulk Convert My Company Apps** in the application navigator.
 2. Ensure your application scope is set to **Global** (required for conversion operations).
 3. Check the apps you want to convert in either panel.
 4. Click **Convert to Dev Mode** (left) or **Convert to Store App** (right).
@@ -64,7 +67,7 @@ The page queries `sys_scope` (parent table of both `sys_store_app` and `sys_app`
 
 1. Clone the instance
 2. Log into the cloned dev instance
-3. Navigate to **System Applications → Bulk Upgrade My Company Apps** and run the upgrade script to pull the latest app versions for apps listed in `bulk_convert_store_app.convertible_apps`
+3. Navigate to **System Applications → Bulk Upgrade ALL My Company Apps** to upgrade every company-owned app to its latest version, or **System Applications → Bulk Upgrade My Company Apps from Property** to only upgrade the apps listed in `bulk_convert_store_app.convertible_apps`
 4. Ensure your application scope is set to **Global** (required for conversion operations).
 5. Navigate to **System Applications → Bulk Convert My Company Apps** to restore development mode by selecting your apps and clicking **Convert**
 
