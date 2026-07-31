@@ -85,3 +85,7 @@ If you fork it, they will come. Please reach out to request to be a contributor 
 This is meant to be inspiration for you to build your own solution. There is no warranty and teh expectation is that you can support this yourself.  If you have an issue please feel free to become a contributor and submit the solution and/or create an issue.  
 
 Happy coding!
+
+## Retrieved Update Set
+
+- **Import via Update Set**: [`Bulk-Store-App-Converter-1.0.4.xml`](dist/Bulk-Store-App-Converter-1.0.4.xml) — load this into **Retrieved Update Sets** on your instance and commit it to install the app without cloning the repo.

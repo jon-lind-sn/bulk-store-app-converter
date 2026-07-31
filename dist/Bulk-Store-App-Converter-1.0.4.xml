@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><unload unload_date="2026-07-31 22:31:56">
+<sys_remote_update_set action="INSERT_OR_UPDATE">
+<application display_value="Global">global</application>
+<application_name>Global</application_name>
+<application_scope>global</application_scope>
+<application_version/>
+<collisions/>
+<commit_date/>
+<deleted/>
+<description>Used to update multiple store apps to Dev Mode and Back.</description>
+<inserted/>
+<name>Bulk Store App Converter 1.0.4</name>
+<origin_sys_id/>
+<parent display_value=""/>
+<release_date/>
+<remote_base_update_set display_value=""/>
+<remote_parent_id/>
+<remote_sys_id>03eadf2b93d28bd0633ff1cc0903d604</remote_sys_id>
+<state>loaded</state>
+<summary/>
+<sys_class_name>sys_remote_update_set</sys_class_name>
+<sys_created_by>jon.lind</sys_created_by>
+<sys_created_on>2026-07-31 22:31:55</sys_created_on>
+<sys_id>fcabd3eb93d28bd0633ff1cc0903d665</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>jon.lind</sys_updated_by>
+<sys_updated_on>2026-07-31 22:31:55</sys_updated_on>
+<update_set display_value=""/>
+<update_source display_value=""/>
+<updated/>
+</sys_remote_update_set>
+</unload>
