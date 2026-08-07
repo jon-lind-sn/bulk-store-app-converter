@@ -1,119 +1,176 @@
-<?xml version="1.0" encoding="UTF-8"?><unload unload_date="2026-08-07 17:01:09">
-<sys_remote_update_set action="INSERT_OR_UPDATE">
-<application display_value="Global">global</application>
-<application_name>Global</application_name>
-<application_scope>global</application_scope>
-<application_version/>
-<collisions/>
-<commit_date/>
-<deleted/>
-<description>Used to update multiple store apps to Dev Mode and Back.</description>
-<inserted/>
-<name>Bulk Store App Converter</name>
-<origin_sys_id/>
-<parent display_value=""/>
-<release_date/>
-<remote_base_update_set display_value=""/>
-<remote_parent_id/>
-<remote_sys_id>a2d2d2b993e68354633ff1cc0903d64c</remote_sys_id>
-<state>loaded</state>
-<summary/>
-<sys_class_name>sys_remote_update_set</sys_class_name>
-<sys_created_by>jon.lind</sys_created_by>
-<sys_created_on>2026-08-07 17:01:08</sys_created_on>
-<sys_id>230396f993e68354633ff1cc0903d615</sys_id>
-<sys_mod_count>0</sys_mod_count>
-<sys_updated_by>jon.lind</sys_updated_by>
-<sys_updated_on>2026-08-07 17:01:08</sys_updated_on>
-<update_set display_value=""/>
-<update_source display_value=""/>
-<updated/>
-</sys_remote_update_set>
-<sys_update_xml action="INSERT_OR_UPDATE">
-<action>INSERT_OR_UPDATE</action>
-<application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application>
-<category>customer</category>
-<comments/>
-<name>sys_app_module_0733e5a91a7247b39c8d2b650f060a31</name>
-<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_app_module"><sys_app_module action="INSERT_OR_UPDATE"><active>true</active><application display_value="System Applications">9e329333c33220001875addbdfba8f56</application><assessment/><device_type/><filter/><hint>Bulk convert store apps to development mode.</hint><homepage/><image/><link_type>DIRECT</link_type><map_page/><mobile_title>Bulk Convert Store Apps</mobile_title><mobile_view_name>Mobile</mobile_view_name><name/><order>106</order><override_menu_roles>false</override_menu_roles><query>bulk_convert_store_app_confirm.do</query><report/><require_confirmation>false</require_confirmation><roles>admin</roles><route/><screen/><sys_class_name>sys_app_module</sys_class_name><sys_created_by>jon.lind</sys_created_by><sys_created_on>2026-06-26 16:26:12</sys_created_on><sys_domain>global</sys_domain><sys_domain_path>/</sys_domain_path><sys_id>0733e5a91a7247b39c8d2b650f060a31</sys_id><sys_mod_count>4</sys_mod_count><sys_name>Bulk Convert My Company Apps</sys_name><sys_overrides/><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope><sys_update_name>sys_app_module_0733e5a91a7247b39c8d2b650f060a31</sys_update_name><sys_updated_by>jon.lind</sys_updated_by><sys_updated_on>2026-07-21 21:43:21</sys_updated_on><timeline_page/><title>Bulk Convert My Company Apps</title><uncancelable>false</uncancelable><ux_list/><view_name/><window_name/></sys_app_module><sys_claim action="INSERT_OR_UPDATE"><claim_owner_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</claim_owner_scope><claim_timestamp>19f1a42f2960000001</claim_timestamp><metadata_update_name>sys_app_module_0733e5a91a7247b39c8d2b650f060a31</metadata_update_name><previous_claim_app_version>1.0.1</previous_claim_app_version><previous_claim_name>Bulk Store App Converter</previous_claim_name><previous_claim_scope>3b04bd443371c7d02e49a94a7e5c7bb3</previous_claim_scope><sys_created_by>jon.lind</sys_created_by><sys_created_on>2026-06-30 20:40:22</sys_created_on><sys_id>b8d89fed93bd4f10244af07e2803d660</sys_id><sys_mod_count>0</sys_mod_count><sys_updated_by>jon.lind</sys_updated_by><sys_updated_on>2026-06-30 20:40:22</sys_updated_on></sys_claim></record_update>]]></payload>
-<payload_hash>193530793</payload_hash>
-<remote_update_set display_value="Bulk Store App Converter">230396f993e68354633ff1cc0903d615</remote_update_set>
-<replace_on_upgrade>false</replace_on_upgrade>
-<sys_created_by>jon.lind</sys_created_by>
-<sys_created_on>2026-08-07 17:01:08</sys_created_on>
-<sys_id>270396f993e68354633ff1cc0903d616</sys_id>
-<sys_mod_count>0</sys_mod_count>
-<sys_recorded_at>19fdd2b172c0000001</sys_recorded_at>
-<sys_updated_by>jon.lind</sys_updated_by>
-<sys_updated_on>2026-08-07 17:01:08</sys_updated_on>
-<table/>
-<target_name>Bulk Convert My Company Apps</target_name>
-<type>Module</type>
-<update_domain>global</update_domain>
-<update_guid/>
-<update_guid_history/>
-<update_set display_value=""/>
-<view/>
-</sys_update_xml>
-<sys_update_xml action="INSERT_OR_UPDATE">
-<action>INSERT_OR_UPDATE</action>
-<application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application>
-<category>customer</category>
-<comments/>
-<name>sys_properties_53bdd86258a14ab2b5f619b55f1acd56</name>
-<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties"><sys_properties action="INSERT_OR_UPDATE"><choices/><description>Comma delimited list of app scope names to convert to development mode. E.g. x_snc_auto_parts1,x_snc_equip_check</description><ignore_cache>true</ignore_cache><is_private>false</is_private><name>bulk_convert_store_app.convertible_apps</name><read_roles>admin</read_roles><suffix>bulk_convert_store_app.convertible_apps</suffix><sys_class_name>sys_properties</sys_class_name><sys_created_by>jon.lind</sys_created_by><sys_created_on>2026-06-26 16:30:24</sys_created_on><sys_id>53bdd86258a14ab2b5f619b55f1acd56</sys_id><sys_mod_count>12</sys_mod_count><sys_name>bulk_convert_store_app.convertible_apps</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope><sys_update_name>sys_properties_53bdd86258a14ab2b5f619b55f1acd56</sys_update_name><sys_updated_by>jon.lind</sys_updated_by><sys_updated_on>2026-07-30 15:20:01</sys_updated_on><type>string</type><value>x_snc_auto_parts1,x_snc_equip_loan1, x_snc_food_safety1</value><write_roles>admin</write_roles></sys_properties><sys_translated_text action="delete_multiple" query="documentkey=53bdd86258a14ab2b5f619b55f1acd56"/><sys_claim action="INSERT_OR_UPDATE"><claim_owner_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</claim_owner_scope><claim_timestamp>19f1a4292e90000001</claim_timestamp><metadata_update_name>sys_properties_53bdd86258a14ab2b5f619b55f1acd56</metadata_update_name><previous_claim_app_version>1.0.1</previous_claim_app_version><previous_claim_name>Bulk Store App Converter</previous_claim_name><previous_claim_scope>3b04bd443371c7d02e49a94a7e5c7bb3</previous_claim_scope><sys_created_by>jon.lind</sys_created_by><sys_created_on>2026-06-30 20:39:58</sys_created_on><sys_id>7eb89bed93bd4f10244af07e2803d6bb</sys_id><sys_mod_count>0</sys_mod_count><sys_updated_by>jon.lind</sys_updated_by><sys_updated_on>2026-06-30 20:39:58</sys_updated_on></sys_claim></record_update>]]></payload>
-<payload_hash>529700258</payload_hash>
-<remote_update_set display_value="Bulk Store App Converter">230396f993e68354633ff1cc0903d615</remote_update_set>
-<replace_on_upgrade>false</replace_on_upgrade>
-<sys_created_by>jon.lind</sys_created_by>
-<sys_created_on>2026-08-07 17:01:08</sys_created_on>
-<sys_id>2b0396f993e68354633ff1cc0903d617</sys_id>
-<sys_mod_count>0</sys_mod_count>
-<sys_recorded_at>19fdd2b17410000001</sys_recorded_at>
-<sys_updated_by>jon.lind</sys_updated_by>
-<sys_updated_on>2026-08-07 17:01:08</sys_updated_on>
-<table/>
-<target_name>bulk_convert_store_app.convertible_apps</target_name>
-<type>System Property</type>
-<update_domain>global</update_domain>
-<update_guid/>
-<update_guid_history/>
-<update_set display_value=""/>
-<view/>
-</sys_update_xml>
-<sys_update_xml action="INSERT_OR_UPDATE">
-<action>INSERT_OR_UPDATE</action>
-<application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application>
-<category>customer</category>
-<comments/>
-<name>sys_app_module_849a49979396c710244af07e2803d6df</name>
-<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_app_module"><sys_app_module action="INSERT_OR_UPDATE"><active>true</active><application display_value="System Applications">9e329333c33220001875addbdfba8f56</application><assessment/><device_type/><filter/><hint>Upgrades all apps where is_store_app = false.  Works on apps in Store mode, then you can convert them to dev mode.</hint><homepage/><image/><link_type>SCRIPT</link_type><map_page/><mobile_title>Bulk Upgrade My Apps</mobile_title><mobile_view_name>Mobile</mobile_view_name><name/><order>106</order><override_menu_roles>false</override_menu_roles><query>(new global.BulkUpgradeMyCompanyApps()).upgradeMyCompanyApps();</query><report/><require_confirmation>true</require_confirmation><roles/><route/><screen/><sys_class_name>sys_app_module</sys_class_name><sys_created_by>jon.lind</sys_created_by><sys_created_on>2026-07-30 17:19:35</sys_created_on><sys_domain>global</sys_domain><sys_domain_path>/</sys_domain_path><sys_id>849a49979396c710244af07e2803d6df</sys_id><sys_mod_count>5</sys_mod_count><sys_name>Bulk Upgrade ALL My Company Apps</sys_name><sys_overrides/><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope><sys_update_name>sys_app_module_849a49979396c710244af07e2803d6df</sys_update_name><sys_updated_by>jon.lind</sys_updated_by><sys_updated_on>2026-07-30 17:24:43</sys_updated_on><timeline_page/><title>Bulk Upgrade ALL My Company Apps</title><uncancelable>false</uncancelable><ux_list/><view_name/><window_name>upgrade_company_apps</window_name></sys_app_module><sys_claim action="INSERT_OR_UPDATE"><claim_owner_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</claim_owner_scope><claim_timestamp>19fb40e9abe0000001</claim_timestamp><metadata_update_name>sys_app_module_849a49979396c710244af07e2803d6df</metadata_update_name><previous_claim_app_version>1.0.4</previous_claim_app_version><previous_claim_name>Bulk Store App Converter</previous_claim_name><previous_claim_scope>3b04bd443371c7d02e49a94a7e5c7bb3</previous_claim_scope><sys_created_by>jon.lind</sys_created_by><sys_created_on>2026-07-30 17:24:43</sys_created_on><sys_id>17bb055f9396c710244af07e2803d609</sys_id><sys_mod_count>0</sys_mod_count><sys_updated_by>jon.lind</sys_updated_by><sys_updated_on>2026-07-30 17:24:43</sys_updated_on></sys_claim></record_update>]]></payload>
-<payload_hash>-1965833783</payload_hash>
-<remote_update_set display_value="Bulk Store App Converter">230396f993e68354633ff1cc0903d615</remote_update_set>
-<replace_on_upgrade>false</replace_on_upgrade>
-<sys_created_by>jon.lind</sys_created_by>
-<sys_created_on>2026-08-07 17:01:08</sys_created_on>
-<sys_id>6b0396f993e68354633ff1cc0903d616</sys_id>
-<sys_mod_count>0</sys_mod_count>
-<sys_recorded_at>19fdd2b17560000001</sys_recorded_at>
-<sys_updated_by>jon.lind</sys_updated_by>
-<sys_updated_on>2026-08-07 17:01:08</sys_updated_on>
-<table/>
-<target_name>Bulk Upgrade ALL My Company Apps</target_name>
-<type>Module</type>
-<update_domain>global</update_domain>
-<update_guid/>
-<update_guid_history/>
-<update_set display_value=""/>
-<view/>
-</sys_update_xml>
-<sys_update_xml action="INSERT_OR_UPDATE">
-<action>INSERT_OR_UPDATE</action>
-<application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application>
-<category>customer</category>
-<comments/>
-<name>sys_script_include_0dd88b5493924b50244af07e2803d6e7</name>
-<payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sys_script_include"&gt;&lt;sys_script_include action="INSERT_OR_UPDATE"&gt;&lt;access&gt;package_private&lt;/access&gt;&lt;active&gt;true&lt;/active&gt;&lt;api_name&gt;global.BulkUpgradeMyCompanyApps&lt;/api_name&gt;&lt;caller_access/&gt;&lt;client_callable&gt;false&lt;/client_callable&gt;&lt;description&gt;Script to bulk upgrade your company's applications to the latest versions.  It will either use the system property bulk_convert_store_app.convertible_apps (containing scope names) or you may call it yourself and pass a filter for the apps you wish to upgrade (e.g. "is_store_app=false" will usually return all of your custom apps).&lt;/description&gt;&lt;mobile_callable&gt;false&lt;/mobile_callable&gt;&lt;name&gt;BulkUpgradeMyCompanyApps&lt;/name&gt;&lt;sandbox_callable&gt;false&lt;/sandbox_callable&gt;&lt;script&gt;&lt;![CDATA[var BulkUpgradeMyCompanyApps = Class.create();
+<?xml version="1.0" encoding="UTF-8"?><unload unload_date="2026-07-21 21:43:21"><sys_remote_update_set action="INSERT_OR_UPDATE"><application display_value="Global">global</application><application_name>Global</application_name><application_scope>global</application_scope><collisions /><commit_date /><deleted /><description>Used to update multiple store apps to Dev Mode and Back.</description><inserted /><name>Bulk Store App Converter v1.0.4</name><origin_sys_id /><parent display_value="" /><release_date /><remote_base_update_set display_value="" /><remote_parent_id /><remote_sys_id>9e09496814f2273cf3745db05183dbb2</remote_sys_id><state>loaded</state><summary /><sys_class_name>sys_remote_update_set</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on /><sys_id>27820c6f15a4171bb952a702290000d5</sys_id><sys_mod_count>0</sys_mod_count><sys_updated_by>admin</sys_updated_by><sys_updated_on /><update_set display_value="" /><update_source display_value="" /><updated /></sys_remote_update_set><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_app_module_0733e5a91a7247b39c8d2b650f060a31</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_app_module">
+    <sys_app_module action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <application display_value="System Applications">9e329333c33220001875addbdfba8f56</application>
+        <assessment />
+        <device_type />
+        <filter />
+        <hint>Bulk convert store apps to development mode.</hint>
+        <homepage />
+        <image />
+        <link_type>DIRECT</link_type>
+        <map_page />
+        <mobile_title>Bulk Convert Store Apps</mobile_title>
+        <mobile_view_name>Mobile</mobile_view_name>
+        <name />
+        <order>106</order>
+        <override_menu_roles>false</override_menu_roles>
+        <query>bulk_convert_store_app_confirm.do</query>
+        <report />
+        <require_confirmation>false</require_confirmation>
+        <roles>admin</roles>
+        <route />
+        <screen />
+        <sys_class_name>sys_app_module</sys_class_name>
+        <sys_created_by>jon.lind</sys_created_by>
+        <sys_created_on>2026-06-26 16:26:12</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>0733e5a91a7247b39c8d2b650f060a31</sys_id>
+        <sys_mod_count>4</sys_mod_count>
+        <sys_name>Bulk Convert My Company Apps</sys_name>
+        <sys_overrides />
+        <sys_package display_value="Global" source="global">global</sys_package>
+        <sys_policy />
+        <sys_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
+        <sys_update_name>sys_app_module_0733e5a91a7247b39c8d2b650f060a31</sys_update_name>
+        <sys_updated_by>jon.lind</sys_updated_by>
+        <sys_updated_on>2026-07-21 21:43:21</sys_updated_on>
+        <timeline_page />
+        <title>Bulk Convert My Company Apps</title>
+        <uncancelable>false</uncancelable>
+        <ux_list />
+        <view_name />
+        <window_name />
+    </sys_app_module>
+    </record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">27820c6f15a4171bb952a702290000d5</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>jon.lind</sys_created_by><sys_created_on>2026-07-21 21:43:21</sys_created_on><sys_id>311130b90d80abfb74e30af7fbf9bcec</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b0000000001</sys_recorded_at><sys_updated_by>jon.lind</sys_updated_by><sys_updated_on>2026-07-21 21:43:21</sys_updated_on><table /><target_name>Bulk Convert My Company Apps</target_name><type>Sys App Module</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_app_module_849a49979396c710244af07e2803d6df</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_app_module">
+    <sys_app_module action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <application display_value="System Applications">9e329333c33220001875addbdfba8f56</application>
+        <assessment />
+        <device_type />
+        <filter />
+        <hint>Upgrades all apps where is_store_app = false.  Works on apps in Store mode, then you can convert them to dev mode.</hint>
+        <homepage />
+        <image />
+        <link_type>SCRIPT</link_type>
+        <map_page />
+        <mobile_title>Bulk Upgrade My Apps</mobile_title>
+        <mobile_view_name>Mobile</mobile_view_name>
+        <name />
+        <order>106</order>
+        <override_menu_roles>false</override_menu_roles>
+        <query>(new global.BulkUpgradeMyCompanyApps()).upgradeMyCompanyApps();</query>
+        <report />
+        <require_confirmation>true</require_confirmation>
+        <roles />
+        <route />
+        <screen />
+        <sys_class_name>sys_app_module</sys_class_name>
+        <sys_created_by>jon.lind</sys_created_by>
+        <sys_created_on>2026-07-30 17:19:35</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>849a49979396c710244af07e2803d6df</sys_id>
+        <sys_mod_count>5</sys_mod_count>
+        <sys_name>Bulk Upgrade ALL My Company Apps</sys_name>
+        <sys_overrides />
+        <sys_package display_value="Global" source="global">global</sys_package>
+        <sys_policy />
+        <sys_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
+        <sys_update_name>sys_app_module_849a49979396c710244af07e2803d6df</sys_update_name>
+        <sys_updated_by>jon.lind</sys_updated_by>
+        <sys_updated_on>2026-07-30 17:24:43</sys_updated_on>
+        <timeline_page />
+        <title>Bulk Upgrade ALL My Company Apps</title>
+        <uncancelable>false</uncancelable>
+        <ux_list />
+        <view_name />
+        <window_name>upgrade_company_apps</window_name>
+    </sys_app_module>
+    </record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">27820c6f15a4171bb952a702290000d5</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>jon.lind</sys_created_by><sys_created_on>2026-07-30 17:24:43</sys_created_on><sys_id>481f1be36b31cd21acbc3e60e389e1d2</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b0010000001</sys_recorded_at><sys_updated_by>jon.lind</sys_updated_by><sys_updated_on>2026-07-30 17:24:43</sys_updated_on><table /><target_name>Bulk Upgrade ALL My Company Apps</target_name><type>Sys App Module</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_app_module_bd9797d093564b50244af07e2803d611</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_app_module">
+    <sys_app_module action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <application display_value="System Applications">9e329333c33220001875addbdfba8f56</application>
+        <assessment />
+        <device_type />
+        <filter />
+        <hint>Upgrades eligible apps by comma delimited scope name in sys property `bulk_convert_store_app.convertible_apps`. BE SURE TO REFRESH MY COMPANY APPS!</hint>
+        <homepage />
+        <image />
+        <link_type>SCRIPT</link_type>
+        <map_page />
+        <mobile_title>Bulk Upgrade My Apps</mobile_title>
+        <mobile_view_name>Mobile</mobile_view_name>
+        <name />
+        <order>106</order>
+        <override_menu_roles>false</override_menu_roles>
+        <query>(new global.BulkUpgradeMyCompanyApps()).upgradeSavedApps();</query>
+        <report />
+        <require_confirmation>true</require_confirmation>
+        <roles />
+        <route />
+        <screen />
+        <sys_class_name>sys_app_module</sys_class_name>
+        <sys_created_by>jon.lind</sys_created_by>
+        <sys_created_on>2026-07-21 19:55:48</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>bd9797d093564b50244af07e2803d611</sys_id>
+        <sys_mod_count>5</sys_mod_count>
+        <sys_name>Bulk Upgrade My Company Apps from Property</sys_name>
+        <sys_overrides />
+        <sys_package display_value="Bulk Store App Converter" source="3b04bd443371c7d02e49a94a7e5c7bb3">3b04bd443371c7d02e49a94a7e5c7bb3</sys_package>
+        <sys_policy />
+        <sys_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
+        <sys_update_name>sys_app_module_bd9797d093564b50244af07e2803d611</sys_update_name>
+        <sys_updated_by>jon.lind</sys_updated_by>
+        <sys_updated_on>2026-07-30 17:26:44</sys_updated_on>
+        <timeline_page />
+        <title>Bulk Upgrade My Company Apps from Property</title>
+        <uncancelable>false</uncancelable>
+        <ux_list />
+        <view_name />
+        <window_name>upgrade_company_apps</window_name>
+    </sys_app_module>
+</record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">27820c6f15a4171bb952a702290000d5</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>jon.lind</sys_created_by><sys_created_on>2026-07-30 17:26:44</sys_created_on><sys_id>09f07fc5c3eca106c6c7647f7d30ff39</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b0020000001</sys_recorded_at><sys_updated_by>jon.lind</sys_updated_by><sys_updated_on>2026-07-30 17:26:44</sys_updated_on><table /><target_name>Bulk Upgrade My Company Apps from Property</target_name><type>Sys App Module</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_properties_53bdd86258a14ab2b5f619b55f1acd56</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties">
+    <sys_properties action="INSERT_OR_UPDATE">
+        <choices />
+        <description>Comma delimited list of app scope names to convert to development mode. E.g. x_snc_auto_parts1,x_snc_equip_check</description>
+        <ignore_cache>true</ignore_cache>
+        <is_private>false</is_private>
+        <name>bulk_convert_store_app.convertible_apps</name>
+        <read_roles>admin</read_roles>
+        <suffix>bulk_convert_store_app.convertible_apps</suffix>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>jon.lind</sys_created_by>
+        <sys_created_on>2026-06-26 16:30:24</sys_created_on>
+        <sys_id>53bdd86258a14ab2b5f619b55f1acd56</sys_id>
+        <sys_mod_count>12</sys_mod_count>
+        <sys_name>bulk_convert_store_app.convertible_apps</sys_name>
+        <sys_package display_value="Global" source="global">global</sys_package>
+        <sys_policy />
+        <sys_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
+        <sys_update_name>sys_properties_53bdd86258a14ab2b5f619b55f1acd56</sys_update_name>
+        <sys_updated_by>jon.lind</sys_updated_by>
+        <sys_updated_on>2026-07-30 15:20:01</sys_updated_on>
+        <type>string</type>
+        <value>x_snc_auto_parts1,x_snc_equip_loan1, x_snc_food_safety1</value>
+        <write_roles>admin</write_roles>
+    </sys_properties>
+    <sys_translated_text action="delete_multiple" query="documentkey=53bdd86258a14ab2b5f619b55f1acd56" />
+    </record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">27820c6f15a4171bb952a702290000d5</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>jon.lind</sys_created_by><sys_created_on>2026-07-30 15:20:01</sys_created_on><sys_id>7b0a5f2a506793c4142ec758cfc4a4f1</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b0030000001</sys_recorded_at><sys_updated_by>jon.lind</sys_updated_by><sys_updated_on>2026-07-30 15:20:01</sys_updated_on><table /><target_name>bulk_convert_store_app.convertible_apps</target_name><type>Sys Properties</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_script_include_0dd88b5493924b50244af07e2803d6e7</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>global.BulkUpgradeMyCompanyApps</api_name>
+        <caller_access />
+        <client_callable>false</client_callable>
+        <description>Script to bulk upgrade your company's applications to the latest versions.  It will either use the system property bulk_convert_store_app.convertible_apps (containing scope names) or you may call it yourself and pass a filter for the apps you wish to upgrade (e.g. "is_store_app=false" will usually return all of your custom apps).</description>
+        <mobile_callable>false</mobile_callable>
+        <name>BulkUpgradeMyCompanyApps</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script>var BulkUpgradeMyCompanyApps = Class.create();
 BulkUpgradeMyCompanyApps.prototype = Object.extendsObject(global.AbstractAjaxProcessor, (function(){  
 
     function updateAvailable(appGR) {
@@ -268,33 +325,35 @@ BulkUpgradeMyCompanyApps.prototype = Object.extendsObject(global.AbstractAjaxPro
 
         type: 'BulkUpgradeMyCompanyApps'
     };
-})());]]&gt;&lt;/script&gt;&lt;sys_class_name&gt;sys_script_include&lt;/sys_class_name&gt;&lt;sys_created_by&gt;jon.lind&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-07-21 18:50:35&lt;/sys_created_on&gt;&lt;sys_id&gt;0dd88b5493924b50244af07e2803d6e7&lt;/sys_id&gt;&lt;sys_mod_count&gt;28&lt;/sys_mod_count&gt;&lt;sys_name&gt;BulkUpgradeMyCompanyApps&lt;/sys_name&gt;&lt;sys_package display_value="Bulk Store App Converter" source="3b04bd443371c7d02e49a94a7e5c7bb3"&gt;3b04bd443371c7d02e49a94a7e5c7bb3&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Bulk Store App Converter"&gt;3b04bd443371c7d02e49a94a7e5c7bb3&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_script_include_0dd88b5493924b50244af07e2803d6e7&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;jon.lind&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-07-31 21:53:28&lt;/sys_updated_on&gt;&lt;/sys_script_include&gt;&lt;sys_es_latest_script action="INSERT_OR_UPDATE"&gt;&lt;id&gt;0dd88b5493924b50244af07e2803d6e7&lt;/id&gt;&lt;sys_created_by&gt;jon.lind&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-07-21 18:50:34&lt;/sys_created_on&gt;&lt;sys_id&gt;09190f5493924b50244af07e2803d66d&lt;/sys_id&gt;&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;&lt;sys_updated_by&gt;jon.lind&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-07-21 18:50:34&lt;/sys_updated_on&gt;&lt;table&gt;sys_script_include&lt;/table&gt;&lt;use_es_latest&gt;true&lt;/use_es_latest&gt;&lt;/sys_es_latest_script&gt;&lt;/record_update&gt;</payload>
-<payload_hash>1952486409</payload_hash>
-<remote_update_set display_value="Bulk Store App Converter">230396f993e68354633ff1cc0903d615</remote_update_set>
-<replace_on_upgrade>false</replace_on_upgrade>
-<sys_created_by>jon.lind</sys_created_by>
-<sys_created_on>2026-08-07 17:01:08</sys_created_on>
-<sys_id>6f0396f993e68354633ff1cc0903d617</sys_id>
-<sys_mod_count>0</sys_mod_count>
-<sys_recorded_at>19fdd2b17860000001</sys_recorded_at>
-<sys_updated_by>jon.lind</sys_updated_by>
-<sys_updated_on>2026-08-07 17:01:08</sys_updated_on>
-<table/>
-<target_name>BulkUpgradeMyCompanyApps</target_name>
-<type>Script Include</type>
-<update_domain>global</update_domain>
-<update_guid/>
-<update_guid_history/>
-<update_set display_value=""/>
-<view/>
-</sys_update_xml>
-<sys_update_xml action="INSERT_OR_UPDATE">
-<action>INSERT_OR_UPDATE</action>
-<application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application>
-<category>customer</category>
-<comments/>
-<name>sys_ui_page_e50a5b297999422a982ce43dd4e39791</name>
-<payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sys_ui_page"&gt;&lt;sys_ui_page action="INSERT_OR_UPDATE"&gt;&lt;category&gt;general&lt;/category&gt;&lt;client_script&gt;&lt;![CDATA[function showInfoMessage(msg) {
+})());</script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>jon.lind</sys_created_by>
+        <sys_created_on>2026-07-21 18:50:35</sys_created_on>
+        <sys_id>0dd88b5493924b50244af07e2803d6e7</sys_id>
+        <sys_mod_count>28</sys_mod_count>
+        <sys_name>BulkUpgradeMyCompanyApps</sys_name>
+        <sys_package display_value="Bulk Store App Converter" source="3b04bd443371c7d02e49a94a7e5c7bb3">3b04bd443371c7d02e49a94a7e5c7bb3</sys_package>
+        <sys_policy />
+        <sys_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
+        <sys_update_name>sys_script_include_0dd88b5493924b50244af07e2803d6e7</sys_update_name>
+        <sys_updated_by>jon.lind</sys_updated_by>
+        <sys_updated_on>2026-07-31 21:53:28</sys_updated_on>
+    </sys_script_include>
+    <sys_es_latest_script action="INSERT_OR_UPDATE">
+        <id>0dd88b5493924b50244af07e2803d6e7</id>
+        <sys_created_by>jon.lind</sys_created_by>
+        <sys_created_on>2026-07-21 18:50:34</sys_created_on>
+        <sys_id>09190f5493924b50244af07e2803d66d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>jon.lind</sys_updated_by>
+        <sys_updated_on>2026-07-21 18:50:34</sys_updated_on>
+        <table>sys_script_include</table>
+        <use_es_latest>true</use_es_latest>
+    </sys_es_latest_script>
+</record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">27820c6f15a4171bb952a702290000d5</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>jon.lind</sys_created_by><sys_created_on>2026-07-31 21:53:28</sys_created_on><sys_id>02f624cd5fbf3c93378e87c71d62a20e</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b0040000001</sys_recorded_at><sys_updated_by>jon.lind</sys_updated_by><sys_updated_on>2026-07-31 21:53:28</sys_updated_on><table /><target_name>BulkUpgradeMyCompanyApps</target_name><type>Sys Script Include</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_ui_page_e50a5b297999422a982ce43dd4e39791</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_page">
+    <sys_ui_page action="INSERT_OR_UPDATE">
+        <category>general</category>
+        <client_script>function showInfoMessage(msg) {
     var container = gel('page-messages');
     if (!container) { return; }
     var div = document.createElement('div');
@@ -519,7 +578,11 @@ function convertDevNext(sysIds, index) {
         }
     });
 }
-]]&gt;&lt;/client_script&gt;&lt;description&gt;Bidirectional bulk conversion: convert store apps to development mode and development apps back to store apps.&lt;/description&gt;&lt;direct&gt;false&lt;/direct&gt;&lt;endpoint/&gt;&lt;html&gt;&lt;![CDATA[&lt;?xml version="1.0" encoding="utf-8"?&gt;
+</client_script>
+        <description>Bidirectional bulk conversion: convert store apps to development mode and development apps back to store apps.</description>
+        <direct>false</direct>
+        <endpoint />
+        <html>&lt;?xml version="1.0" encoding="utf-8"?&gt;
 &lt;j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null"&gt;
   &lt;j2:if test="$[gs.hasRole('admin')]"&gt;
     &lt;g2:evaluate var="jvar_is_global_scope" jelly="true"&gt;var isGlobalScope = gs.getCurrentApplicationScope() === 'global';
@@ -658,102 +721,78 @@ function convertDevNext(sysIds, index) {
       &lt;/div&gt;
     &lt;/g:ui_form&gt;
   &lt;/j2:if&gt;
-&lt;/j:jelly&gt;]]&gt;&lt;/html&gt;&lt;name&gt;bulk_convert_store_app_confirm&lt;/name&gt;&lt;processing_script/&gt;&lt;sys_class_name&gt;sys_ui_page&lt;/sys_class_name&gt;&lt;sys_created_by&gt;jon.lind&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-06-25 21:45:44&lt;/sys_created_on&gt;&lt;sys_id&gt;e50a5b297999422a982ce43dd4e39791&lt;/sys_id&gt;&lt;sys_mod_count&gt;28&lt;/sys_mod_count&gt;&lt;sys_name&gt;bulk_convert_store_app_confirm&lt;/sys_name&gt;&lt;sys_package display_value="Global" source="global"&gt;global&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Bulk Store App Converter"&gt;3b04bd443371c7d02e49a94a7e5c7bb3&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_ui_page_e50a5b297999422a982ce43dd4e39791&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;jon.lind&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-07-31 22:16:47&lt;/sys_updated_on&gt;&lt;/sys_ui_page&gt;&lt;sys_claim action="INSERT_OR_UPDATE"&gt;&lt;claim_owner_scope display_value="Bulk Store App Converter"&gt;3b04bd443371c7d02e49a94a7e5c7bb3&lt;/claim_owner_scope&gt;&lt;claim_timestamp&gt;19f1a422e0c0000001&lt;/claim_timestamp&gt;&lt;metadata_update_name&gt;sys_ui_page_e50a5b297999422a982ce43dd4e39791&lt;/metadata_update_name&gt;&lt;previous_claim_app_version&gt;1.0.1&lt;/previous_claim_app_version&gt;&lt;previous_claim_name&gt;Bulk Store App Converter&lt;/previous_claim_name&gt;&lt;previous_claim_scope&gt;3b04bd443371c7d02e49a94a7e5c7bb3&lt;/previous_claim_scope&gt;&lt;sys_created_by&gt;jon.lind&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-06-30 20:39:32&lt;/sys_created_on&gt;&lt;sys_id&gt;d4a897ed93bd4f10244af07e2803d610&lt;/sys_id&gt;&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;&lt;sys_updated_by&gt;jon.lind&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-06-30 20:39:32&lt;/sys_updated_on&gt;&lt;/sys_claim&gt;&lt;sys_es_latest_script action="INSERT_OR_UPDATE"&gt;&lt;id&gt;e50a5b297999422a982ce43dd4e39791&lt;/id&gt;&lt;sys_created_by&gt;jon.lind&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-06-26 21:29:23&lt;/sys_created_on&gt;&lt;sys_id&gt;63adb25493b58310633ff1cc0903d6d5&lt;/sys_id&gt;&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;&lt;sys_updated_by&gt;jon.lind&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-06-26 21:29:23&lt;/sys_updated_on&gt;&lt;table&gt;sys_ui_page&lt;/table&gt;&lt;use_es_latest&gt;true&lt;/use_es_latest&gt;&lt;/sys_es_latest_script&gt;&lt;/record_update&gt;</payload>
-<payload_hash>418091308</payload_hash>
-<remote_update_set display_value="Bulk Store App Converter">230396f993e68354633ff1cc0903d615</remote_update_set>
-<replace_on_upgrade>false</replace_on_upgrade>
-<sys_created_by>jon.lind</sys_created_by>
-<sys_created_on>2026-08-07 17:01:08</sys_created_on>
-<sys_id>a30396f993e68354633ff1cc0903d618</sys_id>
-<sys_mod_count>0</sys_mod_count>
-<sys_recorded_at>19fdd2b17a70000001</sys_recorded_at>
-<sys_updated_by>jon.lind</sys_updated_by>
-<sys_updated_on>2026-08-07 17:01:08</sys_updated_on>
-<table/>
-<target_name>bulk_convert_store_app_confirm</target_name>
-<type>UI Page</type>
-<update_domain>global</update_domain>
-<update_guid/>
-<update_guid_history/>
-<update_set display_value=""/>
-<view/>
-</sys_update_xml>
-<sys_update_xml action="INSERT_OR_UPDATE">
-<action>INSERT_OR_UPDATE</action>
-<application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application>
-<category>customer</category>
-<comments/>
-<name>sys_app_3b04bd443371c7d02e49a94a7e5c7bb3</name>
-<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_app"><sys_app action="INSERT_OR_UPDATE"><active>true</active><can_edit_in_studio>true</can_edit_in_studio><enforce_license>log</enforce_license><guided_setup_guid/><hide_on_ui>false</hide_on_ui><ide_created>SNS</ide_created><installed_as_dependency>false</installed_as_dependency><js_level>helsinki_es5</js_level><licensable>true</licensable><license/><license_category>none</license_category><license_definition/><license_model>none</license_model><logo/><menu/><name>Bulk Store App Converter</name><package_json/><package_resolver_version>1.0.0</package_resolver_version><private>false</private><restrict_table_access>false</restrict_table_access><runtime_access_tracking>permissive</runtime_access_tracking><scope>global</scope><scoped_administration>false</scoped_administration><short_description>Used to update multiple store apps to Dev Mode and Back.</short_description><source>3b04bd443371c7d02e49a94a7e5c7bb3</source><store_correlation_id>REPOAPP0000001015</store_correlation_id><store_url/><subscription_entitlement/><sys_class_name>sys_app</sys_class_name><sys_code/><sys_created_by>jon.lind</sys_created_by><sys_created_on>2026-06-25 21:29:14</sys_created_on><sys_id>3b04bd443371c7d02e49a94a7e5c7bb3</sys_id><sys_mod_count>7</sys_mod_count><sys_updated_by>jon.lind</sys_updated_by><sys_updated_on>2026-07-20 18:26:18</sys_updated_on><template/><trackable>true</trackable><uninstall_blocked>false</uninstall_blocked><user_role/><vendor/><vendor_prefix/><version>1.0.4</version></sys_app><sys_translated_text action="delete_multiple" query="documentkey=3b04bd443371c7d02e49a94a7e5c7bb3"/></record_update>]]></payload>
-<payload_hash>-894337074</payload_hash>
-<remote_update_set display_value="Bulk Store App Converter">230396f993e68354633ff1cc0903d615</remote_update_set>
-<replace_on_upgrade>false</replace_on_upgrade>
-<sys_created_by>jon.lind</sys_created_by>
-<sys_created_on>2026-08-07 17:01:08</sys_created_on>
-<sys_id>a70396f993e68354633ff1cc0903d615</sys_id>
-<sys_mod_count>0</sys_mod_count>
-<sys_recorded_at>19fdd2b16ee0000001</sys_recorded_at>
-<sys_updated_by>jon.lind</sys_updated_by>
-<sys_updated_on>2026-08-07 17:01:08</sys_updated_on>
-<table/>
-<target_name>Bulk Store App Converter</target_name>
-<type>Custom Application</type>
-<update_domain>global</update_domain>
-<update_guid/>
-<update_guid_history/>
-<update_set display_value=""/>
-<view/>
-</sys_update_xml>
-<sys_update_xml action="INSERT_OR_UPDATE">
-<action>INSERT_OR_UPDATE</action>
-<application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application>
-<category>customer</category>
-<comments/>
-<name>sys_app_module_bd9797d093564b50244af07e2803d611</name>
-<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_app_module"><sys_app_module action="INSERT_OR_UPDATE"><active>true</active><application display_value="System Applications">9e329333c33220001875addbdfba8f56</application><assessment/><device_type/><filter/><hint>Upgrades eligible apps by comma delimited scope name in sys property `bulk_convert_store_app.convertible_apps`. BE SURE TO REFRESH MY COMPANY APPS!</hint><homepage/><image/><link_type>SCRIPT</link_type><map_page/><mobile_title>Bulk Upgrade My Apps</mobile_title><mobile_view_name>Mobile</mobile_view_name><name/><order>106</order><override_menu_roles>false</override_menu_roles><query>(new global.BulkUpgradeMyCompanyApps()).upgradeSavedApps();</query><report/><require_confirmation>true</require_confirmation><roles/><route/><screen/><sys_class_name>sys_app_module</sys_class_name><sys_created_by>jon.lind</sys_created_by><sys_created_on>2026-07-21 19:55:48</sys_created_on><sys_domain>global</sys_domain><sys_domain_path>/</sys_domain_path><sys_id>bd9797d093564b50244af07e2803d611</sys_id><sys_mod_count>5</sys_mod_count><sys_name>Bulk Upgrade My Company Apps from Property</sys_name><sys_overrides/><sys_package display_value="Bulk Store App Converter" source="3b04bd443371c7d02e49a94a7e5c7bb3">3b04bd443371c7d02e49a94a7e5c7bb3</sys_package><sys_policy/><sys_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope><sys_update_name>sys_app_module_bd9797d093564b50244af07e2803d611</sys_update_name><sys_updated_by>jon.lind</sys_updated_by><sys_updated_on>2026-07-30 17:26:44</sys_updated_on><timeline_page/><title>Bulk Upgrade My Company Apps from Property</title><uncancelable>false</uncancelable><ux_list/><view_name/><window_name>upgrade_company_apps</window_name></sys_app_module></record_update>]]></payload>
-<payload_hash>-464396957</payload_hash>
-<remote_update_set display_value="Bulk Store App Converter">230396f993e68354633ff1cc0903d615</remote_update_set>
-<replace_on_upgrade>false</replace_on_upgrade>
-<sys_created_by>jon.lind</sys_created_by>
-<sys_created_on>2026-08-07 17:01:08</sys_created_on>
-<sys_id>af0396f993e68354633ff1cc0903d616</sys_id>
-<sys_mod_count>0</sys_mod_count>
-<sys_recorded_at>19fdd2b176a0000001</sys_recorded_at>
-<sys_updated_by>jon.lind</sys_updated_by>
-<sys_updated_on>2026-08-07 17:01:08</sys_updated_on>
-<table/>
-<target_name>Bulk Upgrade My Company Apps from Property</target_name>
-<type>Module</type>
-<update_domain>global</update_domain>
-<update_guid/>
-<update_guid_history/>
-<update_set display_value=""/>
-<view/>
-</sys_update_xml>
-<sys_update_xml action="INSERT_OR_UPDATE">
-<action>DELETE</action>
-<application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application>
-<category>customer</category>
-<comments/>
-<name>sys_gen_ai_model_version_mapping_f6ed4ef2338a03102e49a94a7e5c7b08</name>
-<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_gen_ai_model_version_mapping"><sys_gen_ai_model_version_mapping action="DELETE"><active>true</active><control>skill</control><gen_ai_provider display_value="Google Gemini">dc851269ff3566100158ffffffffffe4</gen_ai_provider><model_type>GENERIC</model_type><resource>f4920c03ff6d6210509bfffffffffff7</resource><resource_type>sn_nowassist_skill_config</resource_type><skill_type>ootb</skill_type><source>customer</source><source_model_name display_value="gemini_large">4ccd425e7f842210c0e9a2a22d86655a</source_model_name><sys_class_name>sys_gen_ai_model_version_mapping</sys_class_name><sys_created_by>jon.lind</sys_created_by><sys_created_on>2026-07-16 22:41:13</sys_created_on><sys_domain>global</sys_domain><sys_id>f6ed4ef2338a03102e49a94a7e5c7b08</sys_id><sys_mod_count>0</sys_mod_count><sys_name>4ccd425e7f842210c0e9a2a22d86655a</sys_name><sys_overrides/><sys_package display_value="Bulk Store App Converter" source="3b04bd443371c7d02e49a94a7e5c7bb3">3b04bd443371c7d02e49a94a7e5c7bb3</sys_package><sys_policy/><sys_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope><sys_update_name>sys_gen_ai_model_version_mapping_f6ed4ef2338a03102e49a94a7e5c7b08</sys_update_name><sys_updated_by>jon.lind</sys_updated_by><sys_updated_on>2026-07-16 22:41:13</sys_updated_on><target_model_name display_value="gemini-pro">55b1bffb2d427510f877b951e3e5bfc0</target_model_name></sys_gen_ai_model_version_mapping></record_update>]]></payload>
-<payload_hash>-1343503249</payload_hash>
-<remote_update_set display_value="Bulk Store App Converter">230396f993e68354633ff1cc0903d615</remote_update_set>
-<replace_on_upgrade>false</replace_on_upgrade>
-<sys_created_by>jon.lind</sys_created_by>
-<sys_created_on>2026-08-07 17:01:08</sys_created_on>
-<sys_id>e30396f993e68354633ff1cc0903d617</sys_id>
-<sys_mod_count>0</sys_mod_count>
-<sys_recorded_at>19fdd2b17c90000001</sys_recorded_at>
-<sys_updated_by>jon.lind</sys_updated_by>
-<sys_updated_on>2026-08-07 17:01:08</sys_updated_on>
-<table/>
-<target_name>4ccd425e7f842210c0e9a2a22d86655a</target_name>
-<type>Gen AI Model Version Mapping</type>
-<update_domain>global</update_domain>
-<update_guid/>
-<update_guid_history/>
-<update_set display_value=""/>
-<view/>
-</sys_update_xml>
-</unload>
+&lt;/j:jelly&gt;</html>
+        <name>bulk_convert_store_app_confirm</name>
+        <processing_script />
+        <sys_class_name>sys_ui_page</sys_class_name>
+        <sys_created_by>jon.lind</sys_created_by>
+        <sys_created_on>2026-06-25 21:45:44</sys_created_on>
+        <sys_id>e50a5b297999422a982ce43dd4e39791</sys_id>
+        <sys_mod_count>28</sys_mod_count>
+        <sys_name>bulk_convert_store_app_confirm</sys_name>
+        <sys_package display_value="Global" source="global">global</sys_package>
+        <sys_policy />
+        <sys_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
+        <sys_update_name>sys_ui_page_e50a5b297999422a982ce43dd4e39791</sys_update_name>
+        <sys_updated_by>jon.lind</sys_updated_by>
+        <sys_updated_on>2026-07-31 22:16:47</sys_updated_on>
+    </sys_ui_page>
+    <sys_es_latest_script action="INSERT_OR_UPDATE">
+        <id>e50a5b297999422a982ce43dd4e39791</id>
+        <sys_created_by>jon.lind</sys_created_by>
+        <sys_created_on>2026-06-26 21:29:23</sys_created_on>
+        <sys_id>63adb25493b58310633ff1cc0903d6d5</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>jon.lind</sys_updated_by>
+        <sys_updated_on>2026-06-26 21:29:23</sys_updated_on>
+        <table>sys_ui_page</table>
+        <use_es_latest>true</use_es_latest>
+    </sys_es_latest_script>
+</record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">27820c6f15a4171bb952a702290000d5</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>jon.lind</sys_created_by><sys_created_on>2026-07-31 22:16:47</sys_created_on><sys_id>e9e0060900c6389b99385fee78091e23</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b0050000001</sys_recorded_at><sys_updated_by>jon.lind</sys_updated_by><sys_updated_on>2026-07-31 22:16:47</sys_updated_on><table /><target_name>bulk_convert_store_app_confirm</target_name><type>Sys UI Page</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_app_3b04bd443371c7d02e49a94a7e5c7bb3</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_app">
+    <sys_app action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <can_edit_in_studio>true</can_edit_in_studio>
+        <enforce_license>log</enforce_license>
+        <guided_setup_guid />
+        <hide_on_ui>false</hide_on_ui>
+        <ide_created>SNS</ide_created>
+        <installed_as_dependency>false</installed_as_dependency>
+        <js_level>helsinki_es5</js_level>
+        <licensable>true</licensable>
+        <license />
+        <license_category>none</license_category>
+        <license_definition />
+        <license_model>none</license_model>
+        <logo />
+        <menu />
+        <name>Bulk Store App Converter</name>
+        <package_json />
+        <package_resolver_version>1.0.0</package_resolver_version>
+        <private>false</private>
+        <restrict_table_access>false</restrict_table_access>
+        <runtime_access_tracking>permissive</runtime_access_tracking>
+        <scope>global</scope>
+        <scoped_administration>false</scoped_administration>
+        <short_description>Used to update multiple store apps to Dev Mode and Back.</short_description>
+        <source>3b04bd443371c7d02e49a94a7e5c7bb3</source>
+        <store_correlation_id>REPOAPP0000001015</store_correlation_id>
+        <store_url />
+        <subscription_entitlement />
+        <sys_class_name>sys_app</sys_class_name>
+        <sys_code />
+        <sys_created_by>jon.lind</sys_created_by>
+        <sys_created_on>2026-06-25 21:29:14</sys_created_on>
+        <sys_id>3b04bd443371c7d02e49a94a7e5c7bb3</sys_id>
+        <sys_mod_count>7</sys_mod_count>
+        <sys_updated_by>jon.lind</sys_updated_by>
+        <sys_updated_on>2026-07-20 18:26:18</sys_updated_on>
+        <template />
+        <trackable>true</trackable>
+        <uninstall_blocked>false</uninstall_blocked>
+        <user_role />
+        <vendor />
+        <vendor_prefix />
+        <version>1.0.4</version>
+    </sys_app>
+    <sys_translated_text action="delete_multiple" query="documentkey=3b04bd443371c7d02e49a94a7e5c7bb3" />
+</record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">27820c6f15a4171bb952a702290000d5</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>jon.lind</sys_created_by><sys_created_on>2026-07-20 18:26:18</sys_created_on><sys_id>1edb23934ee751ddab3043f4047020a5</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b0060000001</sys_recorded_at><sys_updated_by>jon.lind</sys_updated_by><sys_updated_on>2026-07-20 18:26:18</sys_updated_on><table /><target_name>Bulk Store App Converter</target_name><type>Sys App</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml></unload>
