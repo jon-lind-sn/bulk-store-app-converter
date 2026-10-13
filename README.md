@@ -88,4 +88,4 @@ Happy coding!
 
 ## Retrieved Update Set
 
-- **Import via Update Set**: [`Bulk-Store-App-Converter-1.0.4.xml`](dist/Bulk-Store-App-Converter-1.0.4.xml) — load this into **Retrieved Update Sets** on your instance and commit it to install the app without cloning the repo.
+- **Import via Update Set**: [`Bulk-Store-App-Converter-1.0.4.xml`](share/Bulk-Store-App-Converter-1.0.4.xml) — load this into **Retrieved Update Sets** on your instance and commit it to install the app without cloning the repo.

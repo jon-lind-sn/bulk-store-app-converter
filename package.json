@@ -1,0 +1,19 @@
+{
+    "name": "bulk-store-app-converter",
+    "version": "1.0.4",
+    "description": "Used to update multiple store apps to Dev Mode and Back.",
+    "license": "UNLICENSED",
+    "imports": {
+        "#now:*": "./@types/servicenow/fluent/*/index.js"
+    },
+    "scripts": {
+        "build": "npx @servicenow/sdk build",
+        "deploy": "npx @servicenow/sdk install",
+        "transform": "npx @servicenow/sdk transform",
+        "types": "npx @servicenow/sdk dependencies"
+    },
+    "devDependencies": {
+        "@servicenow/sdk": "4.13.6",
+        "@servicenow/glide": "27.0.5"
+    }
+}

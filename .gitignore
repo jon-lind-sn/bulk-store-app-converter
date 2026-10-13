@@ -1,2 +1,9 @@
 .DS_Store
 .claude
+
+.now/
+dist/
+node_modules/
+target/
+*.tsbuildinfo
+.jest_cache

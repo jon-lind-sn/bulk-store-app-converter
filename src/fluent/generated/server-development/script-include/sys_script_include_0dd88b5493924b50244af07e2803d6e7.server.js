@@ -1,15 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
-    <sys_script_include action="INSERT_OR_UPDATE">
-        <access>package_private</access>
-        <active>true</active>
-        <api_name>global.BulkUpgradeMyCompanyApps</api_name>
-        <caller_access/>
-        <client_callable>false</client_callable>
-        <description>Script to bulk upgrade your company's applications to the latest versions.  It will either use the system property bulk_convert_store_app.convertible_apps (containing scope names) or you may call it yourself and pass a filter for the apps you wish to upgrade (e.g. "is_store_app=false" will usually return all of your custom apps).</description>
-        <mobile_callable>false</mobile_callable>
-        <name>BulkUpgradeMyCompanyApps</name>
-        <sandbox_callable>false</sandbox_callable>
-        <script><![CDATA[var BulkUpgradeMyCompanyApps = Class.create();
+var BulkUpgradeMyCompanyApps = Class.create();
 BulkUpgradeMyCompanyApps.prototype = Object.extendsObject(global.AbstractAjaxProcessor, (function(){  
 
     function updateAvailable(appGR) {
@@ -164,29 +153,4 @@ BulkUpgradeMyCompanyApps.prototype = Object.extendsObject(global.AbstractAjaxPro
 
         type: 'BulkUpgradeMyCompanyApps'
     };
-})());]]></script>
-        <sys_class_name>sys_script_include</sys_class_name>
-        <sys_created_by>jon.lind</sys_created_by>
-        <sys_created_on>2026-07-21 18:50:35</sys_created_on>
-        <sys_id>0dd88b5493924b50244af07e2803d6e7</sys_id>
-        <sys_mod_count>28</sys_mod_count>
-        <sys_name>BulkUpgradeMyCompanyApps</sys_name>
-        <sys_package display_value="Bulk Store App Converter" source="3b04bd443371c7d02e49a94a7e5c7bb3">3b04bd443371c7d02e49a94a7e5c7bb3</sys_package>
-        <sys_policy/>
-        <sys_scope display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
-        <sys_update_name>sys_script_include_0dd88b5493924b50244af07e2803d6e7</sys_update_name>
-        <sys_updated_by>jon.lind</sys_updated_by>
-        <sys_updated_on>2026-07-31 21:53:28</sys_updated_on>
-    </sys_script_include>
-    <sys_es_latest_script action="INSERT_OR_UPDATE">
-        <id>0dd88b5493924b50244af07e2803d6e7</id>
-        <sys_created_by>jon.lind</sys_created_by>
-        <sys_created_on>2026-07-21 18:50:34</sys_created_on>
-        <sys_id>09190f5493924b50244af07e2803d66d</sys_id>
-        <sys_mod_count>0</sys_mod_count>
-        <sys_updated_by>jon.lind</sys_updated_by>
-        <sys_updated_on>2026-07-21 18:50:34</sys_updated_on>
-        <table>sys_script_include</table>
-        <use_es_latest>true</use_es_latest>
-    </sys_es_latest_script>
-</record_update>
+})());
