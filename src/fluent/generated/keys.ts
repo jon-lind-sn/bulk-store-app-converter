@@ -29,6 +29,10 @@ declare global {
                         table: 'sys_module'
                         id: '5d50fcfe27094e1c9d11f4bee5507bec'
                     }
+                    'bulk-publish-my-company-apps': {
+                        table: 'sys_script_include'
+                        id: 'a596bcf5023642be80f89bfd1870e524'
+                    }
                     package_json: {
                         table: 'sys_module'
                         id: '743e285e6acf46a48d0d74349d2132c2'
@@ -67,6 +71,14 @@ declare global {
                             claim_owner_scope: '3b04bd443371c7d02e49a94a7e5c7bb3'
                             previous_claim_scope: '3b04bd443371c7d02e49a94a7e5c7bb3'
                             metadata_update_name: 'sys_properties_53bdd86258a14ab2b5f619b55f1acd56'
+                        }
+                    },
+                    {
+                        table: 'sys_es_latest_script'
+                        id: '8a4d1af703c64ca8948050054825e9a1'
+                        key: {
+                            id: 'a596bcf5023642be80f89bfd1870e524'
+                            table: 'sys_script_include'
                         }
                     },
                     {

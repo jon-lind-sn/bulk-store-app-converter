@@ -31,6 +31,17 @@ The convert UI handles bidirectional app mode conversion: store apps can be conv
 
 The page polls `sys_execution_tracker` every 3 seconds to track completion of each conversion in the batch, providing real-time status updates (`Pending` → `Converting` → `Complete`/`Failed`). After all conversions finish, users refresh to see the updated lists as apps move between the left and right panels.
 
+## Bulk Publish Feature
+
+The **Publish New Version** button under the Development Mode Apps panel publishes each selected app to My Application Repository at the next minor version the repository accepts. It works on development mode apps (`sys_app`) only.
+
+For each selected app the page:
+
+1. Skips any app whose version contains `CONVERTED` and alerts you to set a version manually first.
+2. Switches your application picker to that app (the same call as the stock **Switch to this Application** action), then checks that you can publish it (`canWrite()` or `sn_app_api.AppStoreAPI.canPublishToAppRepo()`). Both checks depend on the picker. When all apps are done the picker goes back to **Global**.
+3. Finds the next version. My Application Repository can only confirm whether a version is publishable, so `BulkPublishMyCompanyApps.getNextPublishVersion` starts at the next minor version above the local version (for example `1.2.5` becomes `1.3.0`) and keeps bumping the minor version until the repository accepts it, for up to 3 attempts.
+4. Starts the stock uploader (`sn_appauthor.ScopedAppUploaderAJAX`) with the new version, then polls `sys_execution_tracker` every 3 seconds, one app at a time, with the same status rows as conversion (`Pending` → `Publishing` → `Published`/`Failed`). Failures show a red message with the app name, the version on the record, and the last version attempted.
+
 ## How to use it
 For the conversion UI specifically, ensure your application scope is set to **Global** (required for conversion operations). Select apps in either panel and click **Convert to Dev Mode** (left) or **Convert to Store App** (right). The interface tracks progress in real-time, and after refresh, apps will appear in their new panel.
 
