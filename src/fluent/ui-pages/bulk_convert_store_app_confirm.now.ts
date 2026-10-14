@@ -58,7 +58,7 @@ var BAC = {
     saveState: {},
     checkStart: {},
     filters: {
-        save: { q: '', statuses: {}, failed: false },
+        save: { q: '', needs: false, statuses: {}, failed: false },
         restore: { q: '', upgrade: false, failed: false }
     },
     prereq: null,
@@ -80,7 +80,7 @@ var STATUS_CLASSES = {
 };
 
 var SAVE_LABELS = {
-    'saved': ['label-success', 'Saved'],
+    'saved': ['label-primary', 'Published'],
     'changed': ['label-warning', 'Changed'],
     'not_in_repo': ['label-danger', 'Not in App Repo'],
     'unpublished_version': ['label-warning', 'Unpublished'],
@@ -92,7 +92,7 @@ var SAVE_FILTER_ORDER = ['changed', 'unpublished_version', 'not_in_repo', 'in_re
 
 // One checkbox per save status. With none checked every app shows.
 function saveChipsHtml() {
-    var html = '';
+    var html = '<label class="checkbox-inline"><input type="checkbox" class="bac-chip" data-tab="save" data-chip="needs"/> Needs publishing <span class="text-muted" id="chipcount-needs"></span></label> ';
     for (var i = 0; i < SAVE_FILTER_ORDER.length; i++) {
         var key = SAVE_FILTER_ORDER[i];
         html += '<label class="checkbox-inline" id="chip-' + key + '"' + (key === 'check_failed' ? ' style="display: none;"' : '') + '><input type="checkbox" class="bac-chip" data-tab="save" data-chip="status" data-status="' + key + '"/> ' +
@@ -112,6 +112,14 @@ function updateSaveChipCounts() {
         if (el) { el.textContent = '(' + (counts[SAVE_FILTER_ORDER[j]] || 0) + ')'; }
     }
     // Check failed only shows while at least one app is in that state.
+    var needsEl = byId('chipcount-needs');
+    if (needsEl) {
+        var needs = 0;
+        for (var n = 0; n < BAC.apps.save.length; n++) {
+            if (isAtRisk(BAC.apps.save[n])) { needs++; }
+        }
+        needsEl.textContent = '(' + needs + ')';
+    }
     var failChip = byId('chip-check_failed');
     if (failChip) {
         failChip.style.display = counts.check_failed ? '' : 'none';
@@ -269,6 +277,12 @@ function statusHtml(st) {
 
 function setRowStatus(tab, sysId, label, note, href) {
     BAC.status[tab][sysId] = { label: label, note: note || '', href: href || '' };
+    if (tab === 'save') {
+        var saveCell = byId('save-' + sysId);
+        var saveApp = findApp('save', sysId);
+        if (saveCell && saveApp) { saveCell.innerHTML = saveCellHtml(saveApp); }
+        return;
+    }
     var cell = byId('status-' + tab + '-' + sysId);
     if (cell) { cell.innerHTML = statusHtml(BAC.status[tab][sysId]); }
 }
@@ -301,6 +315,7 @@ function isVisible(tab, app) {
     if (tab === 'restore') {
         if (f.upgrade && !app.upgradeAvailable) { return false; }
     } else {
+        if (f.needs && !isAtRisk(app)) { return false; }
         var anyStatus = false;
         for (var k in f.statuses) {
             if (f.statuses[k]) { anyStatus = true; }
@@ -347,7 +362,7 @@ function targetHtml(tab, app) {
     var s = BAC.saveState[app.sys_id];
     if (!s) { return '<span class="text-muted">...</span>'; }
     if (s.saveStatus === 'check_failed') { return '<span class="text-muted">&mdash;</span>'; }
-    if (!s.nextVersion) { return '<span class="text-danger">' + esc(s.error || 'No publishable version found.') + '</span>'; }
+    if (!s.nextVersion) { return esc(app.version); }
     return esc(app.version) + ' &rarr; ' + esc(s.nextVersion);
 }
 
@@ -378,6 +393,9 @@ function errorLogUrl(from, to) {
 }
 
 function saveCellHtml(app) {
+    // While a run is working on the app, or if it failed or was skipped, the run status takes the place of the save status.
+    var run = BAC.status.save[app.sys_id];
+    if (run && run.label !== 'Published') { return statusHtml(run); }
     var s = BAC.saveState[app.sys_id];
     if (!s) { return '<span class="text-muted">Checking...</span>'; }
     // Only where local changes may exist that are not in App Repo.
@@ -410,9 +428,10 @@ function rowHtml(tab, app) {
         '<td id="installed-' + tab + '-' + app.sys_id + '">' + installedHtml(tab, app) + '</td>' +
         '<td id="target-' + tab + '-' + app.sys_id + '">' + targetHtml(tab, app) + '</td>';
     if (tab === 'save') {
-        html += '<td id="save-' + app.sys_id + '">' + saveCellHtml(app) + '</td>';
+        html += '<td id="save-' + app.sys_id + '">' + saveCellHtml(app) + '</td></tr>';
+    } else {
+        html += '<td id="status-' + tab + '-' + app.sys_id + '">' + statusHtml(BAC.status[tab][app.sys_id]) + '</td></tr>';
     }
-    html += '<td id="status-' + tab + '-' + app.sys_id + '">' + statusHtml(BAC.status[tab][app.sys_id]) + '</td></tr>';
     return html;
 }
 
@@ -436,7 +455,7 @@ function renderTable(tab) {
     var html = '<table class="table table-condensed table-hover bac-table"><thead><tr>' +
         '<th style="width: 30px;"><input type="checkbox" class="bac-all" data-tab="' + tab + '"' + (allChecked ? ' checked="checked"' : '') + ' title="Check all visible"/></th>' +
         '<th>App</th><th>Installed version</th><th>Target version</th>' +
-        (tab === 'save' ? '<th>Save status</th>' : '') + '<th>Status</th></tr></thead><tbody>';
+        '<th>Status</th></tr></thead><tbody>';
     for (var i = 0; i < vis.length; i++) {
         html += rowHtml(tab, vis[i]);
     }
@@ -473,7 +492,7 @@ function renderBanner() {
                 ' <a href="#" data-action="recheckAll">Retry all checks</a></div>' : '');
     } else {
         el.className = 'alert alert-success';
-        el.textContent = 'All dev apps are saved in App Repo. Safe to clone.';
+        el.textContent = 'All dev apps are published to the App Repo. Safe to clone.';
     }
 }
 
@@ -656,6 +675,16 @@ function beginQueue() {
     updateControls();
 }
 
+// Apps published by the run are done, so they come back unchecked. Everything else keeps the user's selection.
+function uncheckPublished() {
+    for (var i = 0; i < BAC.apps.save.length; i++) {
+        var app = BAC.apps.save[i];
+        var st = BAC.saveState[app.sys_id];
+        if (st && st.saveStatus === 'saved') { BAC.checked.save[app.sys_id] = false; }
+    }
+    renderTable('save');
+}
+
 function endQueue(run, tab) {
     BAC.busy = false;
     window.onbeforeunload = null;
@@ -671,6 +700,7 @@ function endQueue(run, tab) {
     setSummary(html, run.failed ? 'warning' : 'success');
     switchApplication('global', function() {
         loadApps(tab, function() {
+            if (tab === 'save') { uncheckPublished(); }
             updateControls();
             if (tab === 'save') { loadSaveStates(); }
         });
@@ -868,6 +898,12 @@ function publishApp(rows, index, run) {
     });
 }
 
+// The version the next publish will start from: one minor above the version just published.
+function nextMinorVersion(version) {
+    var parts = String(version).split('.');
+    return (parseInt(parts[0], 10) || 0) + '.' + ((parseInt(parts[1], 10) || 0) + 1) + '.0';
+}
+
 function startPublish(appId, info, run, onDone) {
     function fail(detail) {
         run.failed++;
@@ -893,7 +929,7 @@ function startPublish(appId, info, run, onDone) {
             pollTracker(trackerId, function() {
                 run.published++;
                 setRowStatus('save', appId, 'Published', 'Published v' + info.nextVersion + ' (was v' + info.currentVersion + ')');
-                BAC.saveState[appId] = { saveStatus: 'saved', nextVersion: '', currentVersion: info.nextVersion };
+                BAC.saveState[appId] = { saveStatus: 'saved', nextVersion: nextMinorVersion(info.nextVersion), currentVersion: info.nextVersion };
                 var app = findApp('save', appId);
                 if (app) { app.version = info.nextVersion; }
                 var cell = byId('save-' + appId);
