@@ -28,17 +28,17 @@ Both tabs use the same table, rendered client-side from a JSON endpoint instead 
 |---|---|
 | Select | Check all box in the header. Every row starts checked, so the user sees everything that will run and unchecks exceptions |
 | App name, scope | Link icon opens record |
-| Installed version | Inline-editable on Before Clone when it contains `CONVERTED` |
+| Local Version | Inline-editable on Before Clone when it contains `CONVERTED` |
 | Target version | After Clone: `latest_version` (blank = no upgrade, will only convert). Before Clone: next publishable version, fetched lazily |
 | Status | Pending, Upgrading, Converting, Publishing, Complete, Failed, Skipped, inline per row |
 
-The list shows the company's own apps, using the same `is_store_app=false` logic the upgrade already uses. There is no settings drawer: the checked list is the configuration. Sticky toolbar above the table: the primary button, a search box, filter chips (`Upgrade available`, `Global scope`), and a selected count. Secondary actions sit beside the primary button as smaller outline buttons: Upgrade only and Convert to Dev only on After Clone, Convert to Store on Before Clone. Buttons that cannot run explain why in a tooltip.
+The list shows the company's own apps, using the same `is_store_app=false` logic the upgrade already uses. There is no settings drawer: the checked list is the configuration. Sticky toolbar above the table: the primary button, a search box, filter chips (`Upgrade available`, `Global scope`), and a selected count. Secondary actions sit beside the primary button as smaller outline buttons: Upgrade and Convert to Dev on After Clone, Convert to Store on Before Clone. Buttons that cannot run explain why in a tooltip.
 
 Status lives on the row. This removes the 200px status box, the stacking red banners, and the `alert()` dialogs. One summary bar appears at the end ("18 converted, 4 upgraded first, 1 failed. [Show failures] [Batch install plan]"). The table re-fetches after each action, so no page reload. A `beforeunload` warning protects a running queue.
 
 ## 3. After Clone: Restore tab (upgrade integrated into the page)
 
-1. Lists company store apps (`is_store_app=false`). Rows with `latest_version` above `version` are marked "upgrade first". The rest will convert directly. The user sees exactly what will happen before clicking.
+1. Lists company store apps (`is_store_app=false`). Rows with `latest_version` above `version` are marked "Upgrade". The rest will convert directly. The user sees exactly what will happen before clicking.
 2. **Upgrade and convert all** runs:
    1. One `installBatch` for the apps that have an upgrade.
    2. Poll the execution tracker (existing `pollTracker`) and `sys_batch_install_plan.state` until Installed.
@@ -193,7 +193,7 @@ File: `src/fluent/ui-pages/bulk_convert_store_app_confirm.now.ts`.
 5. Reuse as-is, changing only how they read selection and report status: `pollTracker`, `switchApplication`, `convertStoreNext`, `convertDevNext`, `publishNext`, `publishApp`, `startPublish`, `finishPublish`. Selection comes from `getCheckedRows(tab)` returning `[{ sys_id, name, version }]` instead of reading label text from the DOM.
 6. After Clone tab buttons:
    1. **Upgrade and convert all** (primary): `startUpgrade` for checked rows with `upgradeAvailable`, mark them Upgrading, `pollTracker(trackerId)` then poll `getBatchState` every 5 seconds until Installed (fail the batch rows on error), re-fetch `getApps('restore')`, then run the convert queue on the checked rows that are now `convertible`. Rows checked but not convertible get Skipped with a note.
-   2. **Upgrade only** and **Convert to Dev only** (outline): the two halves of the chain.
+   2. **Upgrade** and **Convert to Dev** (outline): the two halves of the chain.
    3. Check for updates: Phase 3, see section 3 item 3 and section 7 item 5.
 7. Before Clone tab buttons: **Publish all** (primary) runs the existing publish queue; `CONVERTED` rows render an inline version input and are Skipped unless edited (write the edited version via a GlideAjax `setAppVersion` admin-guarded method on `BulkAppConsole`, Phase 2). **Convert to Store** (outline) runs the existing `convertDevNext` queue on checked rows whose Save status is Saved, after a confirmation listing skipped rows (section 4.2). After each successful publish, set that row to Saved, write `bulk_convert_store_app.publish_log`, and update the banner. Default selection on this tab is every row not Saved. Publish preview: when the tab loads, call `getPublishState` per row in sequence and fill Target version. It must run after `switchApplication(appId)` per row, as the publish code does today, then switch back to Global at the end.
 8. During any queue: disable both tabs' action buttons, set `window.onbeforeunload` to warn, clear it when the queue finishes, write the summary bar, and re-fetch the tab.

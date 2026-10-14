@@ -14,8 +14,10 @@ UiPage({
         <div id="page-messages"></div>
         <h3>Bulk App Clone Assistant</h3>
         <style>
-          #prereq-strip { padding: 10px 14px; margin-bottom: 18px; }
+          #prereq-strip { margin-bottom: 18px; }
           .bac-sub { margin: 14px 0 12px; }
+          .bac-refresh-tip { font-size: 15px; }
+          .bac-how summary { cursor: pointer; }
           .bac-sub-title { font-size: 18px; }
           .bac-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin: 14px 0 16px; }
           .bac-toolbar .bac-search { width: 220px; }
@@ -23,9 +25,17 @@ UiPage({
           #banner-save { margin: 0; }
           .bac-table th, .bac-table td { padding: 10px 14px !important; vertical-align: middle !important; }
           .bac-table .text-muted { margin-top: 2px; }
+          .bac-table tbody tr:nth-child(even) td { background-color: rgba(0, 0, 0, 0.03); }
+          .bac-table tbody tr:hover td { background-color: rgba(0, 0, 0, 0.06); }
+          .bac-table tbody tr { transition: opacity 0.6s; }
+          .bac-table tbody td { transition: background-color 0.6s, box-shadow 0.6s; }
+          .bac-running tbody tr { opacity: 0.4; }
+          .bac-running tbody tr.bac-in-run { opacity: 1; }
+          .bac-table tbody tr.bac-active td { background-color: #e6f0fa; }
+          .bac-table tbody tr.bac-active td:first-child { box-shadow: inset 4px 0 0 #2a7ab8; }
           #summary-bar { margin: 16px 0; }
         </style>
-        <div id="prereq-strip" class="well well-sm"></div>
+        <div id="prereq-strip" class="alert alert-info" style="display: none;"></div>
         <ul class="nav nav-tabs" style="margin-bottom: 10px;">
           <li id="tab-save"><a href="#" data-tab="save">Before Clone: Save Work</a></li>
           <li id="tab-restore"><a href="#" data-tab="restore">After Clone: Restore</a></li>
@@ -33,7 +43,7 @@ UiPage({
         <div id="pane-save" style="display: none;"></div>
         <div id="pane-restore" style="display: none;"></div>
         <div id="summary-bar" class="alert alert-info" style="display: none; margin-top: 10px;"></div>
-        <details style="margin-top: 15px;">
+        <details class="bac-how" style="margin-top: 15px;">
           <summary>How it works</summary>
           <ol>
             <li>Before a clone, open the Before Clone tab on your dev instance and publish every app whose work is not in My Application Repository (App Repo).</li>
@@ -42,6 +52,7 @@ UiPage({
             <li>Convert to Store only runs on apps that are saved in App Repo, so it never strands unpublished work.</li>
           </ol>
         </details>
+        <p style="margin-top: 10px;"><a href="https://github.com/jon-lind-sn/bulk-store-app-converter" target="_blank" rel="noopener">Source on GitHub</a></p>
       </div>
     </g:ui_form>
   </j2:if>
@@ -49,6 +60,8 @@ UiPage({
     clientScript: `// Bulk App Clone Assistant client script. ES5 only (helsinki_es5).
 var BAC = {
     tab: 'restore',
+    refreshTipDismissed: false,
+    run: { tab: '', ids: {} },
     busy: false,
     loader: false,
     apps: { save: [], restore: [] },
@@ -170,15 +183,6 @@ function byId(id) {
 
 /* ---------- messages and summary ---------- */
 
-function showInfoMessage(msg) {
-    var container = byId('page-messages');
-    if (!container) { return; }
-    var div = document.createElement('div');
-    div.className = 'alert alert-info';
-    div.style.marginTop = '10px';
-    div.textContent = msg;
-    container.appendChild(div);
-}
 
 function setSummary(html, kind) {
     var bar = byId('summary-bar');
@@ -275,8 +279,27 @@ function statusHtml(st) {
     return html;
 }
 
+var ACTIVE_LABELS = { Publishing: true, Converting: true, Upgrading: true };
+
+// Rows a run touches stay at full strength while the rest of the table dims. The row being worked on is highlighted.
+function markRunRow(tab, sysId, label) {
+    if (BAC.run.tab !== tab) { return; }
+    BAC.run.ids[sysId] = true;
+    var tr = byId('row-' + tab + '-' + sysId);
+    if (!tr) { return; }
+    tr.classList.add('bac-in-run');
+    if (ACTIVE_LABELS[label]) { tr.classList.add('bac-active'); } else { tr.classList.remove('bac-active'); }
+}
+
+function runRowClass(tab, sysId) {
+    if (BAC.run.tab !== tab || !BAC.run.ids[sysId]) { return ''; }
+    var st = BAC.status[tab][sysId];
+    return ' bac-in-run' + (st && ACTIVE_LABELS[st.label] ? ' bac-active' : '');
+}
+
 function setRowStatus(tab, sysId, label, note, href) {
     BAC.status[tab][sysId] = { label: label, note: note || '', href: href || '' };
+    markRunRow(tab, sysId, label);
     if (tab === 'save') {
         var saveCell = byId('save-' + sysId);
         var saveApp = findApp('save', sysId);
@@ -338,7 +361,13 @@ function visibleApps(tab) {
 }
 
 function isRowSelectable(tab, app) {
-    return true;
+    if (tab !== 'restore') { return true; }
+    return !app.gone && (app.upgradeAvailable || app.convertible);
+}
+
+function unselectableReason(app) {
+    if (app.gone) { return 'Converted to dev mode. Reload the page to refresh the list.'; }
+    return 'Nothing to upgrade, and the platform cannot convert this app to dev mode.';
 }
 
 function getCheckedRows(tab) {
@@ -417,12 +446,14 @@ function saveCellHtml(app) {
 }
 
 function rowHtml(tab, app) {
-    var checked = BAC.checked[tab][app.sys_id] && isRowSelectable(tab, app);
-    var html = '<tr id="row-' + tab + '-' + app.sys_id + '">' +
+    var selectable = isRowSelectable(tab, app);
+    var checked = BAC.checked[tab][app.sys_id] && selectable;
+    var rowClass = (selectable ? '' : 'text-muted') + runRowClass(tab, app.sys_id);
+    var html = '<tr id="row-' + tab + '-' + app.sys_id + '"' + (rowClass ? ' class="' + rowClass + '"' : '') + '>' +
         '<td><input type="checkbox" class="bac-check" data-tab="' + tab + '" data-id="' + app.sys_id + '"' +
-        (checked ? ' checked="checked"' : '') + '/></td>' +
+        (checked ? ' checked="checked"' : '') + (selectable ? '' : ' disabled="disabled" title="' + esc(unselectableReason(app)) + '"') + '/></td>' +
         '<td><strong>' + esc(app.name) + '</strong>' +
-        (tab === 'restore' && app.upgradeAvailable ? ' <span class="label label-info">upgrade first</span>' : '') +
+        (tab === 'restore' && app.upgradeAvailable && !app.gone ? ' <span class="label label-info">Upgrade</span>' : '') +
         '<br/><span class="text-muted">' + esc(app.scope) + '</span>' +
         ' <a href="sys_scope.do?sys_id=' + app.sys_id + '" target="_blank" title="Open record"><span class="glyphicon glyphicon-new-window"></span></a></td>' +
         '<td id="installed-' + tab + '-' + app.sys_id + '">' + installedHtml(tab, app) + '</td>' +
@@ -452,9 +483,9 @@ function renderTable(tab) {
     for (var c = 0; c < vis.length; c++) {
         if (isRowSelectable(tab, vis[c]) && !BAC.checked[tab][vis[c].sys_id]) { allChecked = false; }
     }
-    var html = '<table class="table table-condensed table-hover bac-table"><thead><tr>' +
+    var html = '<table id="tbl-' + tab + '" class="table table-condensed table-hover bac-table' + (BAC.run.tab === tab ? ' bac-running' : '') + '"><thead><tr>' +
         '<th style="width: 30px;"><input type="checkbox" class="bac-all" data-tab="' + tab + '"' + (allChecked ? ' checked="checked"' : '') + ' title="Check all visible"/></th>' +
-        '<th>App</th><th>Installed version</th><th>Target version</th>' +
+        '<th>App</th><th>Local Version</th><th>Target Version</th>' +
         '<th>Status</th></tr></thead><tbody>';
     for (var i = 0; i < vis.length; i++) {
         html += rowHtml(tab, vis[i]);
@@ -499,13 +530,12 @@ function renderBanner() {
 function renderPrereqs() {
     var el = byId('prereq-strip');
     if (!el || !BAC.prereq) { return; }
-    var p = BAC.prereq;
-    var items = [];
-    items.push('<li><span class="label label-success">OK</span> Application picker is Global' + (p.switched ? ' (switched automatically)' : '') + '</li>');
-    items.push('<li class="bac-restore-only"><span class="label label-default">Info</span> After a clone, refresh <a target="_blank" href="sys_store_app_list.do?sysparm_query=is_store_app%3Dfalse">My Company Applications</a> so the latest versions are visible here.</li>');
-    el.innerHTML = '<ul class="list-unstyled" style="margin: 0;">' + items.join('') + '</ul>';
-    var only = el.querySelectorAll('.bac-restore-only');
-    for (var j = 0; j < only.length; j++) { only[j].style.display = BAC.tab === 'restore' ? '' : 'none'; }
+    if (!BAC.prereq.switched) {
+        el.style.display = 'none';
+        return;
+    }
+    el.innerHTML = '<button type="button" class="close" data-action="dismissPrereq" title="Dismiss" aria-label="Dismiss">&times;</button>Scope changed to Global';
+    el.style.display = '';
 }
 
 /* ---------- buttons ---------- */
@@ -552,10 +582,16 @@ function paneHtml(tab) {
     var html = '';
     if (tab === 'restore') {
         html += '<p class="bac-sub"><strong class="bac-sub-title">Company apps installed in store mode.</strong> <span class="text-muted">Run this right after the clone.</span></p>' +
+            (BAC.refreshTipDismissed ? '' :
+                '<div id="refresh-tip" class="alert alert-warning bac-refresh-tip">' +
+                '<button type="button" class="close" data-action="dismissRefreshTip" title="Dismiss" aria-label="Dismiss">&times;</button>' +
+                '<strong>After a clone, refresh <a target="_blank" href="%24mycompanyappsmgmt.do">My Company Applications</a> first.</strong> ' +
+                'Then reload this page so the latest versions are visible here.' +
+                '</div>') +
             '<div class="bac-toolbar">' +
             '<button type="button" id="btnRestoreAll" class="btn btn-primary" data-action="restoreAll">Upgrade and convert all</button> ' +
-            '<button type="button" id="btnUpgradeOnly" class="btn btn-default btn-sm" data-action="upgradeOnly">Upgrade only</button> ' +
-            '<button type="button" id="btnConvertDevOnly" class="btn btn-default btn-sm" data-action="convertDevOnly">Convert to Dev only</button> ' +
+            '<button type="button" id="btnUpgradeOnly" class="btn btn-default btn-sm" data-action="upgradeOnly">Upgrade</button> ' +
+            '<button type="button" id="btnConvertDevOnly" class="btn btn-default btn-sm" data-action="convertDevOnly">Convert to Dev</button> ' +
             '<input type="text" class="bac-search input-sm" data-tab="restore" placeholder="Search apps"/> ' +
             '<label class="checkbox-inline"><input type="checkbox" class="bac-chip" data-tab="restore" data-chip="upgrade"/> Upgrade available</label> ' +
             '<span id="count-restore" class="text-muted"></span> ' +
@@ -587,11 +623,24 @@ function loadApps(tab, done) {
             return;
         }
         var apps = res.apps || [];
+        var fresh = {};
         for (var i = 0; i < apps.length; i++) {
             var id = apps[i].sys_id;
+            fresh[id] = true;
             if (BAC.checked[tab][id] === undefined) {
                 BAC.checked[tab][id] = true;
             }
+        }
+        // Apps a run converted to dev mode leave the store app list. Keep them on screen with their result until the page is reloaded.
+        if (tab === 'restore') {
+            var old = BAC.apps.restore;
+            for (var k = 0; k < old.length; k++) {
+                if (!fresh[old[k].sys_id] && BAC.status.restore[old[k].sys_id]) {
+                    old[k].gone = true;
+                    apps.push(old[k]);
+                }
+            }
+            apps.sort(function(a, b) { return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : 0); });
         }
         BAC.apps[tab] = apps;
         BAC.loaded[tab] = true;
@@ -668,8 +717,11 @@ function applyDefaultSaveSelection() {
 
 /* ---------- queues ---------- */
 
-function beginQueue() {
+function beginQueue(tab) {
     BAC.busy = true;
+    BAC.run = { tab: tab, ids: {} };
+    var tbl = byId('tbl-' + tab);
+    if (tbl) { tbl.classList.add('bac-running'); }
     window.onbeforeunload = function() { return 'A bulk run is still in progress.'; };
     setSummary('', '');
     updateControls();
@@ -687,10 +739,18 @@ function uncheckPublished() {
 
 function endQueue(run, tab) {
     BAC.busy = false;
+    // Fade the dimming and highlight out before the list reloads.
+    BAC.run = { tab: '', ids: {} };
+    var tbl = byId('tbl-' + tab);
+    if (tbl) {
+        tbl.classList.remove('bac-running');
+        var activeRows = tbl.querySelectorAll('tr.bac-active');
+        for (var a = 0; a < activeRows.length; a++) { activeRows[a].classList.remove('bac-active'); }
+    }
     window.onbeforeunload = null;
     var parts = [];
     if (run.published) { parts.push(run.published + ' published'); }
-    if (run.upgraded) { parts.push(run.upgraded + ' upgraded first'); }
+    if (run.upgraded) { parts.push(run.upgraded + ' upgraded'); }
     if (run.converted) { parts.push(run.converted + ' converted'); }
     if (run.skipped) { parts.push(run.skipped + ' skipped'); }
     if (run.failed) { parts.push(run.failed + ' failed'); }
@@ -795,11 +855,20 @@ function onRestoreRun(mode) {
             if (rows[i].upgradeAvailable) { upRows.push(rows[i]); }
         }
     }
-    beginQueue();
+    beginQueue('restore');
     for (i = 0; i < rows.length; i++) { setRowStatus('restore', rows[i].sys_id, 'Pending', ''); }
 
     function convertPhase() {
-        if (mode === 'upgrade') { finishRestore(); return; }
+        if (mode === 'upgrade') {
+            for (var u = 0; u < rows.length; u++) {
+                if (!rows[u].upgradeAvailable) {
+                    run.skipped++;
+                    setRowStatus('restore', rows[u].sys_id, 'Skipped', 'No newer version in the App Repo.');
+                }
+            }
+            finishRestore();
+            return;
+        }
         loadApps('restore', function(ok) {
             var todo = [];
             for (var j = 0; j < rows.length; j++) {
@@ -857,7 +926,7 @@ function onPublishAll() {
     var rows = getCheckedRows('save');
     if (rows.length === 0) { return; }
     var run = newRun();
-    beginQueue();
+    beginQueue('save');
     for (var i = 0; i < rows.length; i++) { setRowStatus('save', rows[i].sys_id, 'Pending', ''); }
     publishNext(rows, 0, run);
 }
@@ -964,7 +1033,7 @@ function onConvertStore() {
     }
     if (!window.confirm(msg)) { return; }
     var run = newRun();
-    beginQueue();
+    beginQueue('save');
     for (var s1 = 0; s1 < skipped.length; s1++) {
         run.skipped++;
         setRowStatus('save', skipped[s1].sys_id, 'Skipped', 'Publish this app first so it can be restored by upgrading after conversion.');
@@ -1032,6 +1101,15 @@ function onClick(ev) {
     if (action === 'restoreAll') { onRestoreRun('both'); }
     else if (action === 'upgradeOnly') { onRestoreRun('upgrade'); }
     else if (action === 'convertDevOnly') { onRestoreRun('convert'); }
+    else if (action === 'dismissPrereq') {
+        BAC.prereq.switched = false;
+        byId('prereq-strip').style.display = 'none';
+    }
+    else if (action === 'dismissRefreshTip') {
+        BAC.refreshTipDismissed = true;
+        var tip = byId('refresh-tip');
+        if (tip) { tip.parentNode.removeChild(tip); }
+    }
     else if (action === 'publishAll') { onPublishAll(); }
     else if (action === 'convertStore') { onConvertStore(); }
     else if (action === 'loadSaved') { if (!BAC.busy) { onLoadSaved(); } }
@@ -1126,7 +1204,6 @@ function initPage() {
         if (!p.isGlobal) {
             switchApplication('global', function() {
                 p.switched = true;
-                showInfoMessage('Your application picker was switched to Global so this page can convert and publish apps.');
                 start();
             });
         } else {
