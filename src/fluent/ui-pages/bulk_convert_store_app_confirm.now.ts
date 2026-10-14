@@ -5,253 +5,180 @@ UiPage({
     category: 'general',
     endpoint: 'bulk_convert_store_app_confirm.do',
     description:
-        'Bidirectional bulk conversion: convert store apps to development mode and development apps back to store apps.',
+        'Bulk App Clone Assistant: publish dev apps to My Application Repository before a clone, then upgrade and convert store apps to development mode after it.',
     html: `<?xml version="1.0" encoding="utf-8"?>
 <j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null">
   <j2:if test="$[gs.hasRole('admin')]">
-    <g2:evaluate var="jvar_is_global_scope" jelly="true">var isGlobalScope = gs.getCurrentApplicationScope() === 'global';
-      if (!isGlobalScope) {
-        gs.addErrorMessage('BulkConvertStoreApp: You must be in a global scope to convert. Please switch your application scope to Global.');
-      }
-      isGlobalScope;</g2:evaluate>
-    <g2:evaluate var="jvar_store_apps" object="true" jelly="true">var storeApps = [];
-      var devApps = [];
-      var gr = new GlideRecord('sys_scope');
-      gr.orderBy('name');
-      gr.query();
-      while (gr.next()) {
-        var sysId = gr.sys_id.toString();
-        var className = gr.getValue('sys_class_name') || '';
-        var appInfo = {
-          sys_id: sysId,
-          name: gr.getValue('name') || sysId,
-          version: gr.getValue('version') || '',
-          scope: gr.getValue('scope') || ''
-        };
-        try {
-          if (className === 'sys_store_app') {
-            if (sn_app_api.AppStoreAPI.canConvertSysStoreApp(sysId)) {
-              storeApps.push(appInfo);
-            }
-          } else if (className === 'sys_app') {
-            if (sn_app_api.AppStoreAPI.canConvertSysApp(sysId)) {
-              devApps.push(appInfo);
-            }
-          }
-        } catch(e) {
-          gs.error('BulkConvertStoreApp: Error checking convertibility for sys_id=' + sysId + ' (' + className + '): ' + e.message);
-        }
-      }
-      storeApps;</g2:evaluate>
-    <g2:evaluate var="jvar_dev_apps" object="true" jelly="true">devApps;</g2:evaluate>
     <g:ui_form>
-      <div class="container-fluid" style="margin-top: 10px;">
-        <div id="page-messages" class="col-sm-12"></div>
-        <div class="col-sm-12">
-          <h3>Bidirectional App Conversion</h3>
-          <p class="text-muted">\${gs.getMessage("Convert store apps to development mode or development apps back to store apps.")}</p>
-		  <p>
-		  \${gs.getMessage("Have apps that you think you should be able to convert to Dev mode but don't see here? Make sure that \`sn_appauthor.all_company_keys\` system property has your company app key, e.g. for \`x_snc\` it is \`snc\`. Use")}
-		  $[SP]
-		  <a target="_blank" href='https://www.servicenow.com/community/servicenow-ide-sdk-and-fluent/now-sdk-amp-cli-sn-appauthor-all-company-keys-issue-resolution/m-p/3525707'> \${gs.getMessage("this script")}</a> $[SP] \${gs.getMessage("to modify it.")}</p>
-		  <p id="how-to-section">
-		  <h3>How to use this</h3>
-		  <ol>
-		  	<li>Usually after a clone you need to upgrade the apps before converting them to dev mode. From the System Applications menu use the $[SP]<b>Bulk Upgrade ALL My Company Apps</b>$[SP] link to upgrade every app where "is_store_app=false" to the latest version. Or use $[SP]<b>Bulk Upgrade My Company Apps from System Property</b>$[SP] link to only upgrade the apps listed in the system property \`bulk_convert_store_app.convertible_apps\`.</li>
-			<li>On this page select the Store apps that you want to convert to dev mode.</li>
-			<li>To publish development apps, select them in the right column and click $[SP]<b>Publish New Version</b>. Each app is published to My Application Repository at the next minor version the repository accepts. Apps whose version contains CONVERTED are skipped; set their version manually first.</li>
-		  </ol>
-		  </p>
-        </div>
-        <div class="row">
-          <div class="col-sm-6">
-            <div class="panel panel-info">
-              <div class="panel-heading">
-                <h4 class="panel-title">\${gs.getMessage("Convertible Store Apps")}</h4>
-              </div>
-              <div class="panel-body">
-                <p class="text-muted">\${gs.getMessage("Select store apps to convert to development mode.")}</p>
-                <div id="store-app-checklist" style="">
-                  <j2:if test="$[jvar_store_apps.length == 0]">
-                    <p class="text-muted">
-                      <em>\${gs.getMessage("No convertible store applications found.")}</em>
-                    </p>
-                  </j2:if>
-                  <j2:forEach items="$[jvar_store_apps]" var="jvar_sapp">
-                    <div class="checkbox" style="margin: 4px 0;">
-                      <label>
-                        <input type="checkbox" class="store-app-checkbox" value="$[jvar_sapp.sys_id]"></input>
-                        <strong>$[jvar_sapp.name]</strong>
-                        (v$[jvar_sapp.version]) -
-                        <span class="text-muted">$[jvar_sapp.scope]</span>
-                      </label>
-                      <a href="sys_scope.do?sys_id=$[jvar_sapp.sys_id]" target="_blank" title="Open record" style="margin-left: 6px;">
-                        <span class="glyphicon glyphicon-new-window"></span>
-                      </a>
-                    </div>
-                  </j2:forEach>
-                </div>
-                <div style="margin-top: 10px;">
-                  <j2:if test="$[jvar_is_global_scope == true]">
-                    <button id="btnConvertToDev" onclick="onConvertToDev()" class="btn btn-primary" type="button">\${gs.getMessage("Convert to Dev Mode")}</button>
-                  </j2:if>
-                  <j2:if test="$[jvar_is_global_scope != true]">
-                    <button disabled="disabled" class="btn btn-primary">\${gs.getMessage("Convert to Dev Mode")}</button>
-                  </j2:if>
-                </div>
-                <div id="store-status-list" style="display: none; max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background: #fafafa; margin-top: 10px;"></div>
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-6">
-            <div class="panel panel-warning">
-              <div class="panel-heading">
-                <h4 class="panel-title">\${gs.getMessage("Development Mode Apps")}</h4>
-              </div>
-              <div class="panel-body">
-                <p class="text-muted">\${gs.getMessage("Select development apps to convert back to store apps.")}</p>
-                <div id="dev-app-checklist" style="">
-                  <j2:if test="$[jvar_dev_apps.length == 0]">
-                    <p class="text-muted">
-                      <em>\${gs.getMessage("No custom-scoped development applications found.")}</em>
-                    </p>
-                  </j2:if>
-                  <j2:forEach items="$[jvar_dev_apps]" var="jvar_dapp">
-                    <div class="checkbox" style="margin: 4px 0;">
-                      <label>
-                        <input type="checkbox" class="dev-app-checkbox" value="$[jvar_dapp.sys_id]"></input>
-                        <strong>$[jvar_dapp.name]</strong>
-                        (v$[jvar_dapp.version]) -
-                        <span class="text-muted">$[jvar_dapp.scope]</span>
-                      </label>
-                      <a href="sys_scope.do?sys_id=$[jvar_dapp.sys_id]" target="_blank" title="Open record" style="margin-left: 6px;">
-                        <span class="glyphicon glyphicon-new-window"></span>
-                      </a>
-                    </div>
-                  </j2:forEach>
-                </div>
-                <div style="margin-top: 10px;">
-                  <j2:if test="$[jvar_is_global_scope == true]">
-                    <button id="btnConvertToStore" onclick="onConvertToStore()" class="btn btn-warning" type="button">\${gs.getMessage("Convert to Store App")}</button>
-                  </j2:if>
-                  <j2:if test="$[jvar_is_global_scope != true]">
-                    <button disabled="disabled" class="btn btn-warning">\${gs.getMessage("Convert to Store App")}</button>
-                  </j2:if>
-                  <j2:if test="$[jvar_is_global_scope == true]">
-                    <button id="btnPublish" onclick="onPublish()" class="btn btn-success" type="button" style="margin-left: 6px;" title="Bump to the next minor version that My Application Repository accepts and publish each selected app">\${gs.getMessage("Publish New Version")}</button>
-                  </j2:if>
-                  <j2:if test="$[jvar_is_global_scope != true]">
-                    <button disabled="disabled" class="btn btn-success" style="margin-left: 6px;">\${gs.getMessage("Publish New Version")}</button>
-                  </j2:if>
-                </div>
-                <div id="dev-status-list" style="display: none; max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background: #fafafa; margin-top: 10px;"></div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div id="bac-root" class="container-fluid" style="margin-top: 10px;">
+        <div id="page-messages"></div>
+        <h3>Bulk App Clone Assistant</h3>
+        <style>
+          #prereq-strip { padding: 10px 14px; margin-bottom: 18px; }
+          .bac-sub { margin: 14px 0 12px; }
+          .bac-sub-title { font-size: 18px; }
+          .bac-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin: 14px 0 16px; }
+          .bac-toolbar .bac-search { width: 220px; }
+          .bac-toolbar .checkbox-inline { margin: 0; }
+          #banner-save { margin: 0; }
+          .bac-table th, .bac-table td { padding: 10px 14px !important; vertical-align: middle !important; }
+          .bac-table .text-muted { margin-top: 2px; }
+          #summary-bar { margin: 16px 0; }
+        </style>
+        <div id="prereq-strip" class="well well-sm"></div>
+        <ul class="nav nav-tabs" style="margin-bottom: 10px;">
+          <li id="tab-save"><a href="#" data-tab="save">Before Clone: Save Work</a></li>
+          <li id="tab-restore"><a href="#" data-tab="restore">After Clone: Restore</a></li>
+        </ul>
+        <div id="pane-save" style="display: none;"></div>
+        <div id="pane-restore" style="display: none;"></div>
+        <div id="summary-bar" class="alert alert-info" style="display: none; margin-top: 10px;"></div>
+        <details style="margin-top: 15px;">
+          <summary>How it works</summary>
+          <ol>
+            <li>Before a clone, open the Before Clone tab on your dev instance and publish every app whose work is not in My Application Repository (App Repo).</li>
+            <li>Clone from prod. Every company app arrives in store mode.</li>
+            <li>After the clone, open the After Clone tab. Upgrade and convert all upgrades apps that have a newer App Repo version, waits for the batch install, then converts every selected app to dev mode.</li>
+            <li>Convert to Store only runs on apps that are saved in App Repo, so it never strands unpublished work.</li>
+          </ol>
+        </details>
       </div>
     </g:ui_form>
   </j2:if>
 </j:jelly>`,
-    clientScript: `function showInfoMessage(msg) {
-    var container = gel('page-messages');
+    clientScript: `// Bulk App Clone Assistant client script. ES5 only (helsinki_es5).
+var BAC = {
+    tab: 'restore',
+    busy: false,
+    loader: false,
+    apps: { save: [], restore: [] },
+    checked: { save: {}, restore: {} },
+    touched: { save: false, restore: false },
+    status: { save: {}, restore: {} },
+    saveState: {},
+    filters: {
+        save: { q: '', needs: false, failed: false },
+        restore: { q: '', upgrade: false, failed: false }
+    },
+    prereq: null,
+    batchId: '',
+    loaded: { save: false, restore: false }
+};
+
+var STATUS_CLASSES = {
+    'Pending': 'label-info',
+    'Upgrading': 'label-warning',
+    'Converting': 'label-warning',
+    'Publishing': 'label-warning',
+    'Complete': 'label-success',
+    'Converted': 'label-success',
+    'Upgraded': 'label-success',
+    'Published': 'label-primary',
+    'Failed': 'label-danger',
+    'Skipped': 'label-default'
+};
+
+var SAVE_LABELS = {
+    'saved': ['label-success', 'Saved'],
+    'changed': ['label-warning', 'Changed'],
+    'not_in_repo': ['label-danger', 'Not in App Repo'],
+    'unpublished_version': ['label-warning', 'Unpublished'],
+    'in_repo': ['label-info', 'In App Repo'],
+    'check_failed': ['label-default', 'Check failed']
+};
+
+function shortDate(dt) {
+    return dt ? String(dt).substring(0, 10) : '';
+}
+
+function saveNote(s) {
+    if (s.saveStatus === 'in_repo') {
+        return 'No publish record on this instance.' + (s.lastChanged ? ' Last change ' + shortDate(s.lastChanged) + '.' : '');
+    }
+    if (s.saveStatus === 'not_in_repo') {
+        return 'Never published' + (s.repoHost ? ' to ' + s.repoHost : '') + '.';
+    }
+    if (s.saveStatus === 'unpublished_version') {
+        return 'Version ' + s.currentVersion + ' is newer than App Repo ' + (s.repoVersion || 'latest') + '.';
+    }
+    if (s.saveStatus === 'changed') {
+        return 'Changed ' + shortDate(s.lastChanged) + ', published ' + shortDate(s.lastPublished) + '.';
+    }
+    if (s.saveStatus === 'saved') {
+        return 'Published ' + shortDate(s.lastPublished) + '.';
+    }
+    if (s.saveStatus === 'check_failed') {
+        return s.error || 'The App Repo check did not return a result.';
+    }
+    return '';
+}
+
+function esc(s) {
+    return String(s === null || s === undefined ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function byId(id) {
+    return document.getElementById(id);
+}
+
+/* ---------- messages and summary ---------- */
+
+function showInfoMessage(msg) {
+    var container = byId('page-messages');
     if (!container) { return; }
     var div = document.createElement('div');
     div.className = 'alert alert-info';
-    div.style.marginTop = '10px';
-    div.innerHTML = '<strong>Info:</strong> ' + msg;
-    container.appendChild(div);
-}
-
-function showErrorMessage(msg) {
-    var container = gel('page-messages');
-    if (!container) { return; }
-    var div = document.createElement('div');
-    div.className = 'alert alert-danger';
     div.style.marginTop = '10px';
     div.textContent = msg;
     container.appendChild(div);
 }
 
-function getCheckedStoreApps() {
-    var checked = [];
-    var checkboxes = document.querySelectorAll('.store-app-checkbox:checked');
-    for (var i = 0; i < checkboxes.length; i++) {
-        checked.push(checkboxes[i].value);
+function setSummary(html, kind) {
+    var bar = byId('summary-bar');
+    if (!bar) { return; }
+    if (!html) {
+        bar.style.display = 'none';
+        bar.innerHTML = '';
+        return;
     }
-    return checked;
+    bar.className = 'alert alert-' + (kind || 'info');
+    bar.style.display = 'block';
+    bar.innerHTML = html;
 }
 
-function getCheckedDevApps() {
-    var checked = [];
-    var checkboxes = document.querySelectorAll('.dev-app-checkbox:checked');
-    for (var i = 0; i < checkboxes.length; i++) {
-        checked.push(checkboxes[i].value);
-    }
-    return checked;
-}
+/* ---------- server calls ---------- */
 
-function getAppNameFromCheckbox(sysId, className) {
-    var checkboxes = document.querySelectorAll('.' + className);
-    for (var i = 0; i < checkboxes.length; i++) {
-        if (checkboxes[i].value === sysId) {
-            var label = checkboxes[i].closest('label');
-            if (label) {
-                var strong = label.querySelector('strong');
-                return strong ? strong.textContent : sysId;
-            }
+function callConsole(name, params, cb) {
+    var ga = new GlideAjax('BulkAppConsole');
+    ga.addParam('sysparm_name', name);
+    for (var k in params) {
+        if (params.hasOwnProperty(k)) { ga.addParam(k, params[k]); }
+    }
+    ga.getXMLAnswer(function(answer) {
+        var data = null;
+        try {
+            data = JSON.parse(answer);
+        } catch (err) {
+            data = null;
         }
-    }
-    return sysId;
+        if (!data) { data = { ok: false, error: 'No valid response from ' + name + '.' }; }
+        cb(data);
+    });
 }
 
-function addStatusRow(containerId, appId, appName, status) {
-    var container = gel(containerId);
-    container.style.display = 'block';
-    var labelClass = 'label-default';
-    if (status === 'Complete') { labelClass = 'label-success'; }
-    else if (status === 'Published') { labelClass = 'label-primary'; }
-    else if (status === 'Failed') { labelClass = 'label-danger'; }
-    else if (status === 'Converting' || status === 'Publishing') { labelClass = 'label-warning'; }
-    else if (status === 'Pending') { labelClass = 'label-info'; }
-
-    var div = document.createElement('div');
-    div.className = 'conversion-result-item';
-    div.id = 'result-' + containerId + '-' + appId;
-    div.style.cssText = 'margin: 4px 0; padding: 2px 0;';
-    div.innerHTML = '<span class="label ' + labelClass + '">' + status + '</span>' +
-        '<strong style="margin-left: 6px;">' + appName + '</strong> - ' + appId +
-        ' <a href="sys_scope.do?sys_id=' + appId + '" target="_blank" title="Open record" style="margin-left: 6px;"><span class="glyphicon glyphicon-new-window"></span></a>';
-    container.appendChild(div);
+// Same call the stock "Switch to this Application" action makes. Convert and publish checks depend on the application picker.
+function switchApplication(appId, callback) {
+    var ga = new GlideAjax('com.snc.apps.AppsAjaxProcessor');
+    ga.addParam('sysparm_function', 'changeApplication');
+    ga.addParam('sysparm_value', appId);
+    ga.getXML(function() {
+        callback();
+    });
 }
 
-function updateStatusRow(containerId, appId, status) {
-    var div = document.getElementById('result-' + containerId + '-' + appId);
-    if (div) {
-        var span = div.querySelector('.label');
-        if (span) {
-            var labelClass = 'label-default';
-            if (status === 'Complete') { labelClass = 'label-success'; }
-            else if (status === 'Published') { labelClass = 'label-primary'; }
-            else if (status === 'Failed') { labelClass = 'label-danger'; }
-            else if (status === 'Converting' || status === 'Publishing') { labelClass = 'label-warning'; }
-            else if (status === 'Pending') { labelClass = 'label-info'; }
-            span.className = 'label ' + labelClass;
-            span.textContent = status;
-        }
-    }
-}
-
-function disableCheckboxByValue(className, sysId) {
-    var checkboxes = document.querySelectorAll('.' + className);
-    for (var i = 0; i < checkboxes.length; i++) {
-        if (checkboxes[i].value === sysId) {
-            checkboxes[i].disabled = true;
-            checkboxes[i].checked = true;
-        }
-    }
-}
-
+// Returns a function that stops polling.
 function pollTracker(trackerId, onComplete, onFailed) {
     var interval = setInterval(function() {
         var xhr = new XMLHttpRequest();
@@ -280,245 +207,571 @@ function pollTracker(trackerId, onComplete, onFailed) {
         };
         xhr.send();
     }, 3000);
+    return function() { clearInterval(interval); };
 }
 
-function onConvertToDev() {
-    var sysIds = getCheckedStoreApps();
-    if (sysIds.length === 0) {
-        alert('No store apps selected. Check at least one app from the list.');
-        return;
-    }
-    var btn = gel('btnConvertToDev');
-    btn.disabled = true;
-    btn.className = 'btn btn-default';
-    btn.innerHTML = 'Converting...';
+/* ---------- row status ---------- */
 
-    for (var i = 0; i < sysIds.length; i++) {
-        var appName = getAppNameFromCheckbox(sysIds[i], 'store-app-checkbox');
-        addStatusRow('store-status-list', sysIds[i], appName, 'Pending');
-    }
-
-    convertStoreNext(sysIds, 0);
-}
-
-function convertStoreNext(sysIds, index) {
-    if (index >= sysIds.length) {
-        var btn = gel('btnConvertToDev');
-        btn.innerHTML = 'Done';
-        btn.disabled = true;
-        showInfoMessage('Conversion complete. Refresh the page to perform another conversion.');
-        return;
-    }
-
-    var appId = sysIds[index];
-    updateStatusRow('store-status-list', appId, 'Converting');
-
-    var ga = new GlideAjax('com.snc.apps.AppsAjaxProcessor');
-    ga.addParam('sysparm_name', 'start');
-    ga.addParam('sysparm_function', 'convertToDevelopmentApp');
-    ga.addParam('sysparm_sys_id', appId);
-    ga.addParam('sysparm_progress_name', 'Converting Store application');
-    ga.addParam('sysparm_ajax_processor', 'com.snc.apps.AppsAjaxProcessor');
-    ga.addParam('sysparm_scope', 'global');
-    ga.getXMLAnswer(function(answer) {
-        if (answer && answer.trim() !== '') {
-            pollTracker(answer.trim(), function() {
-                updateStatusRow('store-status-list', appId, 'Complete');
-                disableCheckboxByValue('store-app-checkbox', appId);
-                convertStoreNext(sysIds, index + 1);
-            }, function() {
-                updateStatusRow('store-status-list', appId, 'Failed');
-                convertStoreNext(sysIds, index + 1);
-            });
+function statusHtml(st) {
+    if (!st) { return ''; }
+    var html = '<span class="label ' + (STATUS_CLASSES[st.label] || 'label-default') + '">' + esc(st.label) + '</span>';
+    if (st.note) {
+        html += '<div class="text-muted" style="font-size: 90%;">';
+        if (st.href) {
+            html += '<a href="' + esc(st.href) + '" target="_blank">' + esc(st.note) + '</a>';
         } else {
-            updateStatusRow('store-status-list', appId, 'Failed');
-            convertStoreNext(sysIds, index + 1);
+            html += esc(st.note);
         }
-    });
+        html += '</div>';
+    }
+    return html;
 }
 
-function onConvertToStore() {
-    var sysIds = getCheckedDevApps();
-    if (sysIds.length === 0) {
-        alert('No development apps selected. Check at least one app from the list.');
-        return;
-    }
-    var btn = gel('btnConvertToStore');
-    btn.disabled = true;
-    btn.className = 'btn btn-default';
-    btn.innerHTML = 'Converting...';
-
-    for (var i = 0; i < sysIds.length; i++) {
-        var appName = getAppNameFromCheckbox(sysIds[i], 'dev-app-checkbox');
-        addStatusRow('dev-status-list', sysIds[i], appName, 'Pending');
-    }
-
-    convertDevNext(sysIds, 0);
+function setRowStatus(tab, sysId, label, note, href) {
+    BAC.status[tab][sysId] = { label: label, note: note || '', href: href || '' };
+    var cell = byId('status-' + tab + '-' + sysId);
+    if (cell) { cell.innerHTML = statusHtml(BAC.status[tab][sysId]); }
 }
 
-function convertDevNext(sysIds, index) {
-    if (index >= sysIds.length) {
-        var btn = gel('btnConvertToStore');
-        btn.innerHTML = 'Done';
-        btn.disabled = true;
-        showInfoMessage('Conversion complete. Refresh the page to perform another conversion.');
-        return;
+/* ---------- selection and filtering ---------- */
+
+function findApp(tab, sysId) {
+    var list = BAC.apps[tab];
+    for (var i = 0; i < list.length; i++) {
+        if (list[i].sys_id === sysId) { return list[i]; }
     }
-
-    var appId = sysIds[index];
-    updateStatusRow('dev-status-list', appId, 'Converting');
-
-    var ga = new GlideAjax('com.snc.apps.AppsAjaxProcessor');
-    ga.addParam('sysparm_name', 'start');
-    ga.addParam('sysparm_function', 'convertToStoreApp');
-    ga.addParam('sysparm_sys_id', appId);
-    ga.addParam('sysparm_progress_name', 'Converting application');
-    ga.addParam('sysparm_ajax_processor', 'com.snc.apps.AppsAjaxProcessor');
-    ga.addParam('sysparm_scope', 'global');
-    ga.getXMLAnswer(function(answer) {
-        if (answer && answer.trim() !== '') {
-            pollTracker(answer.trim(), function() {
-                updateStatusRow('dev-status-list', appId, 'Complete');
-                disableCheckboxByValue('dev-app-checkbox', appId);
-                convertDevNext(sysIds, index + 1);
-            }, function() {
-                updateStatusRow('dev-status-list', appId, 'Failed');
-                convertDevNext(sysIds, index + 1);
-            });
-        } else {
-            updateStatusRow('dev-status-list', appId, 'Failed');
-            convertDevNext(sysIds, index + 1);
-        }
-    });
+    return null;
 }
 
-function getCheckedEnabledDevApps() {
-    var checked = [];
-    var checkboxes = document.querySelectorAll('.dev-app-checkbox:checked');
-    for (var i = 0; i < checkboxes.length; i++) {
-        if (!checkboxes[i].disabled) {
-            checked.push(checkboxes[i].value);
-        }
-    }
-    return checked;
+function isAtRisk(app) {
+    var s = BAC.saveState[app.sys_id];
+    return !s || s.saveStatus !== 'saved';
 }
 
-function getAppVersionFromCheckbox(sysId, className) {
-    var checkboxes = document.querySelectorAll('.' + className);
-    for (var i = 0; i < checkboxes.length; i++) {
-        if (checkboxes[i].value === sysId) {
-            var label = checkboxes[i].closest('label');
-            var match = label ? label.textContent.match(/\\(v([^)]*)\\)/) : null;
-            return match ? match[1] : '';
-        }
+function isVisible(tab, app) {
+    var f = BAC.filters[tab];
+    if (f.q) {
+        var hay = (app.name + ' ' + app.scope).toLowerCase();
+        if (hay.indexOf(f.q.toLowerCase()) === -1) { return false; }
     }
-    return '';
-}
-
-function setStatusNote(containerId, appId, note, href) {
-    var div = document.getElementById('result-' + containerId + '-' + appId);
-    if (!div) { return; }
-    var existing = div.querySelector('.status-note');
-    if (existing) { existing.parentNode.removeChild(existing); }
-    var span = document.createElement('div');
-    span.className = 'status-note text-muted';
-    span.style.cssText = 'margin-left: 6px; font-size: 90%;';
-    if (href) {
-        var a = document.createElement('a');
-        a.href = href;
-        a.target = '_blank';
-        a.textContent = note;
-        span.appendChild(a);
+    if (f.failed) {
+        var st = BAC.status[tab][app.sys_id];
+        if (!st || st.label !== 'Failed') { return false; }
+    }
+    if (tab === 'restore') {
+        if (f.upgrade && !app.upgradeAvailable) { return false; }
     } else {
-        span.textContent = note;
+        if (f.needs && !isAtRisk(app)) { return false; }
     }
-    div.appendChild(span);
+    return true;
 }
 
-function onPublish() {
-    var sysIds = getCheckedEnabledDevApps();
-    if (sysIds.length === 0) {
-        alert('No development apps selected. Check at least one app from the list.');
-        return;
+function visibleApps(tab) {
+    var out = [];
+    var list = BAC.apps[tab];
+    for (var i = 0; i < list.length; i++) {
+        if (isVisible(tab, list[i])) { out.push(list[i]); }
     }
-
-    var eligible = [];
-    var converted = [];
-    for (var i = 0; i < sysIds.length; i++) {
-        var name = getAppNameFromCheckbox(sysIds[i], 'dev-app-checkbox');
-        var version = getAppVersionFromCheckbox(sysIds[i], 'dev-app-checkbox');
-        if (/CONVERTED/i.test(version)) {
-            converted.push({ id: sysIds[i], name: name, version: version });
-        } else {
-            eligible.push(sysIds[i]);
-        }
-    }
-
-    if (converted.length > 0) {
-        var names = [];
-        for (var c = 0; c < converted.length; c++) {
-            names.push(converted[c].name + ' (v' + converted[c].version + ')');
-        }
-        alert('These apps will not be published because their version contains CONVERTED. Set a version manually first, then run again:\\n\\n' + names.join('\\n'));
-    }
-
-    var btn = gel('btnPublish');
-    for (var s = 0; s < converted.length; s++) {
-        addStatusRow('dev-status-list', converted[s].id, converted[s].name, 'Skipped');
-        setStatusNote('dev-status-list', converted[s].id, 'Version contains CONVERTED. Set the version manually first.');
-    }
-    if (eligible.length === 0) {
-        return;
-    }
-
-    btn.disabled = true;
-    btn.className = 'btn btn-default';
-    btn.style.marginLeft = '6px';
-    btn.innerHTML = 'Publishing...';
-
-    for (var e = 0; e < eligible.length; e++) {
-        addStatusRow('dev-status-list', eligible[e], getAppNameFromCheckbox(eligible[e], 'dev-app-checkbox'), 'Pending');
-    }
-
-    publishNext(eligible, 0);
+    return out;
 }
 
-// Same call the stock "Switch to this Application" action makes. Publish permission checks depend on the application picker.
-function switchApplication(appId, callback) {
-    var ga = new GlideAjax('com.snc.apps.AppsAjaxProcessor');
-    ga.addParam('sysparm_function', 'changeApplication');
-    ga.addParam('sysparm_value', appId);
-    ga.getXML(function() {
-        callback();
+function isRowSelectable(tab, app) {
+    return true;
+}
+
+function getCheckedRows(tab) {
+    var out = [];
+    var vis = visibleApps(tab);
+    for (var i = 0; i < vis.length; i++) {
+        if (BAC.checked[tab][vis[i].sys_id] && isRowSelectable(tab, vis[i])) { out.push(vis[i]); }
+    }
+    return out;
+}
+
+/* ---------- rendering ---------- */
+
+function targetHtml(tab, app) {
+    if (tab === 'restore') {
+        if (app.isConverted && !app.restorable) {
+            return '<span class="text-danger">Not in App Repo, cannot restore automatically</span>';
+        }
+        return app.latest_version ? esc(app.latest_version) : '<span class="text-muted">convert only</span>';
+    }
+    var s = BAC.saveState[app.sys_id];
+    if (!s) { return '<span class="text-muted">...</span>'; }
+    if (s.saveStatus === 'check_failed') { return '<span class="text-muted">&mdash;</span>'; }
+    if (!s.nextVersion) { return '<span class="text-danger">' + esc(s.error || 'No publishable version found.') + '</span>'; }
+    return esc(app.version) + ' &rarr; ' + esc(s.nextVersion);
+}
+
+function installedHtml(tab, app) {
+    var html = esc(app.version);
+    return html;
+}
+
+function saveCellHtml(app) {
+    var s = BAC.saveState[app.sys_id];
+    if (!s) { return '<span class="text-muted">Checking...</span>'; }
+    // Only where local changes may exist that are not in App Repo.
+    var link = /^(changed|in_repo|check_failed)$/.test(s.saveStatus)
+        ? '<div><a href="sys_metadata_list.do?sysparm_query=sys_scope%3D' + app.sys_id + '%5Esys_class_name!%3Dsys_metadata_delete&sysparm_view=" target="_blank">Recent changes</a></div>'
+        : '';
+    var def = SAVE_LABELS[s.saveStatus] || SAVE_LABELS.check_failed;
+    var note = saveNote(s);
+    var action = '';
+    if (s.saveStatus === 'check_failed') {
+        action = s.code === 'not_dev'
+            ? ' <a href="#" data-action="reloadSave">Reload list</a>'
+            : ' <a href="#" data-action="recheck" data-id="' + app.sys_id + '">Retry check</a>';
+    }
+    return '<span class="label ' + def[0] + '">' + def[1] + '</span>' +
+        (note ? '<div class="' + (s.saveStatus === 'check_failed' ? 'text-danger' : 'text-muted') + '" style="font-size: 90%;">' + esc(note) + action + '</div>' : '') + link;
+}
+
+function rowHtml(tab, app) {
+    var checked = BAC.checked[tab][app.sys_id] && isRowSelectable(tab, app);
+    var html = '<tr id="row-' + tab + '-' + app.sys_id + '">' +
+        '<td><input type="checkbox" class="bac-check" data-tab="' + tab + '" data-id="' + app.sys_id + '"' +
+        (checked ? ' checked="checked"' : '') + '/></td>' +
+        '<td><strong>' + esc(app.name) + '</strong>' +
+        (tab === 'restore' && app.upgradeAvailable ? ' <span class="label label-info">upgrade first</span>' : '') +
+        '<br/><span class="text-muted">' + esc(app.scope) + '</span>' +
+        ' <a href="sys_scope.do?sys_id=' + app.sys_id + '" target="_blank" title="Open record"><span class="glyphicon glyphicon-new-window"></span></a></td>' +
+        '<td id="installed-' + tab + '-' + app.sys_id + '">' + installedHtml(tab, app) + '</td>' +
+        '<td id="target-' + tab + '-' + app.sys_id + '">' + targetHtml(tab, app) + '</td>';
+    if (tab === 'save') {
+        html += '<td id="save-' + app.sys_id + '">' + saveCellHtml(app) + '</td>';
+    }
+    html += '<td id="status-' + tab + '-' + app.sys_id + '">' + statusHtml(BAC.status[tab][app.sys_id]) + '</td></tr>';
+    return html;
+}
+
+function renderTable(tab) {
+    var container = byId('table-' + tab);
+    if (!container) { return; }
+    var vis = visibleApps(tab);
+    if (!BAC.loaded[tab]) {
+        container.innerHTML = '<p class="text-muted"><em>Loading apps...</em></p>';
+        return;
+    }
+    if (vis.length === 0) {
+        container.innerHTML = '<p class="text-muted"><em>No apps to show.</em></p>';
+        updateControls();
+        return;
+    }
+    var allChecked = true;
+    for (var c = 0; c < vis.length; c++) {
+        if (isRowSelectable(tab, vis[c]) && !BAC.checked[tab][vis[c].sys_id]) { allChecked = false; }
+    }
+    var html = '<table class="table table-condensed table-hover bac-table"><thead><tr>' +
+        '<th style="width: 30px;"><input type="checkbox" class="bac-all" data-tab="' + tab + '"' + (allChecked ? ' checked="checked"' : '') + ' title="Check all visible"/></th>' +
+        '<th>App</th><th>Installed version</th><th>Target version</th>' +
+        (tab === 'save' ? '<th>Save status</th>' : '') + '<th>Status</th></tr></thead><tbody>';
+    for (var i = 0; i < vis.length; i++) {
+        html += rowHtml(tab, vis[i]);
+    }
+    html += '</tbody></table>';
+    container.innerHTML = html;
+    updateControls();
+}
+
+function renderBanner() {
+    var el = byId('banner-save');
+    if (!el) { return; }
+    var list = BAC.apps.save;
+    if (!BAC.loaded.save) { el.style.display = 'none'; return; }
+    var pending = 0, risk = 0, hiddenRisk = 0, failed = 0;
+    for (var i = 0; i < list.length; i++) {
+        var app = list[i];
+        if (!BAC.saveState[app.sys_id]) { pending++; continue; }
+        if (BAC.saveState[app.sys_id].saveStatus === 'check_failed') { failed++; }
+        if (isAtRisk(app)) {
+            risk++;
+            if (!isVisible('save', app)) { hiddenRisk++; }
+        }
+    }
+    el.style.display = 'block';
+    if (pending > 0) {
+        el.className = 'alert alert-info';
+        el.textContent = 'Checking save status... ' + (list.length - pending) + ' of ' + list.length + ' apps checked.';
+    } else if (risk > 0) {
+        el.className = 'alert alert-warning';
+        el.innerHTML = esc(risk + (risk === 1 ? ' app has' : ' apps have') + ' work that is not in App Repo. Publish ' + (risk === 1 ? 'it' : 'them') + ' before you clone.' +
+            (hiddenRisk > 0 ? ' (' + hiddenRisk + ' hidden by filters)' : '')) +
+            (failed > 0 ? '<div>' + esc(failed + (failed === 1 ? ' app' : ' apps') + ' could not be checked and ' + (failed === 1 ? 'is' : 'are') + ' selected so ' + (failed === 1 ? 'it is' : 'they are') + ' published.') +
+                ' <a href="#" data-action="recheckAll">Retry all checks</a></div>' : '');
+    } else {
+        el.className = 'alert alert-success';
+        el.textContent = 'All dev apps are saved in App Repo. Safe to clone.';
+    }
+}
+
+function renderPrereqs() {
+    var el = byId('prereq-strip');
+    if (!el || !BAC.prereq) { return; }
+    var p = BAC.prereq;
+    var items = [];
+    items.push('<li><span class="label label-success">OK</span> Application picker is Global' + (p.switched ? ' (switched automatically)' : '') + '</li>');
+    items.push('<li class="bac-restore-only"><span class="label label-default">Info</span> After a clone, refresh <a target="_blank" href="sys_store_app_list.do?sysparm_query=is_store_app%3Dfalse">My Company Applications</a> so the latest versions are visible here.</li>');
+    el.innerHTML = '<ul class="list-unstyled" style="margin: 0;">' + items.join('') + '</ul>';
+    var only = el.querySelectorAll('.bac-restore-only');
+    for (var j = 0; j < only.length; j++) { only[j].style.display = BAC.tab === 'restore' ? '' : 'none'; }
+}
+
+/* ---------- buttons ---------- */
+
+function setButton(id, enabled, title) {
+    var btn = byId(id);
+    if (!btn) { return; }
+    btn.disabled = !enabled;
+    btn.title = enabled ? '' : (title || '');
+}
+
+function updateControls() {
+    var blocked = BAC.busy ? 'A run is in progress.' : (BAC.loader ? 'Checking save status. This finishes shortly.' : '');
+    var restoreSel = getCheckedRows('restore');
+    var saveSel = getCheckedRows('save');
+    var restoreMsg = blocked || (restoreSel.length === 0 ? 'Check at least one app.' : '');
+    var saveMsg = blocked || (saveSel.length === 0 ? 'Check at least one app.' : '');
+    setButton('btnRestoreAll', !restoreMsg, restoreMsg);
+    setButton('btnUpgradeOnly', !restoreMsg, restoreMsg);
+    setButton('btnConvertDevOnly', !restoreMsg, restoreMsg);
+    setButton('btnPublishAll', !saveMsg, saveMsg);
+    var anySaved = false;
+    for (var i = 0; i < saveSel.length; i++) {
+        var s = BAC.saveState[saveSel[i].sys_id];
+        if (s && s.saveStatus === 'saved') { anySaved = true; }
+    }
+    setButton('btnConvertStore', !saveMsg && anySaved, saveMsg || 'Publish the checked apps first so they can be restored by upgrading after conversion.');
+    setButton('btnLoadSaved', !blocked, blocked);
+    setButton('btnSaveSelection', !blocked, blocked);
+    var rc = byId('count-restore');
+    if (rc) { rc.textContent = restoreSel.length + ' selected'; }
+    var sc = byId('count-save');
+    if (sc) { sc.textContent = saveSel.length + ' selected'; }
+    var tabs = ['save', 'restore'];
+    for (var t = 0; t < tabs.length; t++) {
+        var li = byId('tab-' + tabs[t]);
+        if (li) { li.className = BAC.tab === tabs[t] ? 'active' : ''; }
+        var pane = byId('pane-' + tabs[t]);
+        if (pane) { pane.style.display = BAC.tab === tabs[t] ? 'block' : 'none'; }
+    }
+}
+
+function paneHtml(tab) {
+    var html = '';
+    if (tab === 'restore') {
+        html += '<p class="bac-sub"><strong class="bac-sub-title">Company apps installed in store mode.</strong> <span class="text-muted">Run this right after the clone.</span></p>' +
+            '<div class="bac-toolbar">' +
+            '<button type="button" id="btnRestoreAll" class="btn btn-primary" data-action="restoreAll">Upgrade and convert all</button> ' +
+            '<button type="button" id="btnUpgradeOnly" class="btn btn-default btn-sm" data-action="upgradeOnly">Upgrade only</button> ' +
+            '<button type="button" id="btnConvertDevOnly" class="btn btn-default btn-sm" data-action="convertDevOnly">Convert to Dev only</button> ' +
+            '<input type="text" class="bac-search input-sm" data-tab="restore" placeholder="Search apps"/> ' +
+            '<label class="checkbox-inline"><input type="checkbox" class="bac-chip" data-tab="restore" data-chip="upgrade"/> Upgrade available</label> ' +
+            '<span id="count-restore" class="text-muted"></span> ' +
+            '<a href="#" id="btnLoadSaved" data-action="loadSaved">Load saved list</a> ' +
+            '<a href="#" id="btnSaveSelection" data-action="saveSelection">Save selection</a>' +
+            '</div>';
+    } else {
+        html += '<p class="bac-sub"><strong class="bac-sub-title">Development mode apps.</strong> <span class="text-muted">Run this on your dev instance before it is cloned over.</span></p>' +
+            '<div id="banner-save" class="alert alert-info" style="display: none;"></div>' +
+            '<div class="bac-toolbar">' +
+            '<button type="button" id="btnPublishAll" class="btn btn-primary" data-action="publishAll">Publish</button> ' +
+            '<button type="button" id="btnConvertStore" class="btn btn-default btn-sm" data-action="convertStore">Convert to Store</button> ' +
+            '<input type="text" class="bac-search input-sm" data-tab="save" placeholder="Search apps"/> ' +
+            '<label class="checkbox-inline"><input type="checkbox" class="bac-chip" data-tab="save" data-chip="needs"/> Needs publish</label> ' +
+            '<span id="count-save" class="text-muted"></span>' +
+            '</div>';
+    }
+    html += '<div id="table-' + tab + '"></div>';
+    return html;
+}
+
+/* ---------- loading ---------- */
+
+function loadApps(tab, done) {
+    callConsole('getApps', { sysparm_list: tab }, function(res) {
+        if (!res.ok) {
+            setSummary('Could not load apps: ' + esc(res.error || 'unknown error'), 'danger');
+            if (done) { done(false); }
+            return;
+        }
+        var apps = res.apps || [];
+        for (var i = 0; i < apps.length; i++) {
+            var id = apps[i].sys_id;
+            if (BAC.checked[tab][id] === undefined) {
+                BAC.checked[tab][id] = true;
+            }
+        }
+        BAC.apps[tab] = apps;
+        BAC.loaded[tab] = true;
+        renderTable(tab);
+        if (tab === 'save') { renderBanner(); loadSaveStates(); }
+        if (done) { done(true); }
     });
 }
 
-function finishPublish() {
-    // The convert and publish actions require the Global application selected, so always end there.
+// Resumable, one app at a time. Each check needs the application picker on that app, and always ends back on Global.
+function loadSaveStates() {
+    if (BAC.loader || BAC.busy) { return; }
+    var pending = [];
+    for (var i = 0; i < BAC.apps.save.length; i++) {
+        var app = BAC.apps.save[i];
+        if (!BAC.saveState[app.sys_id]) { pending.push(app); }
+    }
+    if (pending.length === 0) { applyDefaultSaveSelection(); return; }
+    BAC.loader = true;
+    updateControls();
+    loadSaveStateNext(pending, 0);
+}
+
+function loadSaveStateNext(pending, index) {
+    if (index >= pending.length || BAC.tab !== 'save' || BAC.busy) {
+        switchApplication('global', function() {
+            BAC.loader = false;
+            if (index >= pending.length) { applyDefaultSaveSelection(); }
+            renderBanner();
+            updateControls();
+        });
+        return;
+    }
+    var app = pending[index];
+    checkPublishState(app, 1, function() {
+        var cell = byId('save-' + app.sys_id);
+        if (cell) { cell.innerHTML = saveCellHtml(app); }
+        var target = byId('target-save-' + app.sys_id);
+        if (target) { target.innerHTML = targetHtml('save', app); }
+        renderBanner();
+        loadSaveStateNext(pending, index + 1);
+    });
+}
+
+// One automatic retry before a row is marked Check failed.
+function checkPublishState(app, attemptsLeft, done) {
+    switchApplication(app.sys_id, function() {
+        callConsole('getPublishState', { sysparm_sys_id: app.sys_id }, function(res) {
+            var failed = !res.ok || res.saveStatus === 'check_failed';
+            if (failed && attemptsLeft > 0 && res.code !== 'not_dev') {
+                checkPublishState(app, attemptsLeft - 1, done);
+                return;
+            }
+            BAC.saveState[app.sys_id] = res.ok ? res : { saveStatus: 'check_failed', code: res.code || '', nextVersion: '', error: res.error || '' };
+            done();
+        });
+    });
+}
+
+// Default selection is every app whose work is not in App Repo, unless the user already changed the selection.
+function applyDefaultSaveSelection() {
+    if (!BAC.touched.save) {
+        for (var i = 0; i < BAC.apps.save.length; i++) {
+            var app = BAC.apps.save[i];
+            BAC.checked.save[app.sys_id] = isAtRisk(app);
+        }
+    }
+    renderTable('save');
+    renderBanner();
+}
+
+/* ---------- queues ---------- */
+
+function beginQueue() {
+    BAC.busy = true;
+    window.onbeforeunload = function() { return 'A bulk run is still in progress.'; };
+    setSummary('', '');
+    updateControls();
+}
+
+function endQueue(run, tab) {
+    BAC.busy = false;
+    window.onbeforeunload = null;
+    var parts = [];
+    if (run.published) { parts.push(run.published + ' published'); }
+    if (run.upgraded) { parts.push(run.upgraded + ' upgraded first'); }
+    if (run.converted) { parts.push(run.converted + ' converted'); }
+    if (run.skipped) { parts.push(run.skipped + ' skipped'); }
+    if (run.failed) { parts.push(run.failed + ' failed'); }
+    var html = esc(parts.length ? parts.join(', ') + '.' : 'Nothing to do.');
+    if (run.failed) { html += ' <a href="#" data-action="showFailures">Show failures</a>'; }
+    if (run.batchId) { html += ' <a href="sys_batch_install_plan.do?sys_id=' + run.batchId + '" target="_blank">Batch install plan</a>'; }
+    setSummary(html, run.failed ? 'warning' : 'success');
     switchApplication('global', function() {
-        var btn = gel('btnPublish');
-        btn.innerHTML = 'Done';
-        btn.disabled = true;
-        showInfoMessage('Publishing complete. The application picker is back on Global. Refresh the page to publish more apps.');
+        loadApps(tab, function() {
+            updateControls();
+            if (tab === 'save') { loadSaveStates(); }
+        });
     });
 }
 
-function publishNext(sysIds, index) {
-    if (index >= sysIds.length) {
-        finishPublish();
+function newRun() {
+    return { published: 0, upgraded: 0, converted: 0, skipped: 0, failed: 0, batchId: '' };
+}
+
+// kind is 'dev' (store app to dev mode) or 'store' (dev app to store mode).
+function convertNext(kind, tab, rows, index, run, done) {
+    if (index >= rows.length) { done(); return; }
+    var row = rows[index];
+    var appId = row.sys_id;
+    function next() { convertNext(kind, tab, rows, index + 1, run, done); }
+    function fail(note) {
+        run.failed++;
+        setRowStatus(tab, appId, 'Failed', note);
+        next();
+    }
+    setRowStatus(tab, appId, 'Converting', '');
+
+    var ga = new GlideAjax('com.snc.apps.AppsAjaxProcessor');
+    ga.addParam('sysparm_name', 'start');
+    ga.addParam('sysparm_function', kind === 'dev' ? 'convertToDevelopmentApp' : 'convertToStoreApp');
+    ga.addParam('sysparm_sys_id', appId);
+    ga.addParam('sysparm_progress_name', kind === 'dev' ? 'Converting Store application' : 'Converting application');
+    ga.addParam('sysparm_ajax_processor', 'com.snc.apps.AppsAjaxProcessor');
+    ga.addParam('sysparm_scope', 'global');
+    ga.getXMLAnswer(function(answer) {
+        if (answer && answer.trim() !== '') {
+            pollTracker(answer.trim(), function() {
+                run.converted++;
+                setRowStatus(tab, appId, 'Converted', kind === 'dev' ? 'Now in dev mode' : 'Now in store mode');
+                next();
+            }, function(tracker) {
+                fail(tracker && tracker.message ? tracker.message : 'Conversion failed.');
+            });
+        } else {
+            fail('The conversion did not return a progress tracker.');
+        }
+    });
+}
+
+function convertStoreNext(rows, index, run, done) {
+    convertNext('dev', 'restore', rows, index, run, done);
+}
+
+function convertDevNext(rows, index, run, done) {
+    convertNext('store', 'save', rows, index, run, done);
+}
+
+/* ---------- After Clone: restore ---------- */
+
+function waitForBatch(res, onDone) {
+    var attempts = 0;
+    var finished = false;
+    var cancelTracker = pollTracker(res.trackerId, function() {}, function(tracker) {
+        if (finished) { return; }
+        finished = true;
+        clearInterval(timer);
+        onDone(false, tracker && tracker.message ? tracker.message : 'The upgrade tracker reported a failure.');
+    });
+    var timer = setInterval(function() {
+        if (finished) { return; }
+        attempts++;
+        callConsole('getBatchState', { sysparm_batch_id: res.batchId }, function(state) {
+            if (finished) { return; }
+            if (state.ok && state.state === 'installed') {
+                finished = true; clearInterval(timer); cancelTracker();
+                onDone(true, '');
+            } else if (state.ok && /^(failed|invalid|rolled_back|partial_install)$/.test(state.state)) {
+                finished = true; clearInterval(timer); cancelTracker();
+                onDone(false, 'Batch install ended as ' + state.stateLabel + '.');
+            } else if (attempts >= 360) {
+                finished = true; clearInterval(timer); cancelTracker();
+                onDone(false, 'Still running after 30 minutes. Check the batch install plan.');
+            }
+        });
+    }, 5000);
+}
+
+function onRestoreRun(mode) {
+    var rows = getCheckedRows('restore');
+    if (rows.length === 0) { return; }
+    var run = newRun();
+    var upRows = [];
+    var i;
+    if (mode !== 'convert') {
+        for (i = 0; i < rows.length; i++) {
+            if (rows[i].upgradeAvailable) { upRows.push(rows[i]); }
+        }
+    }
+    beginQueue();
+    for (i = 0; i < rows.length; i++) { setRowStatus('restore', rows[i].sys_id, 'Pending', ''); }
+
+    function convertPhase() {
+        if (mode === 'upgrade') { finishRestore(); return; }
+        loadApps('restore', function(ok) {
+            var todo = [];
+            for (var j = 0; j < rows.length; j++) {
+                var fresh = findApp('restore', rows[j].sys_id);
+                var st = BAC.status.restore[rows[j].sys_id];
+                if (st && st.label === 'Failed') { continue; }
+                if (fresh && fresh.convertible) {
+                    todo.push(fresh);
+                } else {
+                    run.skipped++;
+                    setRowStatus('restore', rows[j].sys_id, 'Skipped', 'Not eligible to convert to dev mode.');
+                }
+            }
+            convertStoreNext(todo, 0, run, finishRestore);
+        });
+    }
+    function finishRestore() { endQueue(run, 'restore'); }
+
+    if (upRows.length === 0) {
+        convertPhase();
         return;
     }
-
-    var appId = sysIds[index];
-    updateStatusRow('dev-status-list', appId, 'Publishing');
-    switchApplication(appId, function() {
-        publishApp(sysIds, index);
+    var ids = [];
+    for (i = 0; i < upRows.length; i++) { ids.push(upRows[i].sys_id); }
+    for (i = 0; i < upRows.length; i++) { setRowStatus('restore', upRows[i].sys_id, 'Upgrading', upRows[i].version + ' to ' + upRows[i].latest_version); }
+    callConsole('startUpgrade', { sysparm_sys_ids: ids.join(',') }, function(res) {
+        if (!res.ok || !res.batchId) {
+            for (var f = 0; f < upRows.length; f++) {
+                run.failed++;
+                setRowStatus('restore', upRows[f].sys_id, 'Failed', res.error || 'The upgrade did not start.');
+            }
+            finishRestore();
+            return;
+        }
+        run.batchId = res.batchId;
+        BAC.batchId = res.batchId;
+        waitForBatch(res, function(ok, message) {
+            for (var k = 0; k < upRows.length; k++) {
+                if (ok) {
+                    run.upgraded++;
+                    setRowStatus('restore', upRows[k].sys_id, 'Upgraded', 'Now at ' + upRows[k].latest_version, 'sys_batch_install_plan.do?sys_id=' + res.batchId);
+                } else {
+                    run.failed++;
+                    setRowStatus('restore', upRows[k].sys_id, 'Failed', message, 'sys_batch_install_plan.do?sys_id=' + res.batchId);
+                }
+            }
+            if (ok) { convertPhase(); } else { finishRestore(); }
+        });
     });
 }
 
-function publishApp(sysIds, index) {
-    var appId = sysIds[index];
+/* ---------- Before Clone: publish and convert to store ---------- */
 
+function onPublishAll() {
+    var rows = getCheckedRows('save');
+    if (rows.length === 0) { return; }
+    var run = newRun();
+    beginQueue();
+    for (var i = 0; i < rows.length; i++) { setRowStatus('save', rows[i].sys_id, 'Pending', ''); }
+    publishNext(rows, 0, run);
+}
+
+function publishNext(rows, index, run) {
+    if (index >= rows.length) {
+        endQueue(run, 'save');
+        return;
+    }
+    var appId = rows[index].sys_id;
+    setRowStatus('save', appId, 'Publishing', '');
+    switchApplication(appId, function() {
+        publishApp(rows, index, run);
+    });
+}
+
+function publishApp(rows, index, run) {
+    var appId = rows[index].sys_id;
     var ga = new GlideAjax('BulkPublishMyCompanyApps');
     ga.addParam('sysparm_name', 'getNextPublishVersion');
     ga.addParam('sysparm_sys_id', appId);
@@ -530,27 +783,22 @@ function publishApp(sysIds, index) {
             info = null;
         }
         if (!info || !info.ok) {
-            var reason = info && info.error ? info.error : getAppNameFromCheckbox(appId, 'dev-app-checkbox') + ': could not determine the next version.';
-            updateStatusRow('dev-status-list', appId, 'Failed');
-            setStatusNote('dev-status-list', appId, reason);
-            showErrorMessage(reason);
-            publishNext(sysIds, index + 1);
+            run.failed++;
+            setRowStatus('save', appId, 'Failed', info && info.error ? info.error : rows[index].name + ': could not determine the next version.');
+            publishNext(rows, index + 1, run);
             return;
         }
-        setStatusNote('dev-status-list', appId, 'v' + info.currentVersion + ' -> v' + info.nextVersion);
-        startPublish(appId, info, function() {
-            publishNext(sysIds, index + 1);
+        startPublish(appId, info, run, function() {
+            publishNext(rows, index + 1, run);
         });
     });
 }
 
-function startPublish(appId, info, onDone) {
+function startPublish(appId, info, run, onDone) {
     function fail(detail) {
-        var msg = info.appName + ': publish failed. Version on record: ' + info.currentVersion +
-            '. Last attempted version: ' + info.nextVersion + '.' + (detail ? ' ' + detail : '');
-        updateStatusRow('dev-status-list', appId, 'Failed');
-        setStatusNote('dev-status-list', appId, msg);
-        showErrorMessage(msg);
+        run.failed++;
+        setRowStatus('save', appId, 'Failed', info.appName + ': publish failed. Version on record: ' + info.currentVersion +
+            '. Last attempted version: ' + info.nextVersion + '.' + (detail ? ' ' + detail : ''));
         onDone();
     }
 
@@ -569,10 +817,17 @@ function startPublish(appId, info, onDone) {
         var trackerId = answer ? answer.trim() : '';
         if (/^[0-9a-f]{32}$/i.test(trackerId)) {
             pollTracker(trackerId, function() {
-                updateStatusRow('dev-status-list', appId, 'Published');
-                setStatusNote('dev-status-list', appId, 'Published v' + info.nextVersion + ' (was v' + info.currentVersion + ')');
-                disableCheckboxByValue('dev-app-checkbox', appId);
-                onDone();
+                run.published++;
+                setRowStatus('save', appId, 'Published', 'Published v' + info.nextVersion + ' (was v' + info.currentVersion + ')');
+                BAC.saveState[appId] = { saveStatus: 'saved', nextVersion: '', currentVersion: info.nextVersion };
+                var app = findApp('save', appId);
+                if (app) { app.version = info.nextVersion; }
+                var cell = byId('save-' + appId);
+                if (cell && app) { cell.innerHTML = saveCellHtml(app); }
+                renderBanner();
+                callConsole('recordPublish', { sysparm_sys_id: appId }, function() {
+                    onDone();
+                });
             }, function(tracker) {
                 fail(tracker && tracker.message ? 'Tracker said: ' + tracker.message : '');
             });
@@ -581,6 +836,192 @@ function startPublish(appId, info, onDone) {
         }
     });
 }
+
+function onConvertStore() {
+    var rows = getCheckedRows('save');
+    var ok = [];
+    var skipped = [];
+    for (var i = 0; i < rows.length; i++) {
+        var s = BAC.saveState[rows[i].sys_id];
+        if (s && s.saveStatus === 'saved') { ok.push(rows[i]); } else { skipped.push(rows[i]); }
+    }
+    if (ok.length === 0) { return; }
+    var msg = 'Convert ' + ok.length + ' app(s) to store mode?';
+    if (skipped.length > 0) {
+        var names = [];
+        for (var n = 0; n < skipped.length; n++) { names.push(skipped[n].name); }
+        msg += '\\n\\nSkipped because they are not saved in App Repo (publish them first so they can be restored by upgrading after conversion):\\n' + names.join('\\n');
+    }
+    if (!window.confirm(msg)) { return; }
+    var run = newRun();
+    beginQueue();
+    for (var s1 = 0; s1 < skipped.length; s1++) {
+        run.skipped++;
+        setRowStatus('save', skipped[s1].sys_id, 'Skipped', 'Publish this app first so it can be restored by upgrading after conversion.');
+    }
+    for (var p = 0; p < ok.length; p++) { setRowStatus('save', ok[p].sys_id, 'Pending', ''); }
+    convertDevNext(ok, 0, run, function() { endQueue(run, 'save'); });
+}
+
+/* ---------- saved list (Phase 3) ---------- */
+
+function onLoadSaved() {
+    callConsole('getSavedList', {}, function(res) {
+        if (!res.ok) { setSummary('Could not load the saved list: ' + esc(res.error || ''), 'danger'); return; }
+        applySavedList(res.scopes || []);
+    });
+}
+
+function applySavedList(scopes) {
+    var set = {};
+    for (var i = 0; i < scopes.length; i++) { set[scopes[i]] = true; }
+    for (var j = 0; j < BAC.apps.restore.length; j++) {
+        var app = BAC.apps.restore[j];
+        BAC.checked.restore[app.sys_id] = !!set[app.scope];
+    }
+    BAC.touched.restore = true;
+    renderTable('restore');
+}
+
+function onSaveSelection() {
+    var rows = getCheckedRows('restore');
+    var scopes = [];
+    for (var i = 0; i < rows.length; i++) { scopes.push(rows[i].scope); }
+    callConsole('saveSavedList', { sysparm_scopes: scopes.join(',') }, function(res) {
+        setSummary(res.ok ? 'Saved ' + res.scopes.length + ' scopes to bulk_convert_store_app.convertible_apps.' : 'Could not save the list: ' + esc(res.error || ''), res.ok ? 'success' : 'danger');
+    });
+}
+
+/* ---------- events ---------- */
+
+function setTab(tab) {
+    BAC.tab = tab;
+    try { window.localStorage.setItem('bulk_app_clone_tab', tab); } catch (e) { /* storage may be blocked */ }
+    updateControls();
+    renderPrereqs();
+    if (!BAC.loaded[tab]) {
+        loadApps(tab);
+    } else if (tab === 'save') {
+        loadSaveStates();
+    }
+}
+
+function onClick(ev) {
+    var target = ev.target || ev.srcElement;
+    var link = target.closest ? target.closest('[data-tab],[data-action]') : null;
+    if (!link) { return; }
+    var action = link.getAttribute('data-action');
+    var tabName = link.getAttribute('data-tab');
+    if (tabName && !action && link.tagName === 'A') {
+        ev.preventDefault();
+        if (!BAC.busy) { setTab(tabName); }
+        return;
+    }
+    if (!action || link.disabled) { return; }
+    ev.preventDefault();
+    if (action === 'restoreAll') { onRestoreRun('both'); }
+    else if (action === 'upgradeOnly') { onRestoreRun('upgrade'); }
+    else if (action === 'convertDevOnly') { onRestoreRun('convert'); }
+    else if (action === 'publishAll') { onPublishAll(); }
+    else if (action === 'convertStore') { onConvertStore(); }
+    else if (action === 'loadSaved') { if (!BAC.busy) { onLoadSaved(); } }
+    else if (action === 'saveSelection') { if (!BAC.busy) { onSaveSelection(); } }
+    else if (action === 'recheck') { if (!BAC.busy) { delete BAC.saveState[link.getAttribute('data-id')]; loadSaveStates(); } }
+    else if (action === 'recheckAll') {
+        if (!BAC.busy) {
+            for (var r = 0; r < BAC.apps.save.length; r++) {
+                var st = BAC.saveState[BAC.apps.save[r].sys_id];
+                if (st && st.saveStatus === 'check_failed') { delete BAC.saveState[BAC.apps.save[r].sys_id]; }
+            }
+            loadSaveStates();
+        }
+    }
+    else if (action === 'reloadSave') { if (!BAC.busy) { loadApps('save'); } }
+    else if (action === 'showFailures') {
+        BAC.filters[BAC.tab].failed = true;
+        renderTable(BAC.tab);
+    }
+}
+
+function onChange(ev) {
+    var target = ev.target || ev.srcElement;
+    var cls = target.className || '';
+    var tab = target.getAttribute('data-tab');
+    if (/bac-all/.test(cls)) {
+        var vis = visibleApps(tab);
+        for (var i = 0; i < vis.length; i++) {
+            if (isRowSelectable(tab, vis[i])) { BAC.checked[tab][vis[i].sys_id] = target.checked; }
+        }
+        BAC.touched[tab] = true;
+        renderTable(tab);
+    } else if (/bac-check/.test(cls)) {
+        BAC.checked[tab][target.getAttribute('data-id')] = target.checked;
+        BAC.touched[tab] = true;
+        updateControls();
+    } else if (/bac-chip/.test(cls)) {
+        BAC.filters[tab][target.getAttribute('data-chip')] = target.checked;
+        renderTable(tab);
+        if (tab === 'save') { renderBanner(); }
+    }
+}
+
+function onInput(ev) {
+    var target = ev.target || ev.srcElement;
+    if (/bac-search/.test(target.className || '')) {
+        var tab = target.getAttribute('data-tab');
+        BAC.filters[tab].q = target.value;
+        renderTable(tab);
+    }
+}
+
+function getUrlParam(name) {
+    var m = new RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+    return m ? decodeURIComponent(m[1]) : '';
+}
+
+function initPage() {
+    var root = byId('bac-root');
+    if (!root) { return; }
+    byId('pane-save').innerHTML = paneHtml('save');
+    byId('pane-restore').innerHTML = paneHtml('restore');
+    root.addEventListener('click', onClick);
+    root.addEventListener('change', onChange);
+    root.addEventListener('input', onInput);
+
+    var tab = getUrlParam('sysparm_tab');
+    if (tab !== 'save' && tab !== 'restore') {
+        tab = '';
+        try { tab = window.localStorage.getItem('bulk_app_clone_tab') || ''; } catch (e) { tab = ''; }
+        if (tab !== 'save' && tab !== 'restore') { tab = 'restore'; }
+    }
+    BAC.tab = tab;
+    updateControls();
+
+    callConsole('getPrereqs', {}, function(p) {
+        if (!p.ok) {
+            setSummary('Could not check prerequisites: ' + esc(p.error || 'unknown error'), 'danger');
+            return;
+        }
+        BAC.prereq = p;
+        function start() {
+            renderPrereqs();
+            loadApps(BAC.tab, function(ok) {
+                if (ok && BAC.tab === 'restore' && getUrlParam('sysparm_saved') === 'true') { onLoadSaved(); }
+            });
+        }
+        if (!p.isGlobal) {
+            switchApplication('global', function() {
+                p.switched = true;
+                showInfoMessage('Your application picker was switched to Global so this page can convert and publish apps.');
+                start();
+            });
+        } else {
+            start();
+        }
+    });
+}
+
+addLoadEvent(initPage);
 `,
     $meta: {
         useEsLatest: true,

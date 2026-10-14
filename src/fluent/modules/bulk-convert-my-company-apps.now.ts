@@ -6,7 +6,7 @@ Record({
     data: {
         active: true,
         application: '9e329333c33220001875addbdfba8f56',
-        hint: 'Bulk convert store apps to development mode.',
+        hint: 'Before a clone: publish dev apps to My Application Repository. After a clone: upgrade and convert store apps to development mode.',
         link_type: 'DIRECT',
         mobile_title: 'Bulk Convert Store Apps',
         mobile_view_name: 'Mobile',
@@ -17,7 +17,7 @@ Record({
         roles: ['admin'],
         sys_domain: 'global',
         sys_domain_path: '/',
-        title: 'Bulk Convert My Company Apps',
+        title: 'Bulk App Clone Assistant',
         uncancelable: false,
     },
 })

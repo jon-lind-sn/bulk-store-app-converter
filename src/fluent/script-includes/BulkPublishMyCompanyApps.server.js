@@ -38,7 +38,8 @@ BulkPublishMyCompanyApps.prototype = Object.extendsObject(global.AbstractAjaxPro
      */
     function findNextPublishableVersion(appId, localVersion) {
         var obtainer = new sn_appauthor.ScopedAppVendorInfoObtainer();
-        var candidate = minorBump(normalize(localVersion));
+        // A dev app that was converted to store mode and back has no real version. Start at 1.0.0 instead of bumping.
+        var candidate = isConvertedVersion(localVersion) ? [1, 0, 0] : minorBump(normalize(localVersion));
         var lastAttempted = '';
         for (var i = 0; i < MAX_VERSION_ATTEMPTS; i++) {
             var candidateStr = toVersionString(candidate);
@@ -83,12 +84,6 @@ BulkPublishMyCompanyApps.prototype = Object.extendsObject(global.AbstractAjaxPro
         result.appName = appGR.getValue('name') || appId;
         result.currentVersion = appGR.getValue('version') || '';
 
-        if (isConvertedVersion(result.currentVersion)) {
-            result.isConverted = true;
-            result.error = result.appName + ': version "' + result.currentVersion + '" contains CONVERTED. Set the version manually before publishing.';
-            return result;
-        }
-
         // Same gate as the stock "Publish to My Application Repository" UI action. The page switches the application
         // picker to this app first, because both checks depend on it.
         var canWrite = appGR.canWrite();
@@ -123,6 +118,9 @@ BulkPublishMyCompanyApps.prototype = Object.extendsObject(global.AbstractAjaxPro
          */
         getNextPublishVersion: function() {
             var appId = '';
+            if (!gs.hasRole('admin')) {
+                return JSON.stringify({ ok: false, error: 'admin role required' });
+            }
             try {
                 appId = this.getParameter('sysparm_sys_id');
                 return JSON.stringify(getNextPublishVersion(appId));
@@ -130,6 +128,17 @@ BulkPublishMyCompanyApps.prototype = Object.extendsObject(global.AbstractAjaxPro
                 gs.error('BulkPublishMyCompanyApps.getNextPublishVersion failed for ' + appId + ': ' + e);
                 return JSON.stringify({ ok: false, error: 'Server error while finding the next version for ' + appId + ': ' + e });
             }
+        },
+
+        /**
+         * Server side helper for BulkAppConsole. Returns { version, lastAttempted, repoError }.
+         * Not meant for GlideAjax (it takes arguments), and guarded the same way as the ajax methods.
+         */
+        findNextPublishableVersion: function(appId, localVersion) {
+            if (!gs.hasRole('admin')) {
+                return { version: '', repoError: 'admin role required' };
+            }
+            return findNextPublishableVersion(appId, localVersion);
         },
 
         type: 'BulkPublishMyCompanyApps'

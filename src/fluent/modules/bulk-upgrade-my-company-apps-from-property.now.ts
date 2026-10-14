@@ -14,6 +14,7 @@ Record({
         override_menu_roles: false,
         query: '(new global.BulkUpgradeMyCompanyApps()).upgradeSavedApps();',
         require_confirmation: true,
+        roles: ['admin'],
         sys_domain: 'global',
         sys_domain_path: '/',
         title: 'Bulk Upgrade My Company Apps from Property',

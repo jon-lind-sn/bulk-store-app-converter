@@ -23,8 +23,6 @@ This app provides a single UI page with two side-by-side panels for bidirectiona
 
 - **Right Panel — "Development Mode Apps"**: Lists custom-scoped development applications eligible to be converted back to store/repo mode. Uses `sn_app_api.AppStoreAPI.canConvertSysApp()` as the eligibility filter.
 
-> Missing apps in the left hand panel? Make sure that `sn_appauthor.all_company_keys` system property has your company app key, e.g. for `x_snc` it is `snc`. Contact support to fix this if any keys are missing or use a script like this one https://www.servicenow.com/community/servicenow-ide-sdk-and-fluent/now-sdk-amp-cli-sn-appauthor-all-company-keys-issue-resolution/m-p/3525707
-
 ![Bulk Store App Converter screenshot](bulk-store-app-converter.jpg)
 
 The convert UI handles bidirectional app mode conversion: store apps can be converted to development mode for customization, and development apps can be converted back to store/repo mode for distribution. The interface uses client-side Ajax (`com.snc.apps.AppsAjaxProcessor`) because the underlying conversion APIs aren't directly callable from the server—the client-side approach was the only reliable way to drive bulk conversions.

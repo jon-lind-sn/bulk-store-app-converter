@@ -29,6 +29,14 @@ declare global {
                         table: 'sys_module'
                         id: '5d50fcfe27094e1c9d11f4bee5507bec'
                     }
+                    'bulk-app-console': {
+                        table: 'sys_script_include'
+                        id: 'a0b9328e4d2b48e890224089b908d683'
+                    }
+                    'bulk-convert-store-app-publish-log': {
+                        table: 'sys_properties'
+                        id: 'feac1a896aa94524b6f9264722e899f9'
+                    }
                     'bulk-publish-my-company-apps': {
                         table: 'sys_script_include'
                         id: 'a596bcf5023642be80f89bfd1870e524'
@@ -88,6 +96,14 @@ declare global {
                             claim_owner_scope: '3b04bd443371c7d02e49a94a7e5c7bb3'
                             previous_claim_scope: '3b04bd443371c7d02e49a94a7e5c7bb3'
                             metadata_update_name: 'sys_app_module_0733e5a91a7247b39c8d2b650f060a31'
+                        }
+                    },
+                    {
+                        table: 'sys_es_latest_script'
+                        id: 'bdbc75d241ee45998e086369ba67c3d0'
+                        key: {
+                            id: 'a0b9328e4d2b48e890224089b908d683'
+                            table: 'sys_script_include'
                         }
                     },
                     {
