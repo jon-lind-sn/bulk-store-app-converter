@@ -157,7 +157,10 @@ function saveNote(s) {
         return 'Never published to the App Repo.';
     }
     if (s.saveStatus === 'unpublished_version') {
-        return 'Version ' + s.currentVersion + ' is newer than App Repo ' + (s.repoVersion || 'latest') + '.';
+        if (s.isConverted) {
+            return 'A conversion reset the version to ' + s.currentVersion + '. ' + (s.repoVersion ? 'App Repo has ' + s.repoVersion + '.' : 'The App Repo has an earlier version.');
+        }
+        return 'Version ' + s.currentVersion + (s.repoVersion ? ' is newer than App Repo ' + s.repoVersion + '.' : ' is not in the App Repo yet.');
     }
     if (s.saveStatus === 'changed') {
         return 'Changed ' + shortDate(s.lastChanged) + ', published ' + shortDate(s.lastPublished) + '.';
@@ -198,6 +201,37 @@ function setSummary(html, kind) {
 }
 
 /* ---------- server calls ---------- */
+
+// Same App Repo sync My Company Applications runs when it opens, so store apps get their latest_version. Always calls done.
+function syncAppRepo(done) {
+    var container = byId('table-restore');
+    if (container) { container.innerHTML = '<p class="text-muted"><em>Checking the App Repo for new versions...</em></p>'; }
+    function get(type, extra, cb) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'sn_appclient_api_v1.do?app_request_type=' + type + extra + '&uniq_param=' + new Date().getTime() + '&sysparm_ck=' + g_ck);
+        xhr.setRequestHeader('Accept', 'application/json');
+        xhr.setRequestHeader('X-UserToken', g_ck);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState !== 4) { return; }
+            var res = null;
+            try { res = JSON.parse(xhr.responseText); } catch (e) { res = null; }
+            cb(res);
+        };
+        xhr.send();
+    }
+    get('list_apps_versions', '&shared_internally=true&isFirstLoad=true', function(res) {
+        var trackerId = res && res.storetrackerId;
+        if (!trackerId) { done(); return; }
+        var attempts = 0;
+        (function poll() {
+            get('get_store_sync_status', '&trackerId=' + trackerId, function(st) {
+                attempts++;
+                if (!st || st.isComplete || attempts >= 60) { done(); return; }
+                setTimeout(poll, 2000);
+            });
+        })();
+    });
+}
 
 function callConsole(name, params, cb) {
     var ga = new GlideAjax('BulkAppConsole');
@@ -328,7 +362,7 @@ function isAtRisk(app) {
 function isVisible(tab, app) {
     var f = BAC.filters[tab];
     if (f.q) {
-        var hay = (app.name + ' ' + app.scope).toLowerCase();
+        var hay = (app.name + ' ' + app.scope + ' ' + (app.version || '')).toLowerCase();
         if (hay.indexOf(f.q.toLowerCase()) === -1) { return false; }
     }
     if (f.failed) {
@@ -559,8 +593,7 @@ function updateControls() {
     setButton('btnPublishAll', !saveMsg, saveMsg);
     var anySaved = false;
     for (var i = 0; i < saveSel.length; i++) {
-        var s = BAC.saveState[saveSel[i].sys_id];
-        if (s && s.saveStatus === 'saved') { anySaved = true; }
+        if (canConvertToStore(saveSel[i])) { anySaved = true; }
     }
     setButton('btnConvertStore', !saveMsg && anySaved, saveMsg || 'Publish the checked apps first so they can be restored by upgrading after conversion.');
     setButton('btnLoadSaved', !blocked, blocked);
@@ -629,6 +662,12 @@ function loadApps(tab, done) {
             fresh[id] = true;
             if (BAC.checked[tab][id] === undefined) {
                 BAC.checked[tab][id] = true;
+            }
+        }
+        if (tab === 'save') {
+            var prev = BAC.apps.save;
+            for (var q = 0; q < prev.length; q++) {
+                if (!fresh[prev[q].sys_id]) { delete BAC.saveState[prev[q].sys_id]; }
             }
         }
         // Apps a run converted to dev mode leave the store app list. Keep them on screen with their result until the page is reloaded.
@@ -875,7 +914,11 @@ function onRestoreRun(mode) {
                 var fresh = findApp('restore', rows[j].sys_id);
                 var st = BAC.status.restore[rows[j].sys_id];
                 if (st && st.label === 'Failed') { continue; }
-                if (fresh && fresh.convertible) {
+                if (mode === 'both' && fresh && fresh.isConverted && !fresh.restorable) {
+                    // Converting now would keep the 0.0.0-CONVERTED copy instead of the App Repo version.
+                    run.skipped++;
+                    setRowStatus('restore', rows[j].sys_id, 'Skipped', 'No App Repo version found to upgrade to. Use Convert to Dev to convert it as it is.');
+                } else if (fresh && fresh.convertible) {
                     todo.push(fresh);
                 } else {
                     run.skipped++;
@@ -1016,13 +1059,20 @@ function startPublish(appId, info, run, onDone) {
     });
 }
 
+// Published apps, and apps whose version a conversion reset while the App Repo still has them. Both can be restored by upgrading.
+function canConvertToStore(app) {
+    var s = BAC.saveState[app.sys_id];
+    if (!s) { return false; }
+    return s.saveStatus === 'saved' || (s.isConverted && !!s.repoVersion);
+}
+
 function onConvertStore() {
     var rows = getCheckedRows('save');
     var ok = [];
     var skipped = [];
     for (var i = 0; i < rows.length; i++) {
         var s = BAC.saveState[rows[i].sys_id];
-        if (s && s.saveStatus === 'saved') { ok.push(rows[i]); } else { skipped.push(rows[i]); }
+        if (canConvertToStore(rows[i])) { ok.push(rows[i]); } else { skipped.push(rows[i]); }
     }
     if (ok.length === 0) { return; }
     var msg = 'Convert ' + ok.length + ' app(s) to store mode?';
@@ -1078,10 +1128,13 @@ function setTab(tab) {
     try { window.localStorage.setItem('bulk_app_clone_tab', tab); } catch (e) { /* storage may be blocked */ }
     updateControls();
     renderPrereqs();
-    if (!BAC.loaded[tab]) {
+    if (BAC.busy) { return; }
+    // Converting moves apps between the two lists, so reload the list every time a tab opens.
+    if (tab === 'restore') {
+        BAC.status.restore = {};
+        syncAppRepo(function() { loadApps('restore'); });
+    } else {
         loadApps(tab);
-    } else if (tab === 'save') {
-        loadSaveStates();
     }
 }
 
@@ -1197,9 +1250,12 @@ function initPage() {
         BAC.prereq = p;
         function start() {
             renderPrereqs();
-            loadApps(BAC.tab, function(ok) {
-                if (ok && BAC.tab === 'restore' && getUrlParam('sysparm_saved') === 'true') { onLoadSaved(); }
-            });
+            function load() {
+                loadApps(BAC.tab, function(ok) {
+                    if (ok && BAC.tab === 'restore' && getUrlParam('sysparm_saved') === 'true') { onLoadSaved(); }
+                });
+            }
+            if (BAC.tab === 'restore') { syncAppRepo(load); } else { load(); }
         }
         if (!p.isGlobal) {
             switchApplication('global', function() {

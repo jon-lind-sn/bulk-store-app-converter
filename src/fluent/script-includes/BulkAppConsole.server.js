@@ -145,10 +145,11 @@ BulkAppConsole.prototype = Object.extendsObject(global.AbstractAjaxProcessor, (f
      * Finds App Repo's latest version of an app with verify_version probes. verify_version accepts a version only when it is
      * above the repo's latest, so the latest is the highest version it rejects. Searches major, then minor, then patch.
      * Only called when the repo has some version below the current one. Returns '' if the search does not settle.
+     * A converted version (0.0.0-CONVERTED) says nothing about the repo, so the search then has no upper bound.
      */
     function findRepoLatest(obtainer, appId, currentVersion) {
         var cur = String(currentVersion || '').split('.');
-        var curParts = [parseInt(cur[0], 10) || 0, parseInt(cur[1], 10) || 0, parseInt(cur[2], 10) || 0];
+        var curParts = isConvertedVersion(currentVersion) ? [-1, -1, -1] : [parseInt(cur[0], 10) || 0, parseInt(cur[1], 10) || 0, parseInt(cur[2], 10) || 0];
         var calls = 0;
         function rejected(parts) {
             calls++;
@@ -191,6 +192,7 @@ BulkAppConsole.prototype = Object.extendsObject(global.AbstractAjaxProcessor, (f
             return result;
         }
         result.currentVersion = appGR.getValue('version') || '';
+        result.isConverted = isConvertedVersion(result.currentVersion);
         var scope = appGR.getValue('scope') || '';
         var step = 'start';
         var startedAt = new GlideDateTime();
