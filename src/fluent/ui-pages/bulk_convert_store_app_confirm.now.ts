@@ -56,8 +56,9 @@ var BAC = {
     touched: { save: false, restore: false },
     status: { save: {}, restore: {} },
     saveState: {},
+    checkStart: {},
     filters: {
-        save: { q: '', needs: false, failed: false },
+        save: { q: '', statuses: {}, failed: false },
         restore: { q: '', upgrade: false, failed: false }
     },
     prereq: null,
@@ -87,6 +88,42 @@ var SAVE_LABELS = {
     'check_failed': ['label-default', 'Check failed']
 };
 
+var SAVE_FILTER_ORDER = ['changed', 'unpublished_version', 'not_in_repo', 'in_repo', 'check_failed', 'saved'];
+
+// One checkbox per save status. With none checked every app shows.
+function saveChipsHtml() {
+    var html = '';
+    for (var i = 0; i < SAVE_FILTER_ORDER.length; i++) {
+        var key = SAVE_FILTER_ORDER[i];
+        html += '<label class="checkbox-inline" id="chip-' + key + '"' + (key === 'check_failed' ? ' style="display: none;"' : '') + '><input type="checkbox" class="bac-chip" data-tab="save" data-chip="status" data-status="' + key + '"/> ' +
+            esc(SAVE_LABELS[key][1]) + ' <span class="text-muted" id="chipcount-' + key + '"></span></label> ';
+    }
+    return html;
+}
+
+function updateSaveChipCounts() {
+    var counts = {};
+    for (var i = 0; i < BAC.apps.save.length; i++) {
+        var st = BAC.saveState[BAC.apps.save[i].sys_id];
+        if (st) { counts[st.saveStatus] = (counts[st.saveStatus] || 0) + 1; }
+    }
+    for (var j = 0; j < SAVE_FILTER_ORDER.length; j++) {
+        var el = byId('chipcount-' + SAVE_FILTER_ORDER[j]);
+        if (el) { el.textContent = '(' + (counts[SAVE_FILTER_ORDER[j]] || 0) + ')'; }
+    }
+    // Check failed only shows while at least one app is in that state.
+    var failChip = byId('chip-check_failed');
+    if (failChip) {
+        failChip.style.display = counts.check_failed ? '' : 'none';
+        if (!counts.check_failed && BAC.filters.save.statuses.check_failed) {
+            BAC.filters.save.statuses.check_failed = false;
+            var box = failChip.getElementsByTagName('input')[0];
+            if (box) { box.checked = false; }
+            renderTable('save');
+        }
+    }
+}
+
 function shortDate(dt) {
     return dt ? String(dt).substring(0, 10) : '';
 }
@@ -96,7 +133,7 @@ function saveNote(s) {
         return 'No publish record on this instance.' + (s.lastChanged ? ' Last change ' + shortDate(s.lastChanged) + '.' : '');
     }
     if (s.saveStatus === 'not_in_repo') {
-        return 'Never published' + (s.repoHost ? ' to ' + s.repoHost : '') + '.';
+        return 'Never published to the App Repo.';
     }
     if (s.saveStatus === 'unpublished_version') {
         return 'Version ' + s.currentVersion + ' is newer than App Repo ' + (s.repoVersion || 'latest') + '.';
@@ -163,7 +200,10 @@ function callConsole(name, params, cb) {
         } catch (err) {
             data = null;
         }
-        if (!data) { data = { ok: false, error: 'No valid response from ' + name + '.' }; }
+        if (!data) {
+            data = { ok: false, error: 'No valid response from ' + name + '. The server returned ' + (answer === null || answer === undefined ? 'no answer (the request failed or timed out)' : 'a response that is not JSON') +
+                '. Raw answer: ' + (answer === null || answer === undefined ? 'none' : String(answer).substring(0, 500)) };
+        }
         cb(data);
     });
 }
@@ -261,7 +301,14 @@ function isVisible(tab, app) {
     if (tab === 'restore') {
         if (f.upgrade && !app.upgradeAvailable) { return false; }
     } else {
-        if (f.needs && !isAtRisk(app)) { return false; }
+        var anyStatus = false;
+        for (var k in f.statuses) {
+            if (f.statuses[k]) { anyStatus = true; }
+        }
+        if (anyStatus) {
+            var ss = BAC.saveState[app.sys_id];
+            if (!ss || !f.statuses[ss.saveStatus]) { return false; }
+        }
     }
     return true;
 }
@@ -309,6 +356,27 @@ function installedHtml(tab, app) {
     return html;
 }
 
+function pad2(n) {
+    return (n < 10 ? '0' : '') + n;
+}
+
+// Browser local time as 'yyyy-MM-dd HH:mm:ss', shifted by a number of seconds.
+function localStamp(date, shiftSeconds) {
+    var d = new Date(date.getTime() + shiftSeconds * 1000);
+    return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds());
+}
+
+// Error level System Log entries created between two 'yyyy-MM-dd HH:mm:ss' stamps (user time zone).
+function errorLogUrl(from, to) {
+    var f = from.split(' ');
+    var t = to.split(' ');
+    var q = 'sys_created_onONToday@javascript:gs.beginningOfToday()@javascript:gs.endOfToday()' +
+        '^level=2' +
+        "^sys_created_on<=javascript:gs.dateGenerate('" + t[0] + "','" + t[1] + "')" +
+        "^sys_created_on>=javascript:gs.dateGenerate('" + f[0] + "','" + f[1] + "')";
+    return 'syslog_list.do?sysparm_query=' + encodeURIComponent(q) + '&sysparm_first_row=1&sysparm_view=';
+}
+
 function saveCellHtml(app) {
     var s = BAC.saveState[app.sys_id];
     if (!s) { return '<span class="text-muted">Checking...</span>'; }
@@ -319,13 +387,15 @@ function saveCellHtml(app) {
     var def = SAVE_LABELS[s.saveStatus] || SAVE_LABELS.check_failed;
     var note = saveNote(s);
     var action = '';
+    var logLink = '';
     if (s.saveStatus === 'check_failed') {
+        logLink = s.logFrom && s.logTo ? '<div><a href="' + errorLogUrl(s.logFrom, s.logTo) + '" target="_blank">Error logs for this check</a></div>' : '';
         action = s.code === 'not_dev'
             ? ' <a href="#" data-action="reloadSave">Reload list</a>'
             : ' <a href="#" data-action="recheck" data-id="' + app.sys_id + '">Retry check</a>';
     }
     return '<span class="label ' + def[0] + '">' + def[1] + '</span>' +
-        (note ? '<div class="' + (s.saveStatus === 'check_failed' ? 'text-danger' : 'text-muted') + '" style="font-size: 90%;">' + esc(note) + action + '</div>' : '') + link;
+        (note ? '<div class="' + (s.saveStatus === 'check_failed' ? 'text-danger' : 'text-muted') + '" style="font-size: 90%;' + (s.saveStatus === 'check_failed' ? ' white-space: pre-wrap;' : '') + '">' + esc(note) + action + '</div>' : '') + logLink + link;
 }
 
 function rowHtml(tab, app) {
@@ -380,6 +450,7 @@ function renderBanner() {
     if (!el) { return; }
     var list = BAC.apps.save;
     if (!BAC.loaded.save) { el.style.display = 'none'; return; }
+    updateSaveChipCounts();
     var pending = 0, risk = 0, hiddenRisk = 0, failed = 0;
     for (var i = 0; i < list.length; i++) {
         var app = list[i];
@@ -396,7 +467,7 @@ function renderBanner() {
         el.textContent = 'Checking save status... ' + (list.length - pending) + ' of ' + list.length + ' apps checked.';
     } else if (risk > 0) {
         el.className = 'alert alert-warning';
-        el.innerHTML = esc(risk + (risk === 1 ? ' app has' : ' apps have') + ' work that is not in App Repo. Publish ' + (risk === 1 ? 'it' : 'them') + ' before you clone.' +
+        el.innerHTML = esc(risk + (risk === 1 ? ' app may have' : ' apps may have') + ' work that has not been saved yet and ' + (risk === 1 ? 'is a good candidate' : 'are good candidates') + ' for publishing before cloning.' +
             (hiddenRisk > 0 ? ' (' + hiddenRisk + ' hidden by filters)' : '')) +
             (failed > 0 ? '<div>' + esc(failed + (failed === 1 ? ' app' : ' apps') + ' could not be checked and ' + (failed === 1 ? 'is' : 'are') + ' selected so ' + (failed === 1 ? 'it is' : 'they are') + ' published.') +
                 ' <a href="#" data-action="recheckAll">Retry all checks</a></div>' : '');
@@ -479,7 +550,7 @@ function paneHtml(tab) {
             '<button type="button" id="btnPublishAll" class="btn btn-primary" data-action="publishAll">Publish</button> ' +
             '<button type="button" id="btnConvertStore" class="btn btn-default btn-sm" data-action="convertStore">Convert to Store</button> ' +
             '<input type="text" class="bac-search input-sm" data-tab="save" placeholder="Search apps"/> ' +
-            '<label class="checkbox-inline"><input type="checkbox" class="bac-chip" data-tab="save" data-chip="needs"/> Needs publish</label> ' +
+            saveChipsHtml() +
             '<span id="count-save" class="text-muted"></span>' +
             '</div>';
     }
@@ -511,7 +582,7 @@ function loadApps(tab, done) {
     });
 }
 
-// Resumable, one app at a time. Each check needs the application picker on that app, and always ends back on Global.
+// Resumable, one app at a time. The checks do not depend on the application picker, so it is never switched here (switching shows an update set toast per app).
 function loadSaveStates() {
     if (BAC.loader || BAC.busy) { return; }
     var pending = [];
@@ -527,12 +598,10 @@ function loadSaveStates() {
 
 function loadSaveStateNext(pending, index) {
     if (index >= pending.length || BAC.tab !== 'save' || BAC.busy) {
-        switchApplication('global', function() {
-            BAC.loader = false;
-            if (index >= pending.length) { applyDefaultSaveSelection(); }
-            renderBanner();
-            updateControls();
-        });
+        BAC.loader = false;
+        if (index >= pending.length) { applyDefaultSaveSelection(); }
+        renderBanner();
+        updateControls();
         return;
     }
     var app = pending[index];
@@ -548,16 +617,21 @@ function loadSaveStateNext(pending, index) {
 
 // One automatic retry before a row is marked Check failed.
 function checkPublishState(app, attemptsLeft, done) {
-    switchApplication(app.sys_id, function() {
-        callConsole('getPublishState', { sysparm_sys_id: app.sys_id }, function(res) {
-            var failed = !res.ok || res.saveStatus === 'check_failed';
-            if (failed && attemptsLeft > 0 && res.code !== 'not_dev') {
-                checkPublishState(app, attemptsLeft - 1, done);
-                return;
-            }
-            BAC.saveState[app.sys_id] = res.ok ? res : { saveStatus: 'check_failed', code: res.code || '', nextVersion: '', error: res.error || '' };
-            done();
-        });
+    if (attemptsLeft === 1) { BAC.checkStart[app.sys_id] = new Date(); }
+    callConsole('getPublishState', { sysparm_sys_id: app.sys_id }, function(res) {
+        var failed = !res.ok || res.saveStatus === 'check_failed';
+        if (failed && attemptsLeft > 0 && res.code !== 'not_dev') {
+            checkPublishState(app, attemptsLeft - 1, done);
+            return;
+        }
+        var began = BAC.checkStart[app.sys_id] || new Date();
+        var ended = new Date();
+        BAC.saveState[app.sys_id] = res.ok ? res : { saveStatus: 'check_failed', code: res.code || '', nextVersion: '', logFrom: localStamp(began, -5), logTo: localStamp(ended, 5),
+            error: 'Save status check failed for ' + app.name + ' (scope ' + app.scope + ', sys_id ' + app.sys_id + ', version ' + (app.version || 'unknown') + ') after 2 attempts.\\n' +
+                (res.error || 'No error detail was returned.') + '\\nBrowser time: ' + new Date().toISOString() + '.' };
+        var st = BAC.saveState[app.sys_id];
+        if (st.saveStatus === 'check_failed' && !st.logFrom) { st.logFrom = localStamp(began, -5); st.logTo = localStamp(ended, 5); }
+        done();
     });
 }
 
@@ -959,7 +1033,11 @@ function onChange(ev) {
         BAC.touched[tab] = true;
         updateControls();
     } else if (/bac-chip/.test(cls)) {
-        BAC.filters[tab][target.getAttribute('data-chip')] = target.checked;
+        if (target.getAttribute('data-chip') === 'status') {
+            BAC.filters[tab].statuses[target.getAttribute('data-status')] = target.checked;
+        } else {
+            BAC.filters[tab][target.getAttribute('data-chip')] = target.checked;
+        }
         renderTable(tab);
         if (tab === 'save') { renderBanner(); }
     }

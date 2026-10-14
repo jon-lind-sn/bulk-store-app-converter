@@ -192,21 +192,29 @@ BulkAppConsole.prototype = Object.extendsObject(global.AbstractAjaxProcessor, (f
         }
         result.currentVersion = appGR.getValue('version') || '';
         var scope = appGR.getValue('scope') || '';
+        var step = 'start';
+        var startedAt = new GlideDateTime();
 
         try {
+            step = 'create ScopedAppVendorInfoObtainer';
             var obtainer = new sn_appauthor.ScopedAppVendorInfoObtainer();
+            step = 'ask the App Repo (verify_version) whether version ' + result.currentVersion + ' is new';
             var gate = isConvertedVersion(result.currentVersion) ? { allowed: true } : obtainer.obtainDisplayVersionFromAppRepo(appId, result.currentVersion, 'false');
             if (gate && gate.allowed === true) {
                 // verify_version only accepts versions above the repo's latest, so 0.0.1 is accepted only when the repo has no version at all.
+                step = 'ask the App Repo (verify_version) whether 0.0.1 is new';
                 var floor = obtainer.obtainDisplayVersionFromAppRepo(appId, '0.0.1', 'false');
                 if (floor && floor.allowed === true) {
                     result.saveStatus = 'not_in_repo';
                 } else {
                     result.saveStatus = 'unpublished_version';
+                    step = 'search for the App Repo latest version (findRepoLatest)';
                     result.repoVersion = findRepoLatest(obtainer, appId, result.currentVersion);
                 }
             } else {
+                step = 'read the latest local change (getLastChanged)';
                 result.lastChanged = getLastChanged(appId);
+                step = 'read the publish record (getLastPublished)';
                 result.lastPublished = getLastPublished(appId, scope, result.currentVersion);
                 if (result.lastPublished && result.lastChanged) {
                     result.saveStatus = numeric(result.lastChanged) > numeric(result.lastPublished) ? 'changed' : 'saved';
@@ -220,7 +228,18 @@ BulkAppConsole.prototype = Object.extendsObject(global.AbstractAjaxProcessor, (f
         } catch (e) {
             gs.error('BulkAppConsole.getPublishState verify failed for ' + appId + ': ' + e);
             result.saveStatus = 'check_failed';
-            result.error = 'Could not check App Repo: ' + e;
+            // Window for the System Log link, in the user's time zone, padded by 5 seconds.
+            var winFrom = new GlideDateTime(startedAt.getValue());
+            winFrom.addSeconds(-5);
+            var winTo = new GlideDateTime();
+            winTo.addSeconds(5);
+            result.logFrom = winFrom.getDisplayValueInternal();
+            result.logTo = winTo.getDisplayValueInternal();
+            result.error = 'Could not check the App Repo for ' + (appGR.getValue('name') || appId) + ' (scope ' + scope + ', sys_id ' + appId + ', version ' + result.currentVersion + ').\n' +
+                'Failed while trying to: ' + step + '.\n' +
+                'Error: ' + e + (e && e.lineNumber ? ' (line ' + e.lineNumber + (e.fileName ? ' of ' + e.fileName : '') + ')' : '') + (e && e.stack ? '\nStack: ' + String(e.stack).substring(0, 600) : '') + '\n' +
+                'App Repo host: ' + (repoHost() || 'sn_appclient.repository_base_url is empty') + '. Run by ' + gs.getUserName() + ' on ' + gs.getProperty('instance_name', '') + ' at ' + new GlideDateTime().getValue() + ' UTC.\n' +
+                'The error logs link below shows System Log errors from the time of this check (search BulkAppConsole.getPublishState).';
         }
 
         try {
