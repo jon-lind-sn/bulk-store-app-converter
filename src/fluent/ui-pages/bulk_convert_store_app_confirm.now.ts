@@ -16,7 +16,10 @@ UiPage({
         <style>
           #prereq-strip { margin-bottom: 18px; }
           .bac-sub { margin: 14px 0 12px; }
-          .bac-refresh-tip { font-size: 15px; }
+          #sync-note { margin-bottom: 14px; }
+          .bac-empty { padding: 28px 14px; font-size: 16px; color: #5b6770; border-top: 1px solid #dde2e6; border-bottom: 1px solid #dde2e6; }
+          @keyframes bac-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+          .bac-spinning { display: inline-block; animation: bac-spin 1s linear infinite; }
           .bac-how summary { cursor: pointer; }
           .bac-sub-title { font-size: 18px; }
           .bac-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin: 14px 0 16px; }
@@ -33,22 +36,22 @@ UiPage({
           .bac-running tbody tr.bac-in-run { opacity: 1; }
           .bac-table tbody tr.bac-active td { background-color: #e6f0fa; }
           .bac-table tbody tr.bac-active td:first-child { box-shadow: inset 4px 0 0 #2a7ab8; }
-          #summary-bar { margin: 16px 0; }
+          #summary-bar { margin: 0 0 18px; }
         </style>
         <div id="prereq-strip" class="alert alert-info" style="display: none;"></div>
+        <div id="summary-bar" class="alert alert-info" style="display: none;"></div>
         <ul class="nav nav-tabs" style="margin-bottom: 10px;">
           <li id="tab-save"><a href="#" data-tab="save">Before Clone: Save Work</a></li>
           <li id="tab-restore"><a href="#" data-tab="restore">After Clone: Restore</a></li>
         </ul>
         <div id="pane-save" style="display: none;"></div>
         <div id="pane-restore" style="display: none;"></div>
-        <div id="summary-bar" class="alert alert-info" style="display: none; margin-top: 10px;"></div>
         <details class="bac-how" style="margin-top: 15px;">
           <summary>How it works</summary>
           <ol>
             <li>Before a clone, open the Before Clone tab on your dev instance and publish every app whose work is not in My Application Repository (App Repo).</li>
             <li>Clone from prod. Every company app arrives in store mode.</li>
-            <li>After the clone, open the After Clone tab. Upgrade and convert all upgrades apps that have a newer App Repo version, waits for the batch install, then converts every selected app to dev mode.</li>
+            <li>After the clone, open the After Clone tab. Upgrade and Convert upgrades apps that have a newer App Repo version, waits for the batch install, then converts every selected app to dev mode.</li>
             <li>Convert to Store only runs on apps that are saved in App Repo, so it never strands unpublished work.</li>
           </ol>
         </details>
@@ -60,7 +63,7 @@ UiPage({
     clientScript: `// Bulk App Clone Assistant client script. ES5 only (helsinki_es5).
 var BAC = {
     tab: 'restore',
-    refreshTipDismissed: false,
+    sync: { state: '', time: '' },
     run: { tab: '', ids: {} },
     busy: false,
     loader: false,
@@ -197,15 +200,44 @@ function setSummary(html, kind) {
     }
     bar.className = 'alert alert-' + (kind || 'info');
     bar.style.display = 'block';
-    bar.innerHTML = html;
+    bar.innerHTML = '<button type="button" class="close" data-action="dismissSummary" title="Dismiss" aria-label="Dismiss">&times;</button>' + html;
 }
 
 /* ---------- server calls ---------- */
 
 // Same App Repo sync My Company Applications runs when it opens, so store apps get their latest_version. Always calls done.
-function syncAppRepo(done) {
+function renderSyncNote() {
+    var el = byId('sync-note');
+    if (!el) { return; }
+    var link = ' <a target="_blank" href="%24mycompanyappsmgmt.do">My Company Applications</a>';
+    var again = ' <a href="#" data-action="resync">Refresh again</a>';
+    if (BAC.sync.state === 'running') {
+        el.className = 'alert alert-info';
+        el.innerHTML = '<span class="glyphicon glyphicon-refresh bac-spinning"></span> Refreshing' + link + ' from the App Repo so the latest versions show here...';
+    } else if (BAC.sync.state === 'done') {
+        el.className = 'alert alert-info';
+        el.innerHTML = 'Refreshed' + link + ' from the App Repo at ' + esc(BAC.sync.time) + '.' + again;
+    } else if (BAC.sync.state === 'failed') {
+        el.className = 'alert alert-warning';
+        el.innerHTML = 'Could not refresh' + link + '. The versions below may be out of date.' + again;
+    } else {
+        el.style.display = 'none';
+        return;
+    }
+    el.style.display = '';
+}
+
+function syncAppRepo(realDone) {
+    BAC.sync = { state: 'running', time: '' };
+    renderSyncNote();
     var container = byId('table-restore');
-    if (container) { container.innerHTML = '<p class="text-muted"><em>Checking the App Repo for new versions...</em></p>'; }
+    if (container) { container.innerHTML = '<div class="bac-empty"><span class="glyphicon glyphicon-refresh bac-spinning"></span> Loading apps...</div>'; }
+    function done(ok) {
+        var now = new Date();
+        BAC.sync = { state: ok ? 'done' : 'failed', time: pad2(now.getHours()) + ':' + pad2(now.getMinutes()) };
+        renderSyncNote();
+        realDone();
+    }
     function get(type, extra, cb) {
         var xhr = new XMLHttpRequest();
         xhr.open('GET', 'sn_appclient_api_v1.do?app_request_type=' + type + extra + '&uniq_param=' + new Date().getTime() + '&sysparm_ck=' + g_ck);
@@ -221,12 +253,13 @@ function syncAppRepo(done) {
     }
     get('list_apps_versions', '&shared_internally=true&isFirstLoad=true', function(res) {
         var trackerId = res && res.storetrackerId;
-        if (!trackerId) { done(); return; }
+        if (!trackerId) { done(false); return; }
         var attempts = 0;
         (function poll() {
             get('get_store_sync_status', '&trackerId=' + trackerId, function(st) {
                 attempts++;
-                if (!st || st.isComplete || attempts >= 60) { done(); return; }
+                if (!st || attempts >= 60) { done(false); return; }
+                if (st.isComplete) { done(true); return; }
                 setTimeout(poll, 2000);
             });
         })();
@@ -505,11 +538,11 @@ function renderTable(tab) {
     if (!container) { return; }
     var vis = visibleApps(tab);
     if (!BAC.loaded[tab]) {
-        container.innerHTML = '<p class="text-muted"><em>Loading apps...</em></p>';
+        container.innerHTML = '<div class="bac-empty"><span class="glyphicon glyphicon-refresh bac-spinning"></span> Loading apps...</div>';
         return;
     }
     if (vis.length === 0) {
-        container.innerHTML = '<p class="text-muted"><em>No apps to show.</em></p>';
+        container.innerHTML = '<div class="bac-empty">' + (tab === 'restore' && BAC.apps.restore.length === 0 ? 'No company apps are installed in store mode.' : 'No apps to show.') + '</div>';
         updateControls();
         return;
     }
@@ -615,14 +648,9 @@ function paneHtml(tab) {
     var html = '';
     if (tab === 'restore') {
         html += '<p class="bac-sub"><strong class="bac-sub-title">Company apps installed in store mode.</strong> <span class="text-muted">Run this right after the clone.</span></p>' +
-            (BAC.refreshTipDismissed ? '' :
-                '<div id="refresh-tip" class="alert alert-warning bac-refresh-tip">' +
-                '<button type="button" class="close" data-action="dismissRefreshTip" title="Dismiss" aria-label="Dismiss">&times;</button>' +
-                '<strong>After a clone, refresh <a target="_blank" href="%24mycompanyappsmgmt.do">My Company Applications</a> first.</strong> ' +
-                'Then reload this page so the latest versions are visible here.' +
-                '</div>') +
+            '<div id="sync-note" class="alert alert-info" style="display: none;"></div>' +
             '<div class="bac-toolbar">' +
-            '<button type="button" id="btnRestoreAll" class="btn btn-primary" data-action="restoreAll">Upgrade and convert all</button> ' +
+            '<button type="button" id="btnRestoreAll" class="btn btn-primary" data-action="restoreAll">Upgrade and Convert</button> ' +
             '<button type="button" id="btnUpgradeOnly" class="btn btn-default btn-sm" data-action="upgradeOnly">Upgrade</button> ' +
             '<button type="button" id="btnConvertDevOnly" class="btn btn-default btn-sm" data-action="convertDevOnly">Convert to Dev</button> ' +
             '<input type="text" class="bac-search input-sm" data-tab="restore" placeholder="Search apps"/> ' +
@@ -1124,6 +1152,7 @@ function onSaveSelection() {
 /* ---------- events ---------- */
 
 function setTab(tab) {
+    if (BAC.tab !== tab && !BAC.busy) { setSummary('', ''); }
     BAC.tab = tab;
     try { window.localStorage.setItem('bulk_app_clone_tab', tab); } catch (e) { /* storage may be blocked */ }
     updateControls();
@@ -1158,10 +1187,12 @@ function onClick(ev) {
         BAC.prereq.switched = false;
         byId('prereq-strip').style.display = 'none';
     }
-    else if (action === 'dismissRefreshTip') {
-        BAC.refreshTipDismissed = true;
-        var tip = byId('refresh-tip');
-        if (tip) { tip.parentNode.removeChild(tip); }
+    else if (action === 'dismissSummary') { setSummary('', ''); }
+    else if (action === 'resync') {
+        if (!BAC.busy) {
+            BAC.status.restore = {};
+            syncAppRepo(function() { loadApps('restore'); });
+        }
     }
     else if (action === 'publishAll') { onPublishAll(); }
     else if (action === 'convertStore') { onConvertStore(); }

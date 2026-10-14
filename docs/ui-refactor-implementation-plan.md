@@ -15,7 +15,7 @@ Today step 1 lives on the page, step 3a lives in two menu modules that run a raw
 ## 1. Organizing idea: two tabs keyed to the clone
 
 1. **Before Clone: Save Work** (`sys_app` dev apps). Default action: **Publish all**.
-2. **After Clone: Restore** (`sys_store_app` company apps). Default action: **Upgrade and convert all**.
+2. **After Clone: Restore** (`sys_store_app` company apps). Default action: **Upgrade and Convert**.
 The user picks the tab. The tab is deep-linkable (`?sysparm_tab=restore`) so the existing menu modules can point at it.
 
 Convert to Store App is used less often, but it stays available wherever dev apps are listed (the Before Clone tab) as a smaller secondary button beside Publish all. It is also the quickest way to reset apps to store mode when testing the After Clone flow. It is guarded so it never strands unpublished work (section 4.2).
@@ -39,7 +39,7 @@ Status lives on the row. This removes the 200px status box, the stacking red ban
 ## 3. After Clone: Restore tab (upgrade integrated into the page)
 
 1. Lists company store apps (`is_store_app=false`). Rows with `latest_version` above `version` are marked "Upgrade". The rest will convert directly. The user sees exactly what will happen before clicking.
-2. **Upgrade and convert all** runs:
+2. **Upgrade and Convert** runs:
    1. One `installBatch` for the apps that have an upgrade.
    2. Poll the execution tracker (existing `pollTracker`) and `sys_batch_install_plan.state` until Installed.
    3. Re-fetch, then convert every selected app to dev with the existing queue.
@@ -137,7 +137,7 @@ Each tab gets a one-line subtitle ("Run this on your dev instance before it is c
 ## 9. Suggested phasing
 
 1. Phase 1: tabs, unified table, select-all default, sticky toolbar, row status, auto-refresh, automatic switch to Global.
-2. Phase 2: Save status detection with the Before Clone banner and Needs publish default selection, Convert to Store guard, publish version preview, integrated upgrade with tracker polling, chained Upgrade and convert all.
+2. Phase 2: Save status detection with the Before Clone banner and Needs publish default selection, Convert to Store guard, publish version preview, integrated upgrade with tracker polling, chained Upgrade and Convert.
 3. Phase 3: saved list load and save (if still wanted), Check for updates worker, company keys detection.
 
 ## Later
@@ -192,7 +192,7 @@ File: `src/fluent/ui-pages/bulk_convert_store_app_confirm.now.ts`.
 4. Status: replace `addStatusRow`/`updateStatusRow` with `setRowStatus(tab, sysId, status, note)` that writes into the row's status cell. Keep the existing label colors (Pending info, Upgrading/Converting/Publishing warning, Complete success, Published primary, Failed danger, Skipped default). `setStatusNote` content (for example "Published v1.3.0 (was v1.2.5)") goes in the same cell.
 5. Reuse as-is, changing only how they read selection and report status: `pollTracker`, `switchApplication`, `convertStoreNext`, `convertDevNext`, `publishNext`, `publishApp`, `startPublish`, `finishPublish`. Selection comes from `getCheckedRows(tab)` returning `[{ sys_id, name, version }]` instead of reading label text from the DOM.
 6. After Clone tab buttons:
-   1. **Upgrade and convert all** (primary): `startUpgrade` for checked rows with `upgradeAvailable`, mark them Upgrading, `pollTracker(trackerId)` then poll `getBatchState` every 5 seconds until Installed (fail the batch rows on error), re-fetch `getApps('restore')`, then run the convert queue on the checked rows that are now `convertible`. Rows checked but not convertible get Skipped with a note.
+   1. **Upgrade and Convert** (primary): `startUpgrade` for checked rows with `upgradeAvailable`, mark them Upgrading, `pollTracker(trackerId)` then poll `getBatchState` every 5 seconds until Installed (fail the batch rows on error), re-fetch `getApps('restore')`, then run the convert queue on the checked rows that are now `convertible`. Rows checked but not convertible get Skipped with a note.
    2. **Upgrade** and **Convert to Dev** (outline): the two halves of the chain.
    3. Check for updates: Phase 3, see section 3 item 3 and section 7 item 5.
 7. Before Clone tab buttons: **Publish all** (primary) runs the existing publish queue; `CONVERTED` rows render an inline version input and are Skipped unless edited (write the edited version via a GlideAjax `setAppVersion` admin-guarded method on `BulkAppConsole`, Phase 2). **Convert to Store** (outline) runs the existing `convertDevNext` queue on checked rows whose Save status is Saved, after a confirmation listing skipped rows (section 4.2). After each successful publish, set that row to Saved, write `bulk_convert_store_app.publish_log`, and update the banner. Default selection on this tab is every row not Saved. Publish preview: when the tab loads, call `getPublishState` per row in sequence and fill Target version. It must run after `switchApplication(appId)` per row, as the publish code does today, then switch back to Global at the end.
@@ -219,7 +219,7 @@ Saved list links, Check for updates async worker, company keys detection. Each n
 3. A store app at `0.0.0-CONVERTED` with a `latest_version` shows the Converted badge on After Clone, and Upgrade restores the real version.
 4. `npm run build` and deploy to xare with now-sdk.
 5. Non-admin user: page empty, and each new GlideAjax method returns an authorization error.
-6. After Clone with one app that has `latest_version` above `version`: Upgrade and convert all upgrades that one, waits for Installed, then converts all. Batch plan link works and the table re-fetches.
+6. After Clone with one app that has `latest_version` above `version`: Upgrade and Convert upgrades that one, waits for Installed, then converts all. Batch plan link works and the table re-fetches.
 7. Check all box toggles every visible row; unchecking one excludes it from the run.
 8. Load the page with the picker set to a scoped app: the picker switches to Global, the info message appears, and all buttons are enabled.
 9. Before Clone preview matches what `getPublishState` returns for `nextVersion`. Publish one app and confirm the version in App Repo.

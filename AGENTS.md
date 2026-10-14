@@ -11,7 +11,7 @@ Working notes for agents on the Bulk Store App Converter. Read `docs/ui-refactor
 5. Server endpoint for the page: `BulkAppConsole` (`src/fluent/script-includes/BulkAppConsole.server.js`), client callable, every method admin guarded, all methods return JSON strings.
 6. Test in the browser with chrome-devtools against `https://xare.service-now.com/bulk_convert_store_app_confirm.do`. The page globals (`BAC`, `renderTable`, `uncheckPublished`, and so on) are reachable from `evaluate_script`. Wait for `BAC.loader` to be false and every app in `BAC.saveState` before reading results. `wait_for` on the word "published" matches the "Never published" notes, so poll `BAC.busy` to detect the end of a run.
 7. Navigation: the page is the module "Bulk App Clone Assistant" (renamed from "Bulk Convert My Company Apps") under the System Applications menu, which is limited to the `upgrade_admin` role. The two upgrade modules are admin only.
-8. Remotes: `origin` (GitHub) and `devsnc` (`code.devsnc.com`). Branch `ui-refactor` is pushed to both. Last pushed commit: `46a1cf1`.
+8. Remotes: `origin` (GitHub) and `devsnc` (`code.devsnc.com`). Branch `ui-refactor` is pushed to both. Last pushed commit: `ee5a587`.
 
 ## Platform gotchas
 
@@ -73,15 +73,17 @@ Page behavior:
 6. When no next version can be found the target column shows the current version only. The error text is still returned when Publish is clicked.
 7. Check failed error text (server side) names the app, scope, sys_id, version, the step that failed, the exception with line and stack, the repo host, user, instance and time. Client side failures (no answer, bad JSON) show the raw answer and browser time. Every Check failed row has an "Error logs for this check" link to `syslog_list.do` filtered to `level=2` in a window of about 10 seconds around the check (user time zone from the server, browser clock otherwise). The `Today` clause means a check that straddles midnight can miss entries.
 
-## Restore tab (After Clone: Restore), not yet worked on
+## Restore tab (After Clone: Restore)
 
-Observed on xare on 2026-10-14, 6 store mode apps, all checked:
-
-1. ATF Adder (global) and Fleet Vehicle Management: installed `0.0.0-CONVERTED`, target "Not in App Repo, cannot restore automatically" in red.
-2. Jon AI 1.4.0, NDA Requests 0.1.0, Peugeot 1.1.0: installed `0.0.0-CONVERTED`, marked "Upgrade".
-3. Feature Requests POC: installed 0.0.2, target 0.0.2.
-4. Controls: Upgrade and convert all, Upgrade, Convert to Dev, search, "Upgrade available" filter, Load saved list, Save selection. No per-status filters.
-5. The red "Not in App Repo" wording is the same kind of claim removed from the Before Clone tab. It comes from the `restorable` flag in `BulkAppConsole.server.js` (line 62): `restorable = !!latest && !isConvertedVersion(latest)`, where `latest` is the app's `sys_store_app.latest_version`. The cause for these two apps (empty or converted `latest_version`) has not been checked.
+1. Columns: Local Version (`sys_store_app.version`) and Target Version (`sys_store_app.latest_version`, filled by the platform App Repo sync). Badge "Upgrade" when the target is above the local version. Buttons: Upgrade and Convert, Upgrade, Convert to Dev. Search matches name, scope and local version.
+2. `0.0.0-CONVERTED` apps on xare were made by converting dev apps to store mode by hand. It is not a real clone state. After a real clone the target version comes from the sync.
+3. Empty `latest_version` means the sync has not run, not that the app is missing from the App Repo. Opening the tab now runs the same sync as My Company Applications (`sn_appclient_api_v1.do?app_request_type=list_apps_versions&shared_internally=true&isFirstLoad=true` returns `storetrackerId`, then poll `get_store_sync_status` until `isComplete`). About 7 seconds on xare. A blue note above the toolbar says "Refreshing My Company Applications from the App Repo..." with a spinner, then "Refreshed ... at HH:MM" with a Refresh again link (amber "Could not refresh" on failure). An empty list reads "No company apps are installed in store mode."
+4. The red "Not in App Repo, cannot restore automatically" text still comes from `restorable` in `BulkAppConsole.server.js` and should be reworded to "No App Repo version found".
+5. Upgrade and Convert skips apps at `0.0.0-CONVERTED` with no App Repo version ("No App Repo version found to upgrade to. Use Convert to Dev to convert it as it is."). Convert to Dev converts them anyway. Upgrade marks apps with nothing to upgrade as Skipped.
+6. `canConvertSysStoreApp` returns false for scoped apps when `sn_appauthor.all_company_keys` is empty. The daily job "Check Scoped App Author Config Changes" (`sysauto_script` 22b6bb03d700310092610eca5e610393, `ConfigChecker`) rewrites that property from the App Repo vendor record, and xare gets no keys back. The property is private, so an update set does not change it. It was set by hand to `snc` for testing and will be blanked again.
+7. Converted apps stay on the list (greyed, checkbox disabled) until the tab is reopened. Each tab reloads its list when opened.
+8. Tested 2026-10-14: Upgrade (Peugeot to 1.1.0), Convert to Dev (Feature Requests POC), Upgrade and Convert (NDA Requests to 0.1.0 then dev mode), app not in the App Repo (Fleet Vehicle Management converted as is).
+9. Before Clone: apps whose version a conversion reset show "A conversion reset the version to 0.0.0-CONVERTED. App Repo has X." and can be converted back to store mode so they can be upgraded.
 
 ## Local edit signals (from file history)
 
@@ -104,7 +106,7 @@ Observed on xare on 2026-10-14, 6 store mode apps, all checked:
 
 ## Open items
 
-1. Work through the Restore tab (see its section above), starting with why ATF Adder and Fleet Vehicle Management show "cannot restore automatically".
+1. Reword the red "cannot restore automatically" text on the Restore tab to "No App Repo version found".
 2. Retry for a failed app list load (only a message today).
 3. "No longer in development mode" path not triggered for real.
 4. Whether a publish through now-sdk or the CI/CD API writes `sys_upgrade_plan_item`.
