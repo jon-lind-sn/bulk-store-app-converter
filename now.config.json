@@ -1,0 +1,8 @@
+{
+    "scope": "global",
+    "scopeId": "3b04bd443371c7d02e49a94a7e5c7bb3",
+    "name": "Bulk Store App Converter",
+    "jsLevel": "helsinki_es5",
+    "description": "Used to update multiple store apps to Dev Mode and Back.",
+    "packageResolverVersion": "2.0.0"
+}
