@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><unload unload_date=""><sys_remote_update_set action="INSERT_OR_UPDATE"><application display_value="Global">global</application><application_name>Global</application_name><application_scope>global</application_scope><collisions /><commit_date /><deleted /><description>Used to update multiple store apps to Dev Mode and Back.</description><inserted /><name>Bulk Store App Converter v1.2.0</name><origin_sys_id /><parent display_value="" /><release_date /><remote_base_update_set display_value="" /><remote_parent_id /><remote_sys_id>1368e9b48f28e5b9d7c6ff4daf2c597f</remote_sys_id><state>loaded</state><summary /><sys_class_name>sys_remote_update_set</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on /><sys_id>e760261a36e34e0f6a1019fc51afa958</sys_id><sys_mod_count>0</sys_mod_count><sys_updated_by>admin</sys_updated_by><sys_updated_on /><update_set display_value="" /><update_source display_value="" /><updated /></sys_remote_update_set><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_app_module_0733e5a91a7247b39c8d2b650f060a31</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_app_module">
+<?xml version="1.0" encoding="UTF-8"?><unload unload_date=""><sys_remote_update_set action="INSERT_OR_UPDATE"><application display_value="Global">global</application><application_name>Global</application_name><application_scope>global</application_scope><collisions /><commit_date /><deleted /><description>Used to update multiple store apps to Dev Mode and Back.</description><inserted /><name>Bulk Store App Converter v1.2.0</name><origin_sys_id /><parent display_value="" /><release_date /><remote_base_update_set display_value="" /><remote_parent_id /><remote_sys_id>654d0e24427ff720f5172a7ed888010a</remote_sys_id><state>loaded</state><summary /><sys_class_name>sys_remote_update_set</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on /><sys_id>d04907f5c07a85f4f1f6157483577acf</sys_id><sys_mod_count>0</sys_mod_count><sys_updated_by>admin</sys_updated_by><sys_updated_on /><update_set display_value="" /><update_source display_value="" /><updated /></sys_remote_update_set><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_app_module_0733e5a91a7247b39c8d2b650f060a31</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_app_module">
   <sys_app_module action="INSERT_OR_UPDATE" apply_defaults="true">
     <sys_id>0733e5a91a7247b39c8d2b650f060a31</sys_id>
     <sys_scope display_value="global">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
@@ -19,7 +19,7 @@
     <title>Bulk App Clone Assistant</title>
     <uncancelable>false</uncancelable>
   </sys_app_module>
-  </record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">e760261a36e34e0f6a1019fc51afa958</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>admin</sys_created_by><sys_created_on /><sys_id>ca0dbd015d8c8c374a49926d22a67904</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b0000000001</sys_recorded_at><sys_updated_by>admin</sys_updated_by><sys_updated_on /><table /><target_name>Bulk App Clone Assistant</target_name><type>Sys App Module</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_app_module_849a49979396c710244af07e2803d6df</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_app_module">
+  </record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">d04907f5c07a85f4f1f6157483577acf</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>admin</sys_created_by><sys_created_on /><sys_id>6fbbf59bb69fadfbe02603b874406665</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b0000000001</sys_recorded_at><sys_updated_by>admin</sys_updated_by><sys_updated_on /><table /><target_name>Bulk App Clone Assistant</target_name><type>Sys App Module</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_app_module_849a49979396c710244af07e2803d6df</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_app_module">
   <sys_app_module action="INSERT_OR_UPDATE" apply_defaults="true">
     <sys_id>849a49979396c710244af07e2803d6df</sys_id>
     <sys_scope display_value="global">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
@@ -41,7 +41,7 @@
     <uncancelable>false</uncancelable>
     <window_name>upgrade_company_apps</window_name>
   </sys_app_module>
-  </record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">e760261a36e34e0f6a1019fc51afa958</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>admin</sys_created_by><sys_created_on /><sys_id>35cab63a675ec7b83a050d75d4b04218</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b0010000001</sys_recorded_at><sys_updated_by>admin</sys_updated_by><sys_updated_on /><table /><target_name>Bulk Upgrade ALL My Company Apps</target_name><type>Sys App Module</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_app_module_bd9797d093564b50244af07e2803d611</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_app_module">
+  </record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">d04907f5c07a85f4f1f6157483577acf</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>admin</sys_created_by><sys_created_on /><sys_id>0b8745ddcaf212c1d1aa47464b227700</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b0010000001</sys_recorded_at><sys_updated_by>admin</sys_updated_by><sys_updated_on /><table /><target_name>Bulk Upgrade ALL My Company Apps</target_name><type>Sys App Module</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_app_module_bd9797d093564b50244af07e2803d611</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_app_module">
   <sys_app_module action="INSERT_OR_UPDATE" apply_defaults="true">
     <sys_id>bd9797d093564b50244af07e2803d611</sys_id>
     <sys_scope display_value="global">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
@@ -63,7 +63,7 @@
     <uncancelable>false</uncancelable>
     <window_name>upgrade_company_apps</window_name>
   </sys_app_module>
-</record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">e760261a36e34e0f6a1019fc51afa958</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>admin</sys_created_by><sys_created_on /><sys_id>0df9f86999c33ef40423178c5b7a11c0</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b0020000001</sys_recorded_at><sys_updated_by>admin</sys_updated_by><sys_updated_on /><table /><target_name>Bulk Upgrade My Company Apps from Property</target_name><type>Sys App Module</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_module_5d50fcfe27094e1c9d11f4bee5507bec</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update>
+</record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">d04907f5c07a85f4f1f6157483577acf</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>admin</sys_created_by><sys_created_on /><sys_id>17fca9bebdf719c5ea992dc4d83f6338</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b0020000001</sys_recorded_at><sys_updated_by>admin</sys_updated_by><sys_updated_on /><table /><target_name>Bulk Upgrade My Company Apps from Property</target_name><type>Sys App Module</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_module_5d50fcfe27094e1c9d11f4bee5507bec</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update>
   <sys_module action="INSERT_OR_UPDATE" apply_defaults="true">
     <sys_id>5d50fcfe27094e1c9d11f4bee5507bec</sys_id>
     <sys_scope display_value="global">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
@@ -74,9 +74,9 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
   "version": 1,
-  "serialNumber": "urn:uuid:8f45e971-8ae7-42f0-9481-b5207bb41146",
+  "serialNumber": "urn:uuid:86a29905-93ee-4c77-aae5-cdec51d71494",
   "metadata": {
-    "timestamp": "2026-10-15T15:38:25.135Z",
+    "timestamp": "2026-10-15T15:55:45.549Z",
     "tools": {
       "components": [
         {
@@ -112,7 +112,7 @@
   ]
 }</content>
   </sys_module>
-</record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">e760261a36e34e0f6a1019fc51afa958</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>admin</sys_created_by><sys_created_on /><sys_id>118067d4f285597d461d481903eb60d2</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b0030000001</sys_recorded_at><sys_updated_by>admin</sys_updated_by><sys_updated_on /><table /><target_name>/global/bulk-store-app-converter/1.2.0/bom.json</target_name><type>Sys Module</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_module_743e285e6acf46a48d0d74349d2132c2</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_module">
+</record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">d04907f5c07a85f4f1f6157483577acf</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>admin</sys_created_by><sys_created_on /><sys_id>912fd95e42ebad8d47bd5fd1db7ff27d</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b0030000001</sys_recorded_at><sys_updated_by>admin</sys_updated_by><sys_updated_on /><table /><target_name>/global/bulk-store-app-converter/1.2.0/bom.json</target_name><type>Sys Module</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_module_743e285e6acf46a48d0d74349d2132c2</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_module">
   <sys_module action="INSERT_OR_UPDATE" apply_defaults="true">
     <sys_id>743e285e6acf46a48d0d74349d2132c2</sys_id>
     <sys_scope display_value="global">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
@@ -140,7 +140,7 @@
     <path>/global/bulk-store-app-converter/1.2.0/package.json</path>
     <sys_name>/global/bulk-store-app-converter/1.2.0/package.json</sys_name>
   </sys_module>
-</record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">e760261a36e34e0f6a1019fc51afa958</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>admin</sys_created_by><sys_created_on /><sys_id>d59bcd8d39766daffef7182acb90fa7e</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b0040000001</sys_recorded_at><sys_updated_by>admin</sys_updated_by><sys_updated_on /><table /><target_name>/global/bulk-store-app-converter/1.2.0/package.json</target_name><type>Sys Module</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_properties_53bdd86258a14ab2b5f619b55f1acd56</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties">
+</record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">d04907f5c07a85f4f1f6157483577acf</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>admin</sys_created_by><sys_created_on /><sys_id>e717c9ea1e815da4d1d2594c1442cdcb</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b0040000001</sys_recorded_at><sys_updated_by>admin</sys_updated_by><sys_updated_on /><table /><target_name>/global/bulk-store-app-converter/1.2.0/package.json</target_name><type>Sys Module</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_properties_53bdd86258a14ab2b5f619b55f1acd56</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties">
   <sys_properties action="INSERT_OR_UPDATE" apply_defaults="true">
     <sys_id>53bdd86258a14ab2b5f619b55f1acd56</sys_id>
     <sys_scope display_value="global">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
@@ -156,7 +156,7 @@
     <value>x_snc_auto_parts1,x_snc_equip_loan1,x_snc_food_safety1</value>
     <write_roles>admin</write_roles>
   </sys_properties>
-  </record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">e760261a36e34e0f6a1019fc51afa958</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>admin</sys_created_by><sys_created_on /><sys_id>516dcc4c67e5913c7ea7ea9cd9093433</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b0050000001</sys_recorded_at><sys_updated_by>admin</sys_updated_by><sys_updated_on /><table /><target_name>bulk_convert_store_app.convertible_apps</target_name><type>Sys Properties</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_properties_feac1a896aa94524b6f9264722e899f9</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties">
+  </record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">d04907f5c07a85f4f1f6157483577acf</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>admin</sys_created_by><sys_created_on /><sys_id>c21690554f2a721ccd5c5d14e54e48b2</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b0050000001</sys_recorded_at><sys_updated_by>admin</sys_updated_by><sys_updated_on /><table /><target_name>bulk_convert_store_app.convertible_apps</target_name><type>Sys Properties</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_properties_feac1a896aa94524b6f9264722e899f9</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties">
   <sys_properties action="INSERT_OR_UPDATE" apply_defaults="true">
     <sys_id>feac1a896aa94524b6f9264722e899f9</sys_id>
     <sys_scope display_value="global">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
@@ -172,7 +172,7 @@
     <value>{}</value>
     <write_roles>admin</write_roles>
   </sys_properties>
-</record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">e760261a36e34e0f6a1019fc51afa958</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>admin</sys_created_by><sys_created_on /><sys_id>6f505356f60a3bbc2503e7ffb1e5b50c</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b0060000001</sys_recorded_at><sys_updated_by>admin</sys_updated_by><sys_updated_on /><table /><target_name>bulk_convert_store_app.publish_log</target_name><type>Sys Properties</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_script_include_0dd88b5493924b50244af07e2803d6e7</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+</record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">d04907f5c07a85f4f1f6157483577acf</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>admin</sys_created_by><sys_created_on /><sys_id>8b8bd4a7d3b2e412a2f7a0a25f6e50f5</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b0060000001</sys_recorded_at><sys_updated_by>admin</sys_updated_by><sys_updated_on /><table /><target_name>bulk_convert_store_app.publish_log</target_name><type>Sys Properties</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_script_include_0dd88b5493924b50244af07e2803d6e7</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
   <sys_script_include action="INSERT_OR_UPDATE" apply_defaults="true">
     <sys_id>0dd88b5493924b50244af07e2803d6e7</sys_id>
     <sys_scope display_value="global">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
@@ -409,7 +409,7 @@ BulkUpgradeMyCompanyApps.prototype = Object.extendsObject(global.AbstractAjaxPro
     <table>sys_script_include</table>
     <use_es_latest>true</use_es_latest>
   </sys_es_latest_script>
-</record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">e760261a36e34e0f6a1019fc51afa958</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>admin</sys_created_by><sys_created_on /><sys_id>fd914f748ef3a6a6308a67c1e21d9617</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b0070000001</sys_recorded_at><sys_updated_by>admin</sys_updated_by><sys_updated_on /><table /><target_name>BulkUpgradeMyCompanyApps</target_name><type>Sys Script Include</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_script_include_a0b9328e4d2b48e890224089b908d683</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+</record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">d04907f5c07a85f4f1f6157483577acf</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>admin</sys_created_by><sys_created_on /><sys_id>7192d5ef6d657bad9fc7154964f007e1</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b0070000001</sys_recorded_at><sys_updated_by>admin</sys_updated_by><sys_updated_on /><table /><target_name>BulkUpgradeMyCompanyApps</target_name><type>Sys Script Include</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_script_include_a0b9328e4d2b48e890224089b908d683</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
   <sys_script_include action="INSERT_OR_UPDATE" apply_defaults="true">
     <sys_id>a0b9328e4d2b48e890224089b908d683</sys_id>
     <sys_scope display_value="global">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
@@ -786,7 +786,7 @@ BulkAppConsole.prototype = Object.extendsObject(global.AbstractAjaxProcessor, (f
     <table>sys_script_include</table>
     <use_es_latest>true</use_es_latest>
   </sys_es_latest_script>
-</record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">e760261a36e34e0f6a1019fc51afa958</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>admin</sys_created_by><sys_created_on /><sys_id>cfa44cd34e0cbfc06fa29e38eb502738</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b0080000001</sys_recorded_at><sys_updated_by>admin</sys_updated_by><sys_updated_on /><table /><target_name>BulkAppConsole</target_name><type>Sys Script Include</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_script_include_a596bcf5023642be80f89bfd1870e524</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+</record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">d04907f5c07a85f4f1f6157483577acf</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>admin</sys_created_by><sys_created_on /><sys_id>06fcf6fdc4b85a4c095d7eeaf0e88abe</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b0080000001</sys_recorded_at><sys_updated_by>admin</sys_updated_by><sys_updated_on /><table /><target_name>BulkAppConsole</target_name><type>Sys Script Include</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_script_include_a596bcf5023642be80f89bfd1870e524</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
   <sys_script_include action="INSERT_OR_UPDATE" apply_defaults="true">
     <sys_id>a596bcf5023642be80f89bfd1870e524</sys_id>
     <sys_scope display_value="global">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
@@ -957,7 +957,7 @@ BulkPublishMyCompanyApps.prototype = Object.extendsObject(global.AbstractAjaxPro
     <table>sys_script_include</table>
     <use_es_latest>true</use_es_latest>
   </sys_es_latest_script>
-</record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">e760261a36e34e0f6a1019fc51afa958</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>admin</sys_created_by><sys_created_on /><sys_id>7a565db63734c9bc0bfe747b15b1089a</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b0090000001</sys_recorded_at><sys_updated_by>admin</sys_updated_by><sys_updated_on /><table /><target_name>BulkPublishMyCompanyApps</target_name><type>Sys Script Include</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_ui_page_e50a5b297999422a982ce43dd4e39791</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_page">
+</record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">d04907f5c07a85f4f1f6157483577acf</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>admin</sys_created_by><sys_created_on /><sys_id>b33a92ccc1b326087a7134fe10a4ae48</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b0090000001</sys_recorded_at><sys_updated_by>admin</sys_updated_by><sys_updated_on /><table /><target_name>BulkPublishMyCompanyApps</target_name><type>Sys Script Include</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_ui_page_e50a5b297999422a982ce43dd4e39791</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_page">
   <sys_ui_page action="INSERT_OR_UPDATE" apply_defaults="true">
     <sys_id>e50a5b297999422a982ce43dd4e39791</sys_id>
     <sys_scope display_value="global">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
@@ -1093,15 +1093,19 @@ function byId(id) {
 /* ---------- messages and summary ---------- */
 
 
+// The summary shows inside the open tab, under its header line.
 function setSummary(html, kind) {
-    var bar = byId('summary-bar');
-    if (!bar) { return; }
-    if (!html) {
-        bar.style.display = 'none';
-        bar.innerHTML = '';
-        return;
+    var tabs = ['save', 'restore'];
+    for (var t = 0; t &lt; tabs.length; t++) {
+        var other = byId('summary-' + tabs[t]);
+        if (other) {
+            other.style.display = 'none';
+            other.innerHTML = '';
+        }
     }
-    bar.className = 'alert alert-' + (kind || 'info');
+    var bar = byId('summary-' + BAC.tab);
+    if (!bar || !html) { return; }
+    bar.className = 'bac-summary alert alert-' + (kind || 'info');
     bar.style.display = 'block';
     bar.innerHTML = '&lt;button type="button" class="close" data-action="dismissSummary" title="Dismiss" aria-label="Dismiss"&gt;&amp;times;&lt;/button&gt;' + html;
 }
@@ -1114,15 +1118,16 @@ function renderSyncNote() {
     if (!el) { return; }
     var link = ' &lt;a target="_blank" href="%24mycompanyappsmgmt.do"&gt;My Company Applications&lt;/a&gt;';
     var again = ' &lt;a href="#" data-action="resync"&gt;Refresh again&lt;/a&gt;';
+    var dismissSync = '&lt;button type="button" class="close" data-action="dismissSync" title="Dismiss" aria-label="Dismiss"&gt;&amp;times;&lt;/button&gt;';
     if (BAC.sync.state === 'running') {
         el.className = 'alert alert-info';
         el.innerHTML = '&lt;span class="glyphicon glyphicon-refresh bac-spinning"&gt;&lt;/span&gt; Refreshing' + link + ' from the App Repo so the latest versions show here...';
     } else if (BAC.sync.state === 'done') {
         el.className = 'alert alert-info';
-        el.innerHTML = 'Refreshed' + link + ' from the App Repo at ' + esc(BAC.sync.time) + '.' + again;
+        el.innerHTML = dismissSync + 'Refreshed' + link + ' from the App Repo at ' + esc(BAC.sync.time) + '.' + again;
     } else if (BAC.sync.state === 'failed') {
         el.className = 'alert alert-warning';
-        el.innerHTML = 'Could not refresh' + link + '. The versions below may be out of date.' + again;
+        el.innerHTML = dismissSync + 'Could not refresh' + link + '. The versions below may be out of date.' + again;
     } else {
         el.style.display = 'none';
         return;
@@ -1551,6 +1556,7 @@ function paneHtml(tab) {
     var html = '';
     if (tab === 'restore') {
         html += '&lt;p class="bac-sub"&gt;&lt;strong class="bac-sub-title"&gt;Company apps installed in store mode.&lt;/strong&gt; &lt;span class="text-muted"&gt;Run this right after the clone.&lt;/span&gt;&lt;/p&gt;' +
+            '&lt;div id="summary-restore" class="bac-summary alert alert-info" style="display: none;"&gt;&lt;/div&gt;' +
             '&lt;div id="sync-note" class="alert alert-info" style="display: none;"&gt;&lt;/div&gt;' +
             '&lt;div class="bac-toolbar"&gt;' +
             '&lt;button type="button" id="btnRestoreAll" class="btn btn-primary" data-action="restoreAll"&gt;Upgrade and Convert&lt;/button&gt; ' +
@@ -1564,6 +1570,7 @@ function paneHtml(tab) {
             '&lt;/div&gt;';
     } else {
         html += '&lt;p class="bac-sub"&gt;&lt;strong class="bac-sub-title"&gt;Development mode apps.&lt;/strong&gt; &lt;span class="text-muted"&gt;Run this on your dev instance before it is cloned over.&lt;/span&gt;&lt;/p&gt;' +
+            '&lt;div id="summary-save" class="bac-summary alert alert-info" style="display: none;"&gt;&lt;/div&gt;' +
             '&lt;div id="banner-save" class="alert alert-info" style="display: none;"&gt;&lt;/div&gt;' +
             '&lt;div class="bac-toolbar"&gt;' +
             '&lt;button type="button" id="btnPublishAll" class="btn btn-primary" data-action="publishAll"&gt;Publish&lt;/button&gt; ' +
@@ -2091,6 +2098,10 @@ function onClick(ev) {
         byId('prereq-strip').style.display = 'none';
     }
     else if (action === 'dismissSummary') { setSummary('', ''); }
+    else if (action === 'dismissSync') {
+        BAC.sync.state = '';
+        renderSyncNote();
+    }
     else if (action === 'resync') {
         if (!BAC.busy) {
             BAC.status.restore = {};
@@ -2236,9 +2247,8 @@ addLoadEvent(initPage);
           .bac-running tbody tr.bac-in-run { opacity: 1; }
           .bac-table tbody tr.bac-active td { background-color: #e6f0fa; }
           .bac-table tbody tr.bac-active td:first-child { box-shadow: inset 4px 0 0 #2a7ab8; }
-          #summary-bar { margin: 0 0 18px; }&lt;/style&gt;
+          .bac-summary { margin: 0 0 14px; }&lt;/style&gt;
         &lt;div id="prereq-strip" class="alert alert-info" style="display: none;"&gt;&lt;/div&gt;
-        &lt;div id="summary-bar" class="alert alert-info" style="display: none;"&gt;&lt;/div&gt;
         &lt;ul class="nav nav-tabs" style="margin-bottom: 10px;"&gt;
           &lt;li id="tab-save"&gt;
             &lt;a href="#" data-tab="save"&gt;Before Clone: Save Work&lt;/a&gt;
@@ -2277,7 +2287,7 @@ addLoadEvent(initPage);
     <table>sys_ui_page</table>
     <use_es_latest>true</use_es_latest>
   </sys_es_latest_script>
-</record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">e760261a36e34e0f6a1019fc51afa958</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>admin</sys_created_by><sys_created_on /><sys_id>a6edd7c6ce45696f62b8f7730d5f323c</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b00a0000001</sys_recorded_at><sys_updated_by>admin</sys_updated_by><sys_updated_on /><table /><target_name>bulk_convert_store_app_confirm</target_name><type>Sys UI Page</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_app_3b04bd443371c7d02e49a94a7e5c7bb3</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_app">
+</record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">d04907f5c07a85f4f1f6157483577acf</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>admin</sys_created_by><sys_created_on /><sys_id>adaa56c76db69c5f4060f3437d1c42a3</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b00a0000001</sys_recorded_at><sys_updated_by>admin</sys_updated_by><sys_updated_on /><table /><target_name>bulk_convert_store_app_confirm</target_name><type>Sys UI Page</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Bulk Store App Converter">3b04bd443371c7d02e49a94a7e5c7bb3</application><category>customer</category><comments /><name>sys_app_3b04bd443371c7d02e49a94a7e5c7bb3</name><payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_app">
   <sys_app action="INSERT_OR_UPDATE" apply_defaults="true">
     <sys_id>3b04bd443371c7d02e49a94a7e5c7bb3</sys_id>
     <sys_scope display_value="global">3b04bd443371c7d02e49a94a7e5c7bb3</sys_scope>
@@ -2312,4 +2322,4 @@ addLoadEvent(initPage);
     <user_role />
     <version>1.2.0</version>
   </sys_app>
-</record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">e760261a36e34e0f6a1019fc51afa958</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>admin</sys_created_by><sys_created_on /><sys_id>d4862ecb05ce199458c5752f3395e8c3</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b00b0000001</sys_recorded_at><sys_updated_by>admin</sys_updated_by><sys_updated_on /><table /><target_name>Bulk Store App Converter</target_name><type>Sys App</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml></unload>
+</record_update>]]></payload><payload_hash /><remote_update_set display_value="Bulk Store App Converter">d04907f5c07a85f4f1f6157483577acf</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>admin</sys_created_by><sys_created_on /><sys_id>c9d4523e9fc2868fd4aacf4261a84d94</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>19fdd2b00b0000001</sys_recorded_at><sys_updated_by>admin</sys_updated_by><sys_updated_on /><table /><target_name>Bulk Store App Converter</target_name><type>Sys App</type><update_domain>global</update_domain><update_guid /><update_guid_history /><update_set display_value="" /><view /></sys_update_xml></unload>
