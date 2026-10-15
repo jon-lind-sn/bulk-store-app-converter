@@ -36,10 +36,9 @@ UiPage({
           .bac-running tbody tr.bac-in-run { opacity: 1; }
           .bac-table tbody tr.bac-active td { background-color: #e6f0fa; }
           .bac-table tbody tr.bac-active td:first-child { box-shadow: inset 4px 0 0 #2a7ab8; }
-          #summary-bar { margin: 0 0 18px; }
+          .bac-summary { margin: 0 0 14px; }
         </style>
         <div id="prereq-strip" class="alert alert-info" style="display: none;"></div>
-        <div id="summary-bar" class="alert alert-info" style="display: none;"></div>
         <ul class="nav nav-tabs" style="margin-bottom: 10px;">
           <li id="tab-save"><a href="#" data-tab="save">Before Clone: Save Work</a></li>
           <li id="tab-restore"><a href="#" data-tab="restore">After Clone: Restore</a></li>
@@ -190,15 +189,19 @@ function byId(id) {
 /* ---------- messages and summary ---------- */
 
 
+// The summary shows inside the open tab, under its header line.
 function setSummary(html, kind) {
-    var bar = byId('summary-bar');
-    if (!bar) { return; }
-    if (!html) {
-        bar.style.display = 'none';
-        bar.innerHTML = '';
-        return;
+    var tabs = ['save', 'restore'];
+    for (var t = 0; t < tabs.length; t++) {
+        var other = byId('summary-' + tabs[t]);
+        if (other) {
+            other.style.display = 'none';
+            other.innerHTML = '';
+        }
     }
-    bar.className = 'alert alert-' + (kind || 'info');
+    var bar = byId('summary-' + BAC.tab);
+    if (!bar || !html) { return; }
+    bar.className = 'bac-summary alert alert-' + (kind || 'info');
     bar.style.display = 'block';
     bar.innerHTML = '<button type="button" class="close" data-action="dismissSummary" title="Dismiss" aria-label="Dismiss">&times;</button>' + html;
 }
@@ -211,15 +214,16 @@ function renderSyncNote() {
     if (!el) { return; }
     var link = ' <a target="_blank" href="%24mycompanyappsmgmt.do">My Company Applications</a>';
     var again = ' <a href="#" data-action="resync">Refresh again</a>';
+    var dismissSync = '<button type="button" class="close" data-action="dismissSync" title="Dismiss" aria-label="Dismiss">&times;</button>';
     if (BAC.sync.state === 'running') {
         el.className = 'alert alert-info';
         el.innerHTML = '<span class="glyphicon glyphicon-refresh bac-spinning"></span> Refreshing' + link + ' from the App Repo so the latest versions show here...';
     } else if (BAC.sync.state === 'done') {
         el.className = 'alert alert-info';
-        el.innerHTML = 'Refreshed' + link + ' from the App Repo at ' + esc(BAC.sync.time) + '.' + again;
+        el.innerHTML = dismissSync + 'Refreshed' + link + ' from the App Repo at ' + esc(BAC.sync.time) + '.' + again;
     } else if (BAC.sync.state === 'failed') {
         el.className = 'alert alert-warning';
-        el.innerHTML = 'Could not refresh' + link + '. The versions below may be out of date.' + again;
+        el.innerHTML = dismissSync + 'Could not refresh' + link + '. The versions below may be out of date.' + again;
     } else {
         el.style.display = 'none';
         return;
@@ -648,6 +652,7 @@ function paneHtml(tab) {
     var html = '';
     if (tab === 'restore') {
         html += '<p class="bac-sub"><strong class="bac-sub-title">Company apps installed in store mode.</strong> <span class="text-muted">Run this right after the clone.</span></p>' +
+            '<div id="summary-restore" class="bac-summary alert alert-info" style="display: none;"></div>' +
             '<div id="sync-note" class="alert alert-info" style="display: none;"></div>' +
             '<div class="bac-toolbar">' +
             '<button type="button" id="btnRestoreAll" class="btn btn-primary" data-action="restoreAll">Upgrade and Convert</button> ' +
@@ -661,6 +666,7 @@ function paneHtml(tab) {
             '</div>';
     } else {
         html += '<p class="bac-sub"><strong class="bac-sub-title">Development mode apps.</strong> <span class="text-muted">Run this on your dev instance before it is cloned over.</span></p>' +
+            '<div id="summary-save" class="bac-summary alert alert-info" style="display: none;"></div>' +
             '<div id="banner-save" class="alert alert-info" style="display: none;"></div>' +
             '<div class="bac-toolbar">' +
             '<button type="button" id="btnPublishAll" class="btn btn-primary" data-action="publishAll">Publish</button> ' +
@@ -1188,6 +1194,10 @@ function onClick(ev) {
         byId('prereq-strip').style.display = 'none';
     }
     else if (action === 'dismissSummary') { setSummary('', ''); }
+    else if (action === 'dismissSync') {
+        BAC.sync.state = '';
+        renderSyncNote();
+    }
     else if (action === 'resync') {
         if (!BAC.busy) {
             BAC.status.restore = {};
