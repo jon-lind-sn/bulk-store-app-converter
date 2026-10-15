@@ -1,100 +1,89 @@
 # Bulk Store App Upgrader and Converter
 
-A global-scope ServiceNow utility for administrators to bulk-upgrade Application Repo store apps and then bulk-convert them between store mode (`sys_store_app`) and development mode (`sys_app`).
+A global-scope ServiceNow utility for administrators to prepare company apps for an instance clone and restore them afterward. It publishes development mode apps (`sys_app`) to My Application Repository (App Repo) before a clone, then upgrades and converts apps between store mode (`sys_store_app`) and development mode (`sys_app`) after the clone.
 
 See a demo and more information on ServiceNow Community at https://sn.works/aemc/bulkupgradeconvert
 
-## Bulk Upgrade Feature
-
-The upgrade script automatically retrieves and installs the latest versions of your Application Repo store apps on a cloned instance. There are two ways to run it, exposed as separate modules under **System Applications**:
-
-- **Bulk Upgrade ALL My Company Apps**: Upgrades every app where `is_store_app = false` to its latest available version. No configuration required — use this if you want everything company-owned brought current.
-- **Bulk Upgrade My Company Apps from Property**: Upgrades only the app scopes listed in the `bulk_convert_store_app.convertible_apps` system property, a comma-separated list of app scope names (e.g., `x_myapp_1,x_myapp_2`). Use this if you want to target a specific set of apps.
-
-Either option ensures cloned instances have any versions which may have been stashed as part of the clone process but not deployed to prod yet. After running either, be sure to refresh **My Company Apps** so the updated versions are reflected.
-
-**Prerequisite** (property-based option only): Configure the `bulk_convert_store_app.convertible_apps` property in production with the list of scopes you want to auto-upgrade on every clone.
-
-## Bulk Convert Feature
-
-This app provides a single UI page with two side-by-side panels for bidirectional app conversion:
-
-- **Left Panel — "Convertible Store Apps"**: Lists store applications eligible to be converted to development mode. Uses `sn_app_api.AppStoreAPI.canConvertSysStoreApp()` as the eligibility filter.  
-
-- **Right Panel — "Development Mode Apps"**: Lists custom-scoped development applications eligible to be converted back to store/repo mode. Uses `sn_app_api.AppStoreAPI.canConvertSysApp()` as the eligibility filter.
-
 ![Bulk Store App Converter screenshot](bulk-store-app-converter.jpg)
 
-The convert UI handles bidirectional app mode conversion: store apps can be converted to development mode for customization, and development apps can be converted back to store/repo mode for distribution. The interface uses client-side Ajax (`com.snc.apps.AppsAjaxProcessor`) because the underlying conversion APIs aren't directly callable from the server—the client-side approach was the only reliable way to drive bulk conversions.
+## Bulk App Clone Assistant
 
-The page polls `sys_execution_tracker` every 3 seconds to track completion of each conversion in the batch, providing real-time status updates (`Pending` → `Converting` → `Complete`/`Failed`). After all conversions finish, users refresh to see the updated lists as apps move between the left and right panels.
+The page is the module **Bulk App Clone Assistant** under **System Applications**. It is limited to the `upgrade_admin` role and has two tabs.
 
-## Bulk Publish Feature
+### Before Clone
 
-The **Publish New Version** button under the Development Mode Apps panel publishes each selected app to My Application Repository at the next minor version the repository accepts. It works on development mode apps (`sys_app`) only.
+Lists every development mode app and checks it against the App Repo so that no work is lost in the clone. Each app shows one status:
 
-For each selected app the page:
+1. **Changed**: the App Repo has the current version, but the app was edited after it was published.
+2. **Unpublished**: the local version is newer than the App Repo version.
+3. **Not in App Repo**: the app has never been published.
+4. **In App Repo**: the App Repo has the current version, but no local publish record exists.
+5. **Published**: the App Repo has the current version and nothing changed after it.
+6. **Check failed**: the check could not finish. The row shows a verbose error, a **Retry check** link, and a link to the matching error logs.
 
-1. Skips any app whose version contains `CONVERTED` and alerts you to set a version manually first.
-2. Switches your application picker to that app (the same call as the stock **Switch to this Application** action), then checks that you can publish it (`canWrite()` or `sn_app_api.AppStoreAPI.canPublishToAppRepo()`). Both checks depend on the picker. When all apps are done the picker goes back to **Global**.
-3. Finds the next version. My Application Repository can only confirm whether a version is publishable, so `BulkPublishMyCompanyApps.getNextPublishVersion` starts at the next minor version above the local version (for example `1.2.5` becomes `1.3.0`) and keeps bumping the minor version until the repository accepts it, for up to 3 attempts.
-4. Starts the stock uploader (`sn_appauthor.ScopedAppUploaderAJAX`) with the new version, then polls `sys_execution_tracker` every 3 seconds, one app at a time, with the same status rows as conversion (`Pending` → `Publishing` → `Published`/`Failed`). Failures show a red message with the app name, the version on the record, and the last version attempted.
+Every app that is not Published is selected by default. Filters cover search, **Needs publishing**, and one checkbox per status. A **Recent changes** link opens the local edits behind a Changed, In App Repo, or Check failed row.
 
-## How to use it
-For the conversion UI specifically, ensure your application scope is set to **Global** (required for conversion operations). Select apps in either panel and click **Convert to Dev Mode** (left) or **Convert to Store App** (right). The interface tracks progress in real-time, and after refresh, apps will appear in their new panel.
+**Publish** sends each selected app to the App Repo at the next minor version the App Repo accepts. The target column shows `<current> to <next>`. After a run the list reloads and the published apps come back unchecked.
 
-1. Navigate to **System Applications > Bulk Convert My Company Apps** in the application navigator.
-2. Ensure your application scope is set to **Global** (required for conversion operations).
-3. Check the apps you want to convert in either panel.
-4. Click **Convert to Dev Mode** (left) or **Convert to Store App** (right).
-5. Watch the inline status progress: `Pending` → `Converting` → `Complete`/`Failed`.
-6. After all conversions finish, refresh the page to see the updated lists (apps will move between panels).
+Apps converted to store mode and back carry the version `0.0.0-CONVERTED`. The page flags them and offers to convert them back to store mode so they can be upgraded.
 
-### How Conversion Works
+### After Clone: Restore
 
-Conversions are initiated via GlideAjax calling `com.snc.apps.AppsAjaxProcessor` with:
+Lists the apps installed in store mode. Opening the tab refreshes My Company Applications from the App Repo, so the **Target Version** column is current. Apps with a newer target version show an **Upgrade** badge.
 
-- `sysparm_function: 'convertToDevelopmentApp'` (store → dev)
-- `sysparm_function: 'convertToStoreApp'` (dev → store)
+1. **Upgrade and Convert**: upgrades each selected app, then converts it to development mode.
+2. **Upgrade**: upgrades each selected app and leaves it in store mode. Apps with nothing to upgrade are skipped.
+3. **Convert to Dev**: converts each selected app to development mode as it is.
 
-Each conversion starts a background progress worker. The page polls `sys_execution_tracker` every 3 seconds until the job completes before starting the next conversion in the batch.
+Apps at `0.0.0-CONVERTED` with no App Repo version are skipped by the upgrade actions. Use **Convert to Dev** for those.
 
-### Server-Side Logic
+## Bulk Upgrade Modules
 
-The page queries `sys_scope` (parent table of both `sys_store_app` and `sys_app`) sorted alphabetically by name. For each record, it checks `sys_class_name` and calls the appropriate API:
+Two modules under **System Applications** upgrade store apps to their latest versions without opening the page. They share the same `runUpgrade` logic as the Restore tab.
 
-- `sys_store_app` + `canConvertSysStoreApp() = true` → left panel
-- `sys_app` + `canConvertSysApp() = true` → right panel
+1. **Bulk Upgrade ALL My Company Apps**: upgrades every company-owned app. No configuration required.
+2. **Bulk Upgrade My Company Apps from Property**: upgrades only the app scopes in the `bulk_convert_store_app.convertible_apps` system property, a comma-separated list such as `x_myapp_1,x_myapp_2`.
+
+Both modules are limited to admins. After either one runs, refresh **My Company Applications** so the new versions show.
 
 ## Requirements
 
-- **Role**: `admin`
-- **Scope**: Must be in Global scope to perform conversions
-- **Platform**: ServiceNow (Washington DC+)
+1. **Role**: `admin` for the upgrade modules and `upgrade_admin` for the page.
+2. **Scope**: the application picker is switched per app during a publish and returns to **Global** at the end of a run.
+3. **Platform**: ServiceNow Washington DC or later.
 
-## New Post-Clone Workflow
+## Post-Clone Workflow
 
-1. Clone the instance
-2. Log into the cloned dev instance
-3. Navigate to **System Applications → Bulk Upgrade ALL My Company Apps** to upgrade every company-owned app to its latest version, or **System Applications → Bulk Upgrade My Company Apps from Property** to only upgrade the apps listed in `bulk_convert_store_app.convertible_apps`
-4. Ensure your application scope is set to **Global** (required for conversion operations).
-5. Navigate to **System Applications → Bulk Convert My Company Apps** to restore development mode by selecting your apps and clicking **Convert**
+1. Before the clone, open **Bulk App Clone Assistant** on the source instance, review the **Before Clone** tab, and publish every app that is not Published.
+2. Clone the instance.
+3. Log in to the cloned instance and open **Bulk App Clone Assistant**.
+4. Open the **After Clone: Restore** tab and select your apps.
+5. Click **Upgrade and Convert** to bring each app current and return it to development mode.
 
-## Bundling / Export
+## Development
 
-- **Fork**: Feel free to fork this repo and install it into your instance directly.
-- **Copy Pasta**: There are two main files, the script include and the UI Page and a couple of modules.  You may wish to just manually create your own files and copy paste the code.
+This is a now-sdk Fluent project (SDK 4.13.6).
 
-## Contributions
-
-If you fork it, they will come. Please reach out to request to be a contributor if you are planning to make changes to this code. I would love to see what you're doing and learn from you.
-
-## Use this as inspiration
-
-This is meant to be inspiration for you to build your own solution. There is no warranty and teh expectation is that you can support this yourself.  If you have an issue please feel free to become a contributor and submit the solution and/or create an issue.  
-
-Happy coding!
+```bash
+npm run build
+npm run deploy
+```
 
 ## Retrieved Update Set
 
-- **Import via Update Set**: [`Bulk-Store-App-Converter-1.0.4.xml`](share/Bulk-Store-App-Converter-1.0.4.xml) — load this into **Retrieved Update Sets** on your instance and commit it to install the app without cloning the repo.
+[`Bulk-Store-App-Converter-1.2.0.xml`](share/Bulk-Store-App-Converter-1.2.0.xml) installs the app without cloning the repo. Load it into **Retrieved Update Sets** on your instance and commit it. Earlier versions of the file stay in the [`share`](share) folder.
+
+## Bundling and Export
+
+1. **Fork**: fork this repo and install it into your instance directly.
+2. **Copy and paste**: the main files are the script includes, the user interface (UI) page, and the modules. You can create your own files and copy the code.
+
+## Contributions
+
+If you fork it, they will come. Reach out to become a contributor if you plan to make changes. I would love to see what you are doing and learn from you.
+
+## Use This as Inspiration
+
+This is meant to be inspiration for your own solution. There is no warranty, and you are expected to support it yourself. If you have an issue, become a contributor and submit the fix, or create an issue.
+
+Happy coding!
