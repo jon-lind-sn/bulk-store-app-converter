@@ -41,6 +41,8 @@ The page switches the application picker per app while publishing, shows a "Scop
 
 ### After Clone: Restore
 
+![Bulk App Clone Assistant, After Clone: Restore tab](images/after-clone-restore.jpg)
+
 Run this on the cloned instance. Opening the tab refreshes My Company Applications from the App Repo so the Target Version column is current. Apps with a newer target show an **Upgrade** badge, and the **Upgrade available** checkbox filters to them.
 
 1. **Upgrade and Convert**: upgrades each selected app, then converts it to development mode.
