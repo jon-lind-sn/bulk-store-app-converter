@@ -15,7 +15,7 @@ The broken files share this shape:
 
 The goal is to remove `global` from these histories: every version row in the app scope, the newest version applied and current, and optionally the Extensible Markup Language (XML) update rows cleaned up.
 
-Example from yoyo, `sc_cat_item_4a17d6a3ff133100ba13ffffffffffe7` (Apple Watch) before the fix:
+Example from the test instance, `sc_cat_item_4a17d6a3ff133100ba13ffffffffffe7` (Apple Watch) before the fix:
 
 | Recorded at | State | Source | Scope |
 |---|---|---|---|
@@ -109,17 +109,17 @@ Filter examples, added one condition at a time:
 
 ## Testing
 
-The test instance is yoyo (now-sdk credential alias `yoyo`). Each test touches one file or one scope.
+Tests run on a test instance (now-sdk credential alias `{test-instance}`). Each test touches one file or one scope.
 
 1. **Report first.** Run the fix script with the default options (report only) and check the counts and patterns against the version rows.
-2. **Unit test `classify()` offline.** Load the script include in Node with a stub `Class.create`, feed it rows pulled from yoyo with `npx @servicenow/sdk query`, and check pattern, target scope and the rows to move. This also covered the case where a revert lands in `global` (the target is still the app scope).
+2. **Unit test `classify()` offline.** Load the script include in Node with a stub `Class.create`, feed it rows pulled from the test instance with `npx @servicenow/sdk query`, and check pattern, target scope and the rows to move. This also covered the case where a revert lands in `global` (the target is still the app scope).
 3. **Record the before state.** Query the file's `sys_update_version` rows, `sys_update_xml` rows and the record's `sys_scope` and `sys_updated_on`.
-4. **Set one-file options.** Edit `OPTIONS` in `find_multi_scope_history.js` (filter on the file name, `limit: 1`, the fixes under test), run `node --check`, `npm run build`, then `npx @servicenow/sdk install -a yoyo`.
+4. **Set one-file options.** Edit `OPTIONS` in `find_multi_scope_history.js` (filter on the file name, `limit: 1`, the fixes under test), run `node --check`, `npm run build`, then `npx @servicenow/sdk install -a {test-instance}`.
 5. **Run the fix script** from its form with Run Fix Script, then Proceed.
 6. **Compare.** Read the run's log lines, then query the version rows, XML rows and record again and compare with step 3.
 7. **Restore** the report-only defaults in `OPTIONS` and deploy again.
 
-## Results on yoyo
+## Results on the test instance
 
 Report run with the default filter: 2506 files checked in about 4.5 seconds, 7 multi-scope files.
 
@@ -152,7 +152,7 @@ Not yet fixed: the releaseops related list.
 7. **The UI link needs write access to the record.** "Revert to this version" is hidden unless `GlideappUpdateVersion.canWriteRecordInVersion` is true. With the picker on Enterprise Services Catalog it was hidden for a `global` record. Switching the picker to Global showed it, and also switched the update set to Default (Global).
 8. **The record's `sys_scope` is not changed by any step.** After the fix, Apple Watch, Apple iPhone 13 pro and the 3 Enterprise Services Catalog items were still `global` records with app-scope history.
 9. **The next install moves the record into the app scope.** On the first app install after the fix, every fixed record moved from `global` to the app scope and was applied (Inserted), with no skip.
-10. **The next install adds a current version from the update set.** Next to the app's `history` row (source `sys_store_app`), the install creates a new `current` version whose source is the installing user's current update set (Default on yoyo), in the same second. Every version row stays in the app scope.
+10. **The next install adds a current version from the update set.** Next to the app's `history` row (source `sys_store_app`), the install creates a new `current` version whose source is the installing user's current update set (Default on the test instance), in the same second. Every version row stays in the app scope.
 11. **The old `global` XML rows do not cause a skip.** The fixed files kept their `global` `sys_update_xml` rows, plus the revert's new one, and still installed cleanly.
 
 ## Platform Gotchas
@@ -167,4 +167,4 @@ Not yet fixed: the releaseops related list.
 1. Decide on the releaseops related list (`newer_history_same_scope`, record not found).
 2. The `global` XML rows do not block the next install (Findings 11). Decide whether to clean them up anyway, and test `updateXml: 'delete_new'` and `'normalize'` on one file each if so.
 3. Test the revert with the application picker on an unrelated scope.
-4. Delete the leftover `u_msh_run` and `u_msh_file` tables on yoyo (by hand, `u_msh_file` first, with the picker on Bulk Store App Converter).
+4. Delete the leftover `u_msh_run` and `u_msh_file` tables on the test instance (by hand, `u_msh_file` first, with the picker on Bulk Store App Converter).
