@@ -41,7 +41,6 @@ MultiScopeHistoryFinder.prototype = {
     BATCH_SIZE: 200,
     LINK_NAME_LIMIT: 80,
     KEEP_FILES: 500,
-    MAX_FIX_FILES: 100,
 
     PATTERNS: {
         NEWER_OTHER_SCOPE: 'newer_history_other_scope',
@@ -227,9 +226,8 @@ MultiScopeHistoryFinder.prototype = {
         if (typeof probe.isValidEncodedQuery === 'function' && !probe.isValidEncodedQuery(opts.filter)) {
             throw 'MultiScopeHistoryFinder: invalid filter for sys_update_version: ' + opts.filter;
         }
-        if (this._writes(opts) && (opts.limit < 1 || opts.limit > this.MAX_FIX_FILES)) {
-            throw 'MultiScopeHistoryFinder: revert, normalize and updateXml need a limit from 1 to ' + this.MAX_FIX_FILES +
-                '. Narrow the filter and run again to fix more.';
+        if (this._writes(opts) && opts.limit < 1) {
+            throw 'MultiScopeHistoryFinder: revert, normalize and updateXml need a limit of 1 or more.';
         }
     },
 
