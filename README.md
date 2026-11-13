@@ -10,7 +10,7 @@ Demo and discussion: https://sn.works/aemc/bulkupgradeconvert
 
 Choose one option.
 
-1. **Update set (recommended).** Download [`Bulk-Store-App-Converter-1.2.0.xml`](share/Bulk-Store-App-Converter-1.2.0.xml), the latest version. On your instance, open **Retrieved Update Sets**, import the file, then preview and commit it. Earlier versions are in the [`share`](share) folder.
+1. **Update set (recommended).** Download [`Bulk-Store-App-Converter-1.3.0.xml`](share/Bulk-Store-App-Converter-1.3.0.xml), the latest version. On your instance, open **Retrieved Update Sets**, import the file, then preview and commit it. Earlier versions are in the [`share`](share) folder.
 2. **now-sdk.** Clone this repo, authenticate with `npx @servicenow/sdk auth`, then run `npm run build` and `npm run deploy`.
 
 **Requirements:** the `admin` role and ServiceNow Washington DC or later.

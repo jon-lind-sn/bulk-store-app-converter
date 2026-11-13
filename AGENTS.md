@@ -11,7 +11,7 @@ Working notes for agents on the Bulk Store App Converter. Read `docs/ui-refactor
 5. Server endpoint for the page: `BulkAppConsole` (`src/fluent/script-includes/BulkAppConsole.server.js`), client callable, every method admin guarded, all methods return JSON strings.
 6. Test in the browser with chrome-devtools against `https://{dev-instance}.service-now.com/bulk_convert_store_app_confirm.do`. The page globals (`BAC`, `renderTable`, `uncheckPublished`, and so on) are reachable from `evaluate_script`. Wait for `BAC.loader` to be false and every app in `BAC.saveState` before reading results. `wait_for` on the word "published" matches the "Never published" notes, so poll `BAC.busy` to detect the end of a run.
 7. Navigation: the page is the module "Bulk App Clone Assistant" (renamed from "Bulk Convert My Company Apps") under the System Applications menu, which is limited to the `upgrade_admin` role. The two upgrade modules are admin only.
-8. Remotes: `origin` (GitHub) and `devsnc` (`code.devsnc.com`). Branch `ui-refactor`: last pushed to `origin` at `a098516`, last pushed to `devsnc` at `ee5a587`.
+8. Remote: `origin` (GitHub). Branch `ui-refactor`.
 
 ## Platform gotchas
 
@@ -38,7 +38,7 @@ Working notes for agents on the Bulk Store App Converter. Read `docs/ui-refactor
    5. `sn_appclient_api_v1.do?app_request_type=list_apps_versions`: the repo cache (`servedFromDB: true`). It leaves out apps present as dev apps.
    6. Not yet explored: other methods on `sn_app_api.AppStoreAPI` and `sn_appclient.AppUpgrader`.
 6. `store_correlation_id` on `sys_app` can be stale or come from elsewhere. App Repo Source Orchestrator (`x_snc_aso`, 1.4.1, created 2022-04-10 by admin) carries REPOAPP0000001001, which belongs to Customer PM Engagement, an unrelated app. It has no publish trace on {dev-instance} and no row in the repo, so "Never published to the App Repo" is correct for it. How it got onto {dev-instance} is unknown. Do not use Customer PM Engagement as evidence for anything.
-7. Next version search (`findNextPublishableVersion`): start at the local version plus one minor, keep bumping the minor until `verify_version` accepts. Jon Config is local 1.0.6 but the repo already holds 1.1.0 (REPOAPP0000001046), so the target is 1.2.0.
+7. Next version search (`findNextPublishableVersion`): start at the local version plus one minor, keep bumping the minor until `verify_version` accepts. Example app is local 1.0.6 but the repo already holds 1.1.0 (REPOAPP0000001046), so the target is 1.2.0.
 8. The real world case is a cloned instance, where far fewer apps are "Not in App Repo" than on {dev-instance}.
 
 ## Publish traces on the instance (tested by publishing Equipment Loans 0.0.2 to 0.1.0 on 2026-10-14)
@@ -113,4 +113,4 @@ Page behavior:
 5. Whether publishing works with the picker left on Global (would remove the last picker switch).
 6. Server side Check failed text and the error log window have not been triggered by a real failure.
 7. Docs refresh (`README.md`, `docs/app-overview.md`).
-8. Whether to open a pull request for `ui-refactor` (pushed to `origin` and `devsnc`).
+8. Whether to open a pull request for `ui-refactor` (pushed to `origin`).
