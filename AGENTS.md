@@ -11,7 +11,7 @@ Working notes for agents on the Bulk Store App Converter. Read `docs/ui-refactor
 5. Server endpoint for the page: `BulkAppConsole` (`src/fluent/script-includes/BulkAppConsole.server.js`), client callable, every method admin guarded, all methods return JSON strings.
 6. Test in the browser with chrome-devtools against `https://xare.service-now.com/bulk_convert_store_app_confirm.do`. The page globals (`BAC`, `renderTable`, `uncheckPublished`, and so on) are reachable from `evaluate_script`. Wait for `BAC.loader` to be false and every app in `BAC.saveState` before reading results. `wait_for` on the word "published" matches the "Never published" notes, so poll `BAC.busy` to detect the end of a run.
 7. Navigation: the page is the module "Bulk App Clone Assistant" (renamed from "Bulk Convert My Company Apps") under the System Applications menu, which is limited to the `upgrade_admin` role. The two upgrade modules are admin only.
-8. Remotes: `origin` (GitHub) and `devsnc` (`code.devsnc.com`). Branch `ui-refactor` is pushed to both. Last pushed commit: `ee5a587`.
+8. Remotes: `origin` (GitHub) and `devsnc` (`code.devsnc.com`). Branch `ui-refactor`: last pushed to `origin` at `a098516`, last pushed to `devsnc` at `ee5a587`.
 
 ## Platform gotchas
 
