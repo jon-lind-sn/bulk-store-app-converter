@@ -6,22 +6,17 @@ var OPTIONS = {
     //   'application.scopeSTARTSWITHx_snc^source_table=sys_store_app'
     //   'application.scopeSTARTSWITHx_snc^nameSTARTSWITHsc_cat_item'
     filter: 'application.scopeSTARTSWITHx_snc',
-    patterns: [],       // empty = all. newer_history_other_scope, newer_history_same_scope, current_is_newest, no_current
     // Fixes run in this order, each optional:
     revert: false,      // 1. revert to the newest row when it is not current
     normalize: false,   // 2. move every version row into the target scope
     updateXml: 'none',  // 3. 'none', 'normalize' (move XML rows to the target scope) or 'delete_new' (delete XML rows outside it created by this run)
-    target: 'app',      // 'app' = newest non-global scope, 'newest' = newest row's scope, 'record' = the record's scope
-    limit: 0,           // max files to check; any fix needs a limit (or confirmAll)
-    confirmAll: false,
-    maxSeconds: 240,
-    startAfter: ''      // continue after this file name (printed when a run stops early)
+    limit: 0            // max files to check. Any fix needs a limit from 1 to 100. To fix more, narrow the filter and run again.
 };
 
 var finder = new MultiScopeHistoryFinder();
 var r = finder.run(OPTIONS);
 
-gs.print('Run ' + r.runId + ' (' + r.fixes + ', target ' + r.target + '), filter: ' + r.filter);
+gs.print('Run ' + r.runId + ' (' + r.fixes + '), filter: ' + r.filter);
 gs.print(r.checked + ' files checked, ' + r.found + ' span two or more scopes.');
 if (r.fixes !== 'report') {
     gs.print('Reverted ' + r.revertedFiles + ', normalized ' + r.normalizedFiles + ' files (' + r.normalizedRows +

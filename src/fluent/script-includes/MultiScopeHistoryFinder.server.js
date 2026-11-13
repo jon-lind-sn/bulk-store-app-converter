@@ -9,10 +9,8 @@
  * Terms:
  *   newest  = the version row with the highest sys_recorded_at, whatever its state
  *   current = the version row with state=current
- *   target  = the scope fixes move rows into:
- *             'app' (default) = the newest scope in the history that is not global
- *             'newest'        = the newest row's scope
- *             'record'        = the scope the record lives in now (else the current row's)
+ *   target  = the scope fixes move rows into: the newest scope in the history
+ *             that is not global
  *
  * Fix steps, in order, each optional:
  *   1. revert    : when the newest row is not current, revert to it
@@ -27,16 +25,15 @@
  * Usage (see the "Find multi-scope history files" fix script):
  *   var result = new MultiScopeHistoryFinder().run({
  *       filter: 'application.scopeSTARTSWITHx_snc',  // encoded query on sys_update_version
- *       patterns: [],        // only these patterns; empty = every multi-scope file
  *       revert: false,
  *       normalize: false,
  *       updateXml: 'none',
- *       target: 'app',
- *       limit: 0,            // max files to check; any fix needs a limit or confirmAll
- *       confirmAll: false,
- *       maxSeconds: 240,     // stop and return nextStartAfter
- *       startAfter: ''       // continue after this file name
+ *       limit: 0             // max files to check; any fix needs 1 to MAX_FIX_FILES
  *   });
+ *
+ * A fix always needs a limit, and the limit cannot exceed MAX_FIX_FILES, so a
+ * wrong filter can never change more than that many files in one run. Narrow the
+ * filter and run again to work through more.
  */
 var MultiScopeHistoryFinder = Class.create();
 MultiScopeHistoryFinder.prototype = {
@@ -44,6 +41,7 @@ MultiScopeHistoryFinder.prototype = {
     BATCH_SIZE: 200,
     LINK_NAME_LIMIT: 80,
     KEEP_FILES: 500,
+    MAX_FIX_FILES: 100,
 
     PATTERNS: {
         NEWER_OTHER_SCOPE: 'newer_history_other_scope',
@@ -60,13 +58,11 @@ MultiScopeHistoryFinder.prototype = {
 
     run: function (options) {
         var opts = this._options(options || {});
-        var started = new Date().getTime();
         var runId = 'MSH-' + String(new GlideDateTime().getValue()).replace(/[^0-9]/g, '');
         var result = {
             runId: runId,
             filter: opts.filter,
             fixes: this._fixLabel(opts),
-            target: opts.target,
             checked: 0,
             found: 0,
             revertedFiles: 0,
@@ -75,7 +71,6 @@ MultiScopeHistoryFinder.prototype = {
             xmlRows: 0,
             failedFiles: 0,
             complete: false,
-            nextStartAfter: '',
             summary: { byPattern: {}, byScopePath: {}, byFlag: {} },
             files: [],
             message: ''
@@ -85,7 +80,6 @@ MultiScopeHistoryFinder.prototype = {
 
         var agg = new GlideAggregate('sys_update_version');
         agg.addEncodedQuery(opts.filter);
-        if (opts.startAfter) agg.addQuery('name', '>', opts.startAfter);
         agg.groupBy('name');
         agg.orderBy('name');
         agg.query();
@@ -98,7 +92,7 @@ MultiScopeHistoryFinder.prototype = {
             if (batch.length < size) continue;
             this._processBatch(batch, opts, result);
             batch = [];
-            if (this._shouldStop(opts, started, result.checked)) {
+            if (opts.limit && result.checked >= opts.limit) {
                 stopped = agg.hasNext();
                 break;
             }
@@ -106,19 +100,17 @@ MultiScopeHistoryFinder.prototype = {
         if (!stopped && batch.length) this._processBatch(batch, opts, result);
 
         result.complete = !stopped;
-        result.nextStartAfter = stopped ? result.lastName : '';
-        if (stopped) result.message = 'Stopped at the time or file limit. Continue with startAfter: "' + result.lastName + '".';
-        delete result.lastName;
+        if (stopped) result.message = 'Stopped at the limit of ' + opts.limit + ' files. More files match the filter.';
 
         result.urls = {
             versions: this.getListUrls('sys_update_version', result.files.map(function (f) { return f.name; })),
             log: this.getLogUrl(runId)
         };
-        this._log(runId + ' | done | filter=' + opts.filter + ' | fixes=' + result.fixes + ' | target=' + opts.target +
+        this._log(runId + ' | done | filter=' + opts.filter + ' | fixes=' + result.fixes +
             ' | checked=' + result.checked + ' | found=' + result.found +
             ' | reverted=' + result.revertedFiles + ' | normalizedFiles=' + result.normalizedFiles +
             ' | normalizedRows=' + result.normalizedRows + ' | xmlRows=' + result.xmlRows + ' | failed=' + result.failedFiles +
-            ' | complete=' + result.complete + (result.nextStartAfter ? ' | nextStartAfter=' + result.nextStartAfter : '') +
+            ' | complete=' + result.complete +
             ' | summary=' + JSON.stringify(result.summary));
         return result;
     },
@@ -128,10 +120,9 @@ MultiScopeHistoryFinder.prototype = {
      * rows: [{ id, app, scope, state, recorded, sourceTable, createdOn }]
      * xmlByScope: { scope: count } for the same name in sys_update_xml
      * recordScope: scope value of the record itself, or '' when not found
-     * target: 'app', 'newest' or 'record'
      * Returns null when the rows cover fewer than two scopes.
      */
-    classify: function (name, rows, xmlByScope, recordScope, target) {
+    classify: function (name, rows, xmlByScope, recordScope) {
         rows = this._sortNewestFirst(rows);
 
         var path = [];
@@ -150,7 +141,7 @@ MultiScopeHistoryFinder.prototype = {
         else if (current.scope !== newest.scope) pattern = this.PATTERNS.NEWER_OTHER_SCOPE;
         else pattern = this.PATTERNS.NEWER_SAME_SCOPE;
 
-        var targetScope = this._targetScope(rows, recordScope, current, target);
+        var targetScope = this._targetScope(rows);
         var xmlScopes = Object.keys(xmlByScope || {}).sort();
 
         var flags = [];
@@ -211,15 +202,10 @@ MultiScopeHistoryFinder.prototype = {
         var xml = String(o.updateXml || 'none');
         return {
             filter: String(o.filter === undefined || o.filter === null ? 'application.scopeSTARTSWITHx_snc' : o.filter),
-            patterns: o.patterns || [],
             revert: o.revert === true,
             normalize: o.normalize === true,
             updateXml: xml === 'normalize' || xml === 'delete_new' ? xml : 'none',
-            target: o.target === 'record' || o.target === 'newest' ? o.target : 'app',
-            limit: parseInt(o.limit, 10) || 0,
-            confirmAll: o.confirmAll === true,
-            maxSeconds: parseInt(o.maxSeconds, 10) || 240,
-            startAfter: o.startAfter ? String(o.startAfter) : ''
+            limit: parseInt(o.limit, 10) || 0
         };
     },
 
@@ -241,14 +227,10 @@ MultiScopeHistoryFinder.prototype = {
         if (typeof probe.isValidEncodedQuery === 'function' && !probe.isValidEncodedQuery(opts.filter)) {
             throw 'MultiScopeHistoryFinder: invalid filter for sys_update_version: ' + opts.filter;
         }
-        if (this._writes(opts) && !opts.limit && !opts.confirmAll) {
-            throw 'MultiScopeHistoryFinder: revert, normalize and updateXml need a limit, or confirmAll: true';
+        if (this._writes(opts) && (opts.limit < 1 || opts.limit > this.MAX_FIX_FILES)) {
+            throw 'MultiScopeHistoryFinder: revert, normalize and updateXml need a limit from 1 to ' + this.MAX_FIX_FILES +
+                '. Narrow the filter and run again to fix more.';
         }
-    },
-
-    _shouldStop: function (opts, started, checked) {
-        if (opts.limit && checked >= opts.limit) return true;
-        return (new Date().getTime() - started) / 1000 >= opts.maxSeconds;
     },
 
     _sortNewestFirst: function (rows) {
@@ -259,9 +241,7 @@ MultiScopeHistoryFinder.prototype = {
     },
 
     // rows are newest first.
-    _targetScope: function (rows, recordScope, current, target) {
-        if (target === 'record') return recordScope || (current ? current.scope : '');
-        if (target === 'newest') return rows[0].scope;
+    _targetScope: function (rows) {
         for (var i = 0; i < rows.length; i++) {
             if (rows[i].scope !== 'global') return rows[i].scope;
         }
@@ -298,9 +278,8 @@ MultiScopeHistoryFinder.prototype = {
             var byApp = xmlByName[n] || {};
             for (var a in byApp) xml[this._label(a)] = (xml[this._label(a)] || 0) + byApp[a];
 
-            var g = this.classify(n, rows, xml, recordApps[n] ? this._label(recordApps[n]) : '', opts.target);
+            var g = this.classify(n, rows, xml, recordApps[n] ? this._label(recordApps[n]) : '');
             if (!g) continue;
-            if (opts.patterns.length && opts.patterns.indexOf(g.pattern) < 0) continue;
 
             result.found++;
             this._count(result.summary.byPattern, g.pattern);
@@ -322,7 +301,6 @@ MultiScopeHistoryFinder.prototype = {
             }
         }
         result.checked += names.length;
-        result.lastName = names[names.length - 1];
     },
 
     // Version rows by name, with scope labels filled in from the cache.

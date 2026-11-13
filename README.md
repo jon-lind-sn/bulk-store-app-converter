@@ -68,7 +68,7 @@ It runs on the instance as the `MultiScopeHistoryFinder` script include, driven 
 
 1. Open the fix script and edit `OPTIONS` at the top. The defaults only report.
 2. Run it and review the counts and patterns per file.
-3. To repair, set `revert` and `normalize` to `true`, narrow the `filter` to one file, set `limit: 1`, and run it again. Widen the filter once the one-file result looks right.
+3. To repair, set `revert` and `normalize` to `true`, narrow the `filter` to one file, set `limit: 1`, and run it again. Widen the filter once the one-file result looks right. A repair requires a `limit` of 1 to 100, so a wrong filter cannot change more than 100 files in one run.
 
 Run it on a test instance first. A repair reverts the record to its newest version and moves every version row into the app scope.
 

@@ -28,10 +28,7 @@ Example from yoyo, `sc_cat_item_4a17d6a3ff133100ba13ffffffffffe7` (Apple Watch) 
 
 1. **Newest**: the version row with the highest `sys_recorded_at`, whatever its state.
 2. **Current**: the version row with `state=current`. In the broken files it is older than the newest row.
-3. **Target scope**: the scope the fix moves rows into.
-   1. `app` (default): the newest scope in the history that is not `global`.
-   2. `newest`: the newest row's scope. After a revert into `global` this would pick `global`, so it is only for special cases.
-   3. `record`: the scope the record itself lives in now, or the current row's scope when the record is not found.
+3. **Target scope**: the scope the fix moves rows into. It is the newest scope in the history that is not `global`.
 
 ## Components
 
@@ -49,7 +46,7 @@ No custom tables. Status goes to the system log, so the tool adds no storage cos
 1. A `GlideAggregate` on `sys_update_version` with the `filter` encoded query, grouped and ordered by `name`, streams candidate names. Only rows matching the filter pick candidates.
 2. Each batch of 200 names loads every version row for those names (all scopes), the `sys_update_xml` counts per name and scope, and the record's own `sys_scope` for names shaped `<table>_<sys_id>`.
 3. `classify()` groups each file's rows. Files whose rows cover fewer than two scopes are dropped.
-4. The run stops at `limit` files or `maxSeconds` and returns `nextStartAfter`. Passing it back as `startAfter` continues the run.
+4. The run stops at `limit` files. A report with no `limit` checks every file the filter matches, so use the filter to work on one app or one group of files at a time.
 
 `classify()` is pure (no queries), which is how it is unit tested offline with Node (see Testing, step 2).
 
@@ -82,7 +79,7 @@ Each step is optional and they run in this order for every matching file:
 
 Safety rules:
 
-1. Any fix requires `limit`, or `confirmAll: true` to run on every match.
+1. Any fix requires a `limit` from 1 to 100, so a wrong filter cannot change more than 100 files in one run. To fix more, narrow the filter and run again.
 2. An invalid filter is rejected before the run starts (`isValidEncodedQuery`), so it never matches every row.
 3. A failure on one file is logged and counted, and the run moves on to the next file.
 
@@ -91,15 +88,10 @@ Safety rules:
 | Option | Default | Meaning |
 |---|---|---|
 | `filter` | `application.scopeSTARTSWITHx_snc` | Encoded query on `sys_update_version` that picks candidate rows. The scope field is `application`, so filter on `application.scope`. `sys_scope.name` is the display name ("Telephony Catalog"). |
-| `patterns` | `[]` | Keep only these patterns. Empty keeps every multi-scope file. |
 | `revert` | `false` | Fix step 1. |
 | `normalize` | `false` | Fix step 2. |
 | `updateXml` | `none` | Fix step 3: `none`, `normalize` or `delete_new`. |
-| `target` | `app` | `app`, `newest` or `record`. |
-| `limit` | `0` | Maximum files to check. Required for fixes unless `confirmAll`. |
-| `confirmAll` | `false` | Allow fixes with no limit. |
-| `maxSeconds` | `240` | Stop and return `nextStartAfter`. |
-| `startAfter` | `''` | Continue after this file name. |
+| `limit` | `0` | Maximum files to check. A fix requires 1 to 100. |
 
 Filter examples, added one condition at a time:
 
@@ -120,7 +112,7 @@ Filter examples, added one condition at a time:
 The test instance is yoyo (now-sdk credential alias `yoyo`). Each test touches one file or one scope.
 
 1. **Report first.** Run the fix script with the default options (report only) and check the counts and patterns against the version rows.
-2. **Unit test `classify()` offline.** Load the script include in Node with a stub `Class.create`, feed it rows pulled from yoyo with `npx @servicenow/sdk query`, and check pattern, target scope and the rows to move. This also covered the case where a revert lands in `global` (target `app` still picks the app scope).
+2. **Unit test `classify()` offline.** Load the script include in Node with a stub `Class.create`, feed it rows pulled from yoyo with `npx @servicenow/sdk query`, and check pattern, target scope and the rows to move. This also covered the case where a revert lands in `global` (the target is still the app scope).
 3. **Record the before state.** Query the file's `sys_update_version` rows, `sys_update_xml` rows and the record's `sys_scope` and `sys_updated_on`.
 4. **Set one-file options.** Edit `OPTIONS` in `find_multi_scope_history.js` (filter on the file name, `limit: 1`, the fixes under test), run `node --check`, `npm run build`, then `npx @servicenow/sdk install -a yoyo`.
 5. **Run the fix script** from its form with Run Fix Script, then Proceed.
