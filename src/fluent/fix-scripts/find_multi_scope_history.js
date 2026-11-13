@@ -7,7 +7,7 @@ var OPTIONS = {
     //   'application.scopeSTARTSWITHx_snc^nameSTARTSWITHsc_cat_item'
     filter: 'application.scopeSTARTSWITHx_snc',
     // Fixes run in this order, each optional:
-    revert: false,      // 1. revert to the newest row when it is not current
+    revert: false,      // 1. revert to the newest row when it is not current (e.g. 'history')
     normalize: false,   // 2. move every version row into the target scope
     updateXml: 'none',  // 3. 'none', 'normalize' (move XML rows to the target scope) or 'delete_new' (delete XML rows outside it created by this run)
     limit: 0            // max files to check. Any fix needs a limit from 1 to 100. To fix more, narrow the filter and run again.
