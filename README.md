@@ -1,4 +1,4 @@
-> **Latest shared version:** [`Bulk-Store-App-Converter-1.3.0.xml`](share/Bulk-Store-App-Converter-1.3.0.xml) is a link to the latest shared version, packaged as an update set.
+> **Latest shared version update set:** Download [`Bulk-Store-App-Converter-1.3.0.xml`](share/Bulk-Store-App-Converter-1.3.0.xml) and load it directly into your instance.
 
 # Bulk Store App Upgrader and Converter
 
