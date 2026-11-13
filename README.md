@@ -1,3 +1,5 @@
+> **Latest shared version:** [`Bulk-Store-App-Converter-1.3.0.xml`](share/Bulk-Store-App-Converter-1.3.0.xml) is a link to the latest shared version, packaged as an update set.
+
 # Bulk Store App Upgrader and Converter
 
 A global-scope ServiceNow utility that helps administrators get company apps through an instance clone. Before the clone, it publishes development mode apps to My Application Repository (App Repo) so no work is lost. After the clone, it upgrades store mode apps and converts them back to development mode.
