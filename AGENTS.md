@@ -5,13 +5,13 @@ Working notes for agents on the Bulk Store App Converter. Read `docs/ui-refactor
 ## Project basics
 
 1. now-sdk 4.13.6 Fluent project, scope `global`. Build with `npm run build`, deploy with `npm run deploy`.
-2. Dev instance: xare (default now-sdk profile `xare`, basic auth; `xareo` is OAuth to the same host). Check with `npx @servicenow/sdk auth --list`. Do not pipe that command through `head`: the list is long and truncating it once led to the false claim that xare was missing.
+2. Dev instance: `{dev-instance}` (default now-sdk profile `{dev-instance}`, basic auth; a second profile is OAuth to the same host). Check with `npx @servicenow/sdk auth --list`. Do not pipe that command through `head`: the list is long and truncating it once led to the false claim that {dev-instance} was missing.
 3. Inspect the instance with `npx @servicenow/sdk query <table> -q "<encoded query>" -f <fields> -o json`. Lines starting with `[now-sdk]` are log output, not JSON. Occasional `fetch failed` responses are transient; retry.
 4. The UI page `src/fluent/ui-pages/bulk_convert_store_app_confirm.now.ts` holds the Jelly `html` and the ES5 `clientScript` as template literals. Inside them, backslashes are doubled, backticks escaped, and `${` written as `\${`. Run a syntax check on the unescaped client script (`node --check`) before deploying. A newline inside a client string is written `\\n` in the file.
 5. Server endpoint for the page: `BulkAppConsole` (`src/fluent/script-includes/BulkAppConsole.server.js`), client callable, every method admin guarded, all methods return JSON strings.
-6. Test in the browser with chrome-devtools against `https://xare.service-now.com/bulk_convert_store_app_confirm.do`. The page globals (`BAC`, `renderTable`, `uncheckPublished`, and so on) are reachable from `evaluate_script`. Wait for `BAC.loader` to be false and every app in `BAC.saveState` before reading results. `wait_for` on the word "published" matches the "Never published" notes, so poll `BAC.busy` to detect the end of a run.
+6. Test in the browser with chrome-devtools against `https://{dev-instance}.service-now.com/bulk_convert_store_app_confirm.do`. The page globals (`BAC`, `renderTable`, `uncheckPublished`, and so on) are reachable from `evaluate_script`. Wait for `BAC.loader` to be false and every app in `BAC.saveState` before reading results. `wait_for` on the word "published" matches the "Never published" notes, so poll `BAC.busy` to detect the end of a run.
 7. Navigation: the page is the module "Bulk App Clone Assistant" (renamed from "Bulk Convert My Company Apps") under the System Applications menu, which is limited to the `upgrade_admin` role. The two upgrade modules are admin only.
-8. Remotes: `origin` (GitHub) and `devsnc` (`code.devsnc.com`). Branch `ui-refactor` is pushed to both. Last pushed commit: `ee5a587`.
+8. Remote: `origin` (GitHub). Branch `ui-refactor`.
 
 ## Platform gotchas
 
@@ -23,7 +23,7 @@ Working notes for agents on the Bulk Store App Converter. Read `docs/ui-refactor
 
 ## App Repo facts (My Application Repository)
 
-1. The instance's repo is set by `sn_appclient.repository_base_url`. The page never queries the repo instance directly; in a live environment only the instance's own tables and platform APIs are available. Work stays local to xare. Do not put the repo host name in UI text.
+1. The instance's repo is set by `sn_appclient.repository_base_url`. The page never queries the repo instance directly; in a live environment only the instance's own tables and platform APIs are available. Work stays local to {dev-instance}. Do not put the repo host name in UI text.
 2. `sn_appauthor.ScopedAppVendorInfoObtainer.obtainDisplayVersionFromAppRepo(appId, version, 'false')` calls `verify_version`. It returns `{ allowed: true }` only when `version` is above the repo's latest for that app, otherwise null. It does not depend on the application picker (probed with the picker on Global and on the app).
 3. Derived checks built only on that call:
    1. Current version allowed: the current version is not in the repo.
@@ -32,14 +32,14 @@ Working notes for agents on the Bulk Store App Converter. Read `docs/ui-refactor
 4. The repo endpoint (`sn_orchestration_api_v1.do`, `OrchestrationAPI` in `dev/app-store-fluent`) also has `lookup_version` (latest display version, no date), but on the instance it is only called from Java (`AppRepoRequester.getPublishedVersion`), so scripts cannot use it.
 5. Local sources that cannot answer "what version of this dev app is in the repo" (all checked):
    1. `sys_store_app.latest_version`: only exists for store mode apps. Bulk upgrade (`BulkUpgradeMyCompanyApps`) compares `version` to `latest_version` on `sys_store_app`, filled by the platform repo sync.
-   2. `sys_remote_app`: repo apps not installed. Holds 3 rows on xare, none are dev apps.
+   2. `sys_remote_app`: repo apps not installed. Holds 3 rows on {dev-instance}, none are dev apps.
    3. `sys_app_version`: no rows for the apps queried.
    4. `sn_appclient_api_v1.do?app_request_type=list_custom_apps`: My Company Applications "In Development" list. It is the local `sys_app` list and says nothing about the repo.
    5. `sn_appclient_api_v1.do?app_request_type=list_apps_versions`: the repo cache (`servedFromDB: true`). It leaves out apps present as dev apps.
    6. Not yet explored: other methods on `sn_app_api.AppStoreAPI` and `sn_appclient.AppUpgrader`.
-6. `store_correlation_id` on `sys_app` can be stale or come from elsewhere. App Repo Source Orchestrator (`x_snc_aso`, 1.4.1, created 2022-04-10 by admin) carries REPOAPP0000001001, which belongs to Customer PM Engagement, an unrelated app. It has no publish trace on xare and no row in the repo, so "Never published to the App Repo" is correct for it. How it got onto xare is unknown. Do not use Customer PM Engagement as evidence for anything.
-7. Next version search (`findNextPublishableVersion`): start at the local version plus one minor, keep bumping the minor until `verify_version` accepts. Jon Config is local 1.0.6 but the repo already holds 1.1.0 (REPOAPP0000001046), so the target is 1.2.0.
-8. The real world case is a cloned instance, where far fewer apps are "Not in App Repo" than on xare.
+6. `store_correlation_id` on `sys_app` can be stale or come from elsewhere. App Repo Source Orchestrator (`x_snc_aso`, 1.4.1, created 2022-04-10 by admin) carries REPOAPP0000001001, which belongs to Customer PM Engagement, an unrelated app. It has no publish trace on {dev-instance} and no row in the repo, so "Never published to the App Repo" is correct for it. How it got onto {dev-instance} is unknown. Do not use Customer PM Engagement as evidence for anything.
+7. Next version search (`findNextPublishableVersion`): start at the local version plus one minor, keep bumping the minor until `verify_version` accepts. Example app is local 1.0.6 but the repo already holds 1.1.0 (REPOAPP0000001046), so the target is 1.2.0.
+8. The real world case is a cloned instance, where far fewer apps are "Not in App Repo" than on {dev-instance}.
 
 ## Publish traces on the instance (tested by publishing Equipment Loans 0.0.2 to 0.1.0 on 2026-10-14)
 
@@ -76,11 +76,11 @@ Page behavior:
 ## Restore tab (After Clone: Restore)
 
 1. Columns: Local Version (`sys_store_app.version`) and Target Version (`sys_store_app.latest_version`, filled by the platform App Repo sync). Badge "Upgrade" when the target is above the local version. Buttons: Upgrade and Convert, Upgrade, Convert to Dev. Search matches name, scope and local version.
-2. `0.0.0-CONVERTED` apps on xare were made by converting dev apps to store mode by hand. It is not a real clone state. After a real clone the target version comes from the sync.
-3. Empty `latest_version` means the sync has not run, not that the app is missing from the App Repo. Opening the tab now runs the same sync as My Company Applications (`sn_appclient_api_v1.do?app_request_type=list_apps_versions&shared_internally=true&isFirstLoad=true` returns `storetrackerId`, then poll `get_store_sync_status` until `isComplete`). About 7 seconds on xare. A blue note above the toolbar says "Refreshing My Company Applications from the App Repo..." with a spinner, then "Refreshed ... at HH:MM" with a Refresh again link (amber "Could not refresh" on failure). An empty list reads "No company apps are installed in store mode."
+2. `0.0.0-CONVERTED` apps on {dev-instance} were made by converting dev apps to store mode by hand. It is not a real clone state. After a real clone the target version comes from the sync.
+3. Empty `latest_version` means the sync has not run, not that the app is missing from the App Repo. Opening the tab now runs the same sync as My Company Applications (`sn_appclient_api_v1.do?app_request_type=list_apps_versions&shared_internally=true&isFirstLoad=true` returns `storetrackerId`, then poll `get_store_sync_status` until `isComplete`). About 7 seconds on {dev-instance}. A blue note above the toolbar says "Refreshing My Company Applications from the App Repo..." with a spinner, then "Refreshed ... at HH:MM" with a Refresh again link (amber "Could not refresh" on failure). An empty list reads "No company apps are installed in store mode."
 4. The red "Not in App Repo, cannot restore automatically" text still comes from `restorable` in `BulkAppConsole.server.js` and should be reworded to "No App Repo version found".
 5. Upgrade and Convert skips apps at `0.0.0-CONVERTED` with no App Repo version ("No App Repo version found to upgrade to. Use Convert to Dev to convert it as it is."). Convert to Dev converts them anyway. Upgrade marks apps with nothing to upgrade as Skipped.
-6. `canConvertSysStoreApp` returns false for scoped apps when `sn_appauthor.all_company_keys` is empty. The daily job "Check Scoped App Author Config Changes" (`sysauto_script` 22b6bb03d700310092610eca5e610393, `ConfigChecker`) rewrites that property from the App Repo vendor record, and xare gets no keys back. The property is private, so an update set does not change it. It was set by hand to `snc` for testing and will be blanked again.
+6. `canConvertSysStoreApp` returns false for scoped apps when `sn_appauthor.all_company_keys` is empty. The daily job "Check Scoped App Author Config Changes" (`sysauto_script` 22b6bb03d700310092610eca5e610393, `ConfigChecker`) rewrites that property from the App Repo vendor record, and {dev-instance} gets no keys back. The property is private, so an update set does not change it. It was set by hand to `snc` for testing and will be blanked again.
 7. Converted apps stay on the list (greyed, checkbox disabled) until the tab is reopened. Each tab reloads its list when opened.
 8. Tested 2026-10-14: Upgrade (Peugeot to 1.1.0), Convert to Dev (Feature Requests POC), Upgrade and Convert (NDA Requests to 0.1.0 then dev mode), app not in the App Repo (Fleet Vehicle Management converted as is).
 9. Before Clone: apps whose version a conversion reset show "A conversion reset the version to 0.0.0-CONVERTED. App Repo has X." and can be converted back to store mode so they can be upgraded.
@@ -90,7 +90,7 @@ Page behavior:
 1. `sys_update_version.source_table = sys_upgrade_history`: files written by an install or upgrade from the repo.
 2. `sys_update_version.source_table = sys_update_set`: local edits (and conversions, version bumps).
 3. Installed vendor apps have file timestamps equal to the install time; those dates say nothing about editing.
-4. No usable clone date exists on xare or yoyo (`clone_instance`, `sn_instance_clone_request`, `sn_um_lastclone_summary` empty or fetch error), so status logic does not depend on a clone date.
+4. No usable clone date exists on `{dev-instance}` or `{test-instance}` (`clone_instance`, `sn_instance_clone_request`, `sn_um_lastclone_summary` empty or fetch error), so status logic does not depend on a clone date.
 
 ## User preferences for this project
 
@@ -99,9 +99,9 @@ Page behavior:
 3. Every status must tell the user what to do. No "Unknown".
 4. Short labels: "Changed", "Unpublished", "Published", "Publish".
 5. Leave the two upgrade menu modules as script modules; they share `runUpgrade` with the page.
-6. Publishing on xare is fine for testing. Keep it to the apps the user names.
+6. Publishing on {dev-instance} is fine for testing. Keep it to the apps the user names.
 7. Do not mention the repo host in UI text or in chat. Say "the App Repo".
-8. Keep checks local to xare. Do not lean on data from another instance.
+8. Keep checks local to {dev-instance}. Do not lean on data from another instance.
 9. Local publish history cannot prove an app is or is not in the repo. Prefer neutral, actionable wording and defaulting to publish everything that is not Published.
 
 ## Open items
@@ -113,4 +113,4 @@ Page behavior:
 5. Whether publishing works with the picker left on Global (would remove the last picker switch).
 6. Server side Check failed text and the error log window have not been triggered by a real failure.
 7. Docs refresh (`README.md`, `docs/app-overview.md`).
-8. Whether to open a pull request for `ui-refactor` (pushed to `origin` and `devsnc`).
+8. Whether to open a pull request for `ui-refactor` (pushed to `origin`).

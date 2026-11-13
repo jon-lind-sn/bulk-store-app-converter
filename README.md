@@ -10,7 +10,7 @@ Demo and discussion: https://sn.works/aemc/bulkupgradeconvert
 
 Choose one option.
 
-1. **Update set (recommended).** Download [`Bulk-Store-App-Converter-1.2.0.xml`](share/Bulk-Store-App-Converter-1.2.0.xml), the latest version. On your instance, open **Retrieved Update Sets**, import the file, then preview and commit it. Earlier versions are in the [`share`](share) folder.
+1. **Update set (recommended).** Download [`Bulk-Store-App-Converter-1.3.0.xml`](share/Bulk-Store-App-Converter-1.3.0.xml), the latest version. On your instance, open **Retrieved Update Sets**, import the file, then preview and commit it. Earlier versions are in the [`share`](share) folder.
 2. **now-sdk.** Clone this repo, authenticate with `npx @servicenow/sdk auth`, then run `npm run build` and `npm run deploy`.
 
 **Requirements:** the `admin` role and ServiceNow Washington DC or later.
@@ -59,6 +59,18 @@ Two modules under **System Applications** upgrade store apps without opening the
 
 1. **Bulk Upgrade ALL My Company Apps** upgrades every company-owned app.
 2. **Bulk Upgrade My Company Apps from Property** upgrades only the scopes in `bulk_convert_store_app.convertible_apps`.
+
+## Scope Normalizer
+
+An optional admin tool for files whose version history spans more than one scope. A common cause is a record customized in `global` through update sets and later shipped inside a scoped app: the app install writes a newer version in the app scope but leaves the current flag on an older `global` version, so the install skips the record. The Scope Normalizer finds these files and repairs them so every version sits in the app scope with the newest version current. See [SCOPE-NORMALIZER.md](SCOPE-NORMALIZER.md) for the detection patterns, options and test results.
+
+It runs on the instance as the `MultiScopeHistoryFinder` script include, driven by the fix script **Find multi-scope history files**. It adds no tables, and it logs every change to the system log (source `MultiScopeHistory`).
+
+1. Open the fix script and edit `OPTIONS` at the top. The defaults only report.
+2. Run it and review the counts and patterns per file.
+3. To repair, set `revert` and `normalize` to `true`, narrow the `filter` to one file, set `limit: 1`, and run it again. Widen the filter once the one-file result looks right. A repair requires a `limit` (e.g. 100), so a wrong filter cannot change every file in one run.
+
+Run it on a test instance first. A repair reverts the record to its newest version and moves every version row into the app scope.
 
 ## Contributing
 
