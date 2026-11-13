@@ -8,7 +8,7 @@ var OPTIONS = {
     filter: 'application.scopeSTARTSWITHx_snc',
     // Fixes run in this order, each optional:
     revert: false,      // 1. revert to the newest row when it is not current (e.g. 'history')
-    normalize: false,   // 2. move each files version rows into the target scope
+    normalize: false,   // 2. move each file's version rows into the target scope
     updateXml: 'none',  // 3. 'none', 'normalize' (move XML rows to the target scope) or 'delete_new' (delete XML rows outside it created by this run)
     limit: 3            // max files to check. Any fix needs a limit (e.g. 100). To fix more, narrow the filter and run again.
 };

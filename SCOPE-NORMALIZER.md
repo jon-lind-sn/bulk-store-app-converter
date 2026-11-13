@@ -91,7 +91,7 @@ Safety rules:
 | `revert` | `false` | Fix step 1. |
 | `normalize` | `false` | Fix step 2. |
 | `updateXml` | `none` | Fix step 3: `none`, `normalize` or `delete_new`. |
-| `limit` | `0` | Maximum files to check. A fix requires a limit (e.g. 100). |
+| `limit` | `0` | Maximum files to check. A fix requires a limit (e.g. 100). The fix script ships with `limit: 3`. |
 
 Filter examples, added one condition at a time:
 
