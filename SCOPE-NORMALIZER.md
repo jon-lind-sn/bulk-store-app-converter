@@ -134,15 +134,20 @@ Report run with the default filter: 2506 files checked in about 4.5 seconds, 7 m
 1. 5 catalog items in `newer_history_other_scope`: 2 in Telephony Catalog (`global > x_snc_telephony_0`) and 3 in Enterprise Services Catalog (`global > x_snc_enterprise_0`).
 2. 2 files in `newer_history_same_scope`: `pc_hardware_cat_item_060f3afa3731300054b6a3549dbe5d3e` (Apple iPad 3, Telephony Catalog, `global > x_snc_telephony_0` through its upgrade baseline) and `sys_ui_related_sn_releaseops_deployment_request_null` (`x_snc_relops_help > sn_releaseops`).
 
-Telephony Catalog files fixed so far:
+Files fixed with the script include (revert, then normalize, `updateXml: 'none'`), except Apple Watch:
 
 | File | Record scope | Fix | Result |
 |---|---|---|---|
 | `sc_cat_item_4a17d6a3ff133100ba13ffffffffffe7` (Apple Watch) | global | Normalize, then "Revert to this version" in the user interface (UI) | 5 rows in Telephony Catalog, newest current. 1 new global XML row (Default update set). |
 | `sc_cat_item_73b1bafa9752cd1021983d1e6253afb5` (Apple iPhone 13 pro) | global | Script: revert, then normalize | 5 rows in Telephony Catalog, newest current. 1 new global XML row (Default update set). |
 | `pc_hardware_cat_item_060f3afa3731300054b6a3549dbe5d3e` (Apple iPad 3) | x_snc_telephony_0 | Script: revert, then normalize | 5 rows in Telephony Catalog, newest current. New XML row in Telephony Catalog. |
+| `sc_cat_item_73237ada4fff0200086eeed18110c7fc` (Endpoint Security) | global | Script: revert, then normalize | 5 rows in Enterprise Services Catalog, newest current. 1 new global XML row (Default update set). |
+| `sc_cat_item_c0c5b2db4fbf4200086eeed18110c718` (Provision a Database) | global | Script: revert, then normalize | 5 rows in Enterprise Services Catalog, newest current. 1 new global XML row (Default update set). |
+| `sc_cat_item_f3937ada4fff0200086eeed18110c7f2` (VM Provisioning) | global | Script: revert, then normalize | 5 rows in Enterprise Services Catalog, newest current. 1 new global XML row (Default update set). |
 
-Not yet fixed: the 3 Enterprise Services Catalog items and the releaseops related list.
+Next install of each app after the fix, deployed through App Engine Management Center (AEMC): Telephony Catalog 1.0.7 and Enterprise Services Catalog 1.0.3, each with a scoped edit to the fixed items. All 6 files installed with disposition Inserted (`changed=true`) and none skipped. Every record moved from `global` to the app scope, and every version row is in the app scope.
+
+Not yet fixed: the releaseops related list.
 
 ## Findings
 
@@ -153,7 +158,10 @@ Not yet fixed: the 3 Enterprise Services Catalog items and the releaseops relate
 5. **The revert applies the history payload, system fields included.** The record's `sys_updated_on` takes the timestamp stored in that version.
 6. **The revert works from a fix script.** With the application picker on Global it succeeded for a `global` record and for a Telephony Catalog record.
 7. **The UI link needs write access to the record.** "Revert to this version" is hidden unless `GlideappUpdateVersion.canWriteRecordInVersion` is true. With the picker on Enterprise Services Catalog it was hidden for a `global` record. Switching the picker to Global showed it, and also switched the update set to Default (Global).
-8. **The record's `sys_scope` is not changed by any step.** Apple Watch and Apple iPhone 13 pro are still `global` records with app-scope history.
+8. **The record's `sys_scope` is not changed by any step.** After the fix, Apple Watch, Apple iPhone 13 pro and the 3 Enterprise Services Catalog items were still `global` records with app-scope history.
+9. **The next install moves the record into the app scope.** On the first app install after the fix, every fixed record moved from `global` to the app scope and was applied (Inserted), with no skip.
+10. **The next install adds a current version from the update set.** Next to the app's `history` row (source `sys_store_app`), the install creates a new `current` version whose source is the installing user's current update set (Default on yoyo), in the same second. Every version row stays in the app scope.
+11. **The old `global` XML rows do not cause a skip.** The fixed files kept their `global` `sys_update_xml` rows, plus the revert's new one, and still installed cleanly.
 
 ## Platform Gotchas
 
@@ -164,9 +172,7 @@ Not yet fixed: the 3 Enterprise Services Catalog items and the releaseops relate
 
 ## Open Items
 
-1. Fix the 3 Enterprise Services Catalog items, then decide on the releaseops related list (`newer_history_same_scope`, record not found).
-2. Decide whether the `global` XML rows matter. Test `updateXml: 'delete_new'` and `'normalize'` on one file each.
-3. Decide whether the record's `sys_scope` must move to the app scope, and how.
-4. Confirm the fixed files no longer skip on the next install or upgrade of the app.
-5. Test the revert with the application picker on an unrelated scope.
-6. Delete the leftover `u_msh_run` and `u_msh_file` tables on yoyo (by hand, `u_msh_file` first, with the picker on Bulk Store App Converter).
+1. Decide on the releaseops related list (`newer_history_same_scope`, record not found).
+2. The `global` XML rows do not block the next install (Findings 11). Decide whether to clean them up anyway, and test `updateXml: 'delete_new'` and `'normalize'` on one file each if so.
+3. Test the revert with the application picker on an unrelated scope.
+4. Delete the leftover `u_msh_run` and `u_msh_file` tables on yoyo (by hand, `u_msh_file` first, with the picker on Bulk Store App Converter).
