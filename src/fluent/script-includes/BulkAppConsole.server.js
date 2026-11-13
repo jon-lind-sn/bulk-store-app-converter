@@ -116,7 +116,7 @@ BulkAppConsole.prototype = Object.extendsObject(global.AbstractAjaxProcessor, (f
     }
 
     function getLastPublished(appId, scope, version) {
-        // 1. Each publish creates a sys_upgrade_plan_item with id = app sys_id and the published version (spiked on xare).
+        // 1. Each publish creates a sys_upgrade_plan_item with id = app sys_id and the published version (spiked on the dev instance).
         var gr = new GlideRecord('sys_upgrade_plan_item');
         gr.addQuery('id', appId);
         gr.addQuery('version', version);

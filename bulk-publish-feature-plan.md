@@ -114,7 +114,7 @@ Research complete. Findings:
   e.g. `{ key:"snc", allow_internal_upload:true, allow_store_upload:false, upload_url:"" , ... }`.
   `upload_url:""` + `allow_internal_upload:true` confirms **default internal upload, no URL/creds** (decision #4). It does NOT return app versions.
 - **No API exposes the repo's latest version directly**, and there is no local
-  cache of it (the repo is remote: `zorb.service-now.com`, company `JonCo`/`snc`).
+  cache of it (the repo is remote: `{prod-instance}.service-now.com`, company `JonCo`/`snc`).
 
 ### ✅ Chosen algorithm: iterative "minor-bump + verify"
 Because `verify_version` tells us whether a candidate version is allowed (i.e.
