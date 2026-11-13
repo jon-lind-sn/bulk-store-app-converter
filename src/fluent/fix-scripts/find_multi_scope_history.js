@@ -10,7 +10,7 @@ var OPTIONS = {
     revert: false,      // 1. revert to the newest row when it is not current (e.g. 'history')
     normalize: false,   // 2. move every version row into the target scope
     updateXml: 'none',  // 3. 'none', 'normalize' (move XML rows to the target scope) or 'delete_new' (delete XML rows outside it created by this run)
-    limit: 3            // max files to check. Any fix needs a limit from 1 to 100. To fix more, narrow the filter and run again.
+    limit: 3            // max files to check. Any fix needs a limit (e.g. 100). To fix more, narrow the filter and run again.
 };
 
 var finder = new MultiScopeHistoryFinder();

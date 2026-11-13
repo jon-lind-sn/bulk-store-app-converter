@@ -79,7 +79,7 @@ Each step is optional and they run in this order for every matching file:
 
 Safety rules:
 
-1. Any fix requires a `limit` from 1 to 100, so a wrong filter cannot change more than 100 files in one run. To fix more, narrow the filter and run again.
+1. Any fix requires a `limit` (e.g. 100), so a wrong filter cannot change every file in one run. To fix more, narrow the filter and run again.
 2. An invalid filter is rejected before the run starts (`isValidEncodedQuery`), so it never matches every row.
 3. A failure on one file is logged and counted, and the run moves on to the next file.
 
@@ -91,7 +91,7 @@ Safety rules:
 | `revert` | `false` | Fix step 1. |
 | `normalize` | `false` | Fix step 2. |
 | `updateXml` | `none` | Fix step 3: `none`, `normalize` or `delete_new`. |
-| `limit` | `0` | Maximum files to check. A fix requires 1 to 100. |
+| `limit` | `0` | Maximum files to check. A fix requires a limit (e.g. 100). |
 
 Filter examples, added one condition at a time:
 

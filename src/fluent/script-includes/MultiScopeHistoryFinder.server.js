@@ -28,12 +28,11 @@
  *       revert: false,
  *       normalize: false,
  *       updateXml: 'none',
- *       limit: 0             // max files to check; any fix needs 1 to MAX_FIX_FILES
+ *       limit: 0             // max files to check; any fix needs a limit (e.g. 100)
  *   });
  *
- * A fix always needs a limit, and the limit cannot exceed MAX_FIX_FILES, so a
- * wrong filter can never change more than that many files in one run. Narrow the
- * filter and run again to work through more.
+ * A fix always needs a limit (e.g. 100), so a wrong filter cannot change every
+ * file in one run. Narrow the filter and run again to work through more.
  */
 var MultiScopeHistoryFinder = Class.create();
 MultiScopeHistoryFinder.prototype = {
