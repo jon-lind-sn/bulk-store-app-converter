@@ -4,7 +4,7 @@ await screen.findByRole('heading', { name: 'Bulk App Clone Assistant', timeout: 
 
 const r = await sn_atf.evaluate(function () {
     var out = {}
-    out.esc = esc('<a href="x" t=\'y\'>&</a>')
+    out.esc = esc('<a href="x" t=' + "'" + 'y' + "'" + '>&</a>')
     out.escNull = esc(null)
     out.escUndef = esc(undefined)
     out.escNum = esc(0)
