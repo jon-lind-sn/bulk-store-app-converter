@@ -8,7 +8,7 @@
 #   now-sdk2.sh build                     now-sdk build, then the update-set payload for install
 #   now-sdk2.sh install                   install the built app through now_sdk/install
 #   now-sdk2.sh auth                      check the credential: token scope and now_sdk/auth
-#   now-sdk2.sh cicd testsuite run        --test-suite-name <name> | --test-suite-sys-id <id>
+#   now-sdk2.sh cicd testsuite run        --test-suite-name <name> | --test-suite-sys-id <id> [--run-in-cloud true]
 #   now-sdk2.sh cicd publish              [--app-version <v>] [--app-sys-id <id>] [--dev-notes <text>]
 #   now-sdk2.sh cicd install              [--app-version <v>] [--app-sys-id <id>]
 #   now-sdk2.sh cicd rollback             --app-version <v> [--app-sys-id <id>]
@@ -180,6 +180,7 @@ cmd_testsuite_run() {
     if [[ -n "${OPT_test_suite_sys_id:-}" ]]; then q="test_suite_sys_id=$(urlencode "$OPT_test_suite_sys_id")"
     elif [[ -n "${OPT_test_suite_name:-}" ]]; then q="test_suite_name=$(urlencode "$OPT_test_suite_name")"
     else die "Provide either --test-suite-sys-id or --test-suite-name"; fi
+    [[ -n "${OPT_run_in_cloud:-}" ]] && q="${q}&run_in_cloud=${OPT_run_in_cloud}"
     log "Running test suite ${OPT_test_suite_name:-${OPT_test_suite_sys_id}}..."
     run_job "Test suite" "api/sn_cicd/testsuite/run?${q}"
     local result_id status passed failed

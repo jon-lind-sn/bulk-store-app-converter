@@ -30,4 +30,4 @@ jobs:
       - name: Install on the test instance
         run: ./tools/now-sdk2.sh install
       - name: Run the ATF suite
-        run: ./tools/now-sdk2.sh cicd testsuite run --test-suite-name "$TEST_SUITE"
+        run: ./tools/now-sdk2.sh cicd testsuite run --test-suite-name "$TEST_SUITE" --run-in-cloud true
