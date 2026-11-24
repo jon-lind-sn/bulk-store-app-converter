@@ -234,7 +234,7 @@ const uiNonAdmin = Test(
 
 TestSuite({
     $id: Now.ID['atf_suite_bulk_app_clone_assistant'],
-    name: 'Bulk App Clone Assistant: non-destructive tests',
+    name: 'Bulk Store App Converter Suite',
     description:
         'Script include and page tests that never publish to the App Repo, install, upgrade or convert an app, or run a Scope Normalizer fix.',
     tests: [classify, options, urls, run, upgrade, nonAdmin, admin, uiLayout, uiFilters, uiRestore, uiHelpers, uiNonAdmin],
