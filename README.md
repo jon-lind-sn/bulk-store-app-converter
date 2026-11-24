@@ -19,7 +19,7 @@ Choose one option.
 
 ## Use
 
-Open **System Applications > Bulk App Clone Assistant**. The page has two tabs.
+Open **System Applications > Bulk App Clone Assistant**. The page has two tabs. Add `?sysparm_tab=save` to the page URL (`bulk_convert_store_app_confirm.do`) to open Before Clone, or `?sysparm_tab=restore` to open After Clone. Without it, the page opens the tab you used last in that browser, and After Clone the first time.
 
 ### Before Clone: Save Work
 
