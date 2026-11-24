@@ -10,7 +10,7 @@ Working notes for agents on the Bulk Store App Converter. Read `docs/ui-refactor
 4. The UI page `src/fluent/ui-pages/bulk_convert_store_app_confirm.now.ts` holds the Jelly `html` and the ES5 `clientScript` as template literals. Inside them, backslashes are doubled, backticks escaped, and `${` written as `\${`. Run a syntax check on the unescaped client script (`node --check`) before deploying. A newline inside a client string is written `\\n` in the file.
 5. Server endpoint for the page: `BulkAppConsole` (`src/fluent/script-includes/BulkAppConsole.server.js`), client callable, every method admin guarded, all methods return JSON strings.
 6. Test in the browser with chrome-devtools against `https://{dev-instance}.service-now.com/bulk_convert_store_app_confirm.do`. The page globals (`BAC`, `renderTable`, `uncheckPublished`, and so on) are reachable from `evaluate_script`. Wait for `BAC.loader` to be false and every app in `BAC.saveState` before reading results. `wait_for` on the word "published" matches the "Never published" notes, so poll `BAC.busy` to detect the end of a run.
-7. Navigation: the page is the module "Bulk App Clone Assistant" (renamed from "Bulk Convert My Company Apps") under the System Applications menu, which is limited to the `upgrade_admin` role. The two upgrade modules are admin only.
+7. Navigation: the page is the module "Bulk App Clone Assistant" (renamed from "Bulk Convert My Company Apps") under the System Applications menu, which is limited to the `upgrade_admin` role.
 8. Remote: `origin` (GitHub). Branch `ui-refactor`.
 
 ## Platform gotchas

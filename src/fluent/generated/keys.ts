@@ -20,10 +20,12 @@ declare global {
                     '849a49979396c710244af07e2803d6df': {
                         table: 'sys_app_module'
                         id: '849a49979396c710244af07e2803d6df'
+                        deleted: true
                     }
                     bd9797d093564b50244af07e2803d611: {
                         table: 'sys_app_module'
                         id: 'bd9797d093564b50244af07e2803d611'
+                        deleted: true
                     }
                     bom_json: {
                         table: 'sys_module'

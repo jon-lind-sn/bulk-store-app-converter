@@ -55,13 +55,6 @@ Apps at `0.0.0-CONVERTED` with no App Repo version are skipped by the upgrade ac
 
 **Save selection** writes the checked apps to the `bulk_convert_store_app.convertible_apps` system property (a comma-separated list of scopes, such as `x_myapp_1,x_myapp_2`). **Load saved list** checks them again, for example on a fresh clone.
 
-## Bulk upgrade modules
-
-Two modules under **System Applications** upgrade store apps without opening the page. Refresh **My Company Applications** afterward to see the new versions.
-
-1. **Bulk Upgrade ALL My Company Apps** upgrades every company-owned app.
-2. **Bulk Upgrade My Company Apps from Property** upgrades only the scopes in `bulk_convert_store_app.convertible_apps`.
-
 ## Scope Normalizer
 
 An optional admin tool for files whose version history spans more than one scope. A common cause is a record customized in `global` through update sets and later shipped inside a scoped app: the app install writes a newer version in the app scope but leaves the current flag on an older `global` version, so the install skips the record. The Scope Normalizer finds these files and repairs them so every version sits in the app scope with the newest version current. See [SCOPE-NORMALIZER.md](SCOPE-NORMALIZER.md) for the detection patterns, options and test results.
