@@ -12,6 +12,7 @@ Working notes for agents on the Bulk Store App Converter. Read `docs/ui-refactor
 6. Test in the browser with chrome-devtools against `https://{dev-instance}.service-now.com/bulk_convert_store_app_confirm.do`. The page globals (`BAC`, `renderTable`, `uncheckPublished`, and so on) are reachable from `evaluate_script`. Wait for `BAC.loader` to be false and every app in `BAC.saveState` before reading results. `wait_for` on the word "published" matches the "Never published" notes, so poll `BAC.busy` to detect the end of a run.
 7. Navigation: the page is the module "Bulk App Clone Assistant" (renamed from "Bulk Convert My Company Apps") under the System Applications menu, which is limited to the `upgrade_admin` role.
 8. Remote: `origin` (GitHub). Branch `ui-refactor`.
+7. Tests: 12 Automated Test Framework (ATF) tests and one suite live in `src/fluent/atf/` (`bulk_app_clone_assistant.now.ts` plus one `.script.js` per test). Server tests use `runServerSideScript` with Jasmine in ES5, page tests use `uiTestScript`. They must stay non-destructive: no publish, install, upgrade, convert, saved list write or normalizer fix. The page tests inject made-up apps into `BAC` through `sn_atf.evaluate`; set `BAC.busy = true` first to stop the real save status checks, then back to false. Run one with `npx @servicenow/sdk cicd test run --test-name "<name>" -a {test-instance}`. Page tests need a signed-in browser running the Client Test Runner; `--run-in-cloud` stays pending without the ATF Cloud Runner. Add or update a test whenever page or script include logic changes.
 
 ## Platform gotchas
 
@@ -98,7 +99,7 @@ Page behavior:
 2. Do not force a version bump and republish unless the app changed on this instance since it came from the repo.
 3. Every status must tell the user what to do. No "Unknown".
 4. Short labels: "Changed", "Unpublished", "Published", "Publish".
-5. Leave the two upgrade menu modules as script modules; they share `runUpgrade` with the page.
+5. The two upgrade menu modules were removed. The page's Upgrade button replaces them.
 6. Publishing on {dev-instance} is fine for testing. Keep it to the apps the user names.
 7. Do not mention the repo host in UI text or in chat. Say "the App Repo".
 8. Keep checks local to {dev-instance}. Do not lean on data from another instance.
