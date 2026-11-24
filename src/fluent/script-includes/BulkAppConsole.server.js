@@ -274,10 +274,10 @@ BulkAppConsole.prototype = Object.extendsObject(global.AbstractAjaxProcessor, (f
             });
         },
 
-        /** Returns { ok, isGlobal }. */
+        /** Returns { ok, isGlobal, company: { codes, prefixes, source } }. company.prefixes is empty when no company code is set. */
         getPrereqs: function() {
             return guarded('getPrereqs', function() {
-                return { ok: true, isGlobal: gs.getCurrentApplicationScope() === 'global' };
+                return { ok: true, isGlobal: gs.getCurrentApplicationScope() === 'global', company: new global.BulkAppCompany().get() };
             });
         },
 

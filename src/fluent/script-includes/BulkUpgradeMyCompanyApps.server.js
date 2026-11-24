@@ -161,8 +161,8 @@ BulkUpgradeMyCompanyApps.prototype = Object.extendsObject(global.AbstractAjaxPro
          * Example queries:
          *   All ServiceNow Store Apps: "install_dateISNOTEMPTY^hide_on_ui=false^vendor=ServiceNow^ORvendorISEMPTY^latest_version!="
          *   My company's apps: is_store_app=false
-         *   Specific apps: scopeINx_snc_daniels_app,x_snc_aso,x_snc_agent_home_0
-         *   By company key: scopeSTARTSWITHx_snc // Change to your company prefix!!
+         *   Specific apps: scopeINx_<company code>_app1,x_<company code>_app2
+         *   By company key: scopeSTARTSWITHx_<company code>_ // the company code is in the glide.appcreator.company.code system property
          * Error Handling: Logs errors and handles missing records gracefully.
          * Response: Saves status information in system log 
          * NOTE: Be sure to got My Company Applications and refresh or else this utility may

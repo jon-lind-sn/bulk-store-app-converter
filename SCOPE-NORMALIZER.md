@@ -79,7 +79,7 @@ Each step is optional and they run in this order for every matching file:
 
 Safety rules:
 
-1. Any fix requires a `limit` (e.g. 100), so a wrong filter cannot change every file in one run. To fix more, narrow the filter and run again.
+1. Any fix requires a `limit` (start with 1), so a wrong filter cannot change every file in one run. To fix more, narrow the filter and run again.
 2. An invalid filter is rejected before the run starts (`isValidEncodedQuery`), so it never matches every row.
 3. A failure on one file is logged and counted, and the run moves on to the next file.
 
@@ -87,18 +87,18 @@ Safety rules:
 
 | Option | Default | Meaning |
 |---|---|---|
-| `filter` | `application.scopeSTARTSWITHx_snc` | Encoded query on `sys_update_version` that picks candidate rows. The scope field is `application`, so filter on `application.scope`. `sys_scope.name` is the display name ("Telephony Catalog"). |
+| `filter` | empty | Empty uses your company's app scopes (`application.scopeSTARTSWITHx_<company code>_`). The company code is read from the `glide.appcreator.company.code` system property, plus any extra keys in `sn_appauthor.all_company_keys`. With no filter and no company code, the run throws an error that names both properties. Otherwise an encoded query on `sys_update_version` that picks candidate rows. The scope field is `application`, so filter on `application.scope`. `sys_scope.name` is the display name ("Telephony Catalog"). |
 | `revert` | `false` | Fix step 1. |
 | `normalize` | `false` | Fix step 2. |
 | `updateXml` | `none` | Fix step 3: `none`, `normalize` or `delete_new`. |
-| `limit` | `0` | Maximum files to check. A fix requires a limit (e.g. 100). The fix script ships with `limit: 3`. |
+| `limit` | `0` | Maximum files to check. A fix requires a limit of 1 or more (start with 1). The fix script default is `0`, so a report checks every file. |
 
 Filter examples, added one condition at a time:
 
-1. `application.scopeSTARTSWITHx_snc^state=history`
-2. `application.scopeSTARTSWITHx_snc^source_table=sys_store_app`
-3. `application.scope=x_snc_telephony_0`
-4. `application.scopeSTARTSWITHx_snc^name=sc_cat_item_73b1bafa9752cd1021983d1e6253afb5` (one file)
+1. `application.scopeSTARTSWITHx_<company code>_^state=history`
+2. `application.scopeSTARTSWITHx_<company code>_^source_table=sys_store_app`
+3. `application.scope=x_<company code>_myapp`
+4. `application.scopeSTARTSWITHx_<company code>_^name=sc_cat_item_73b1bafa9752cd1021983d1e6253afb5` (one file)
 
 ## Output and Status
 

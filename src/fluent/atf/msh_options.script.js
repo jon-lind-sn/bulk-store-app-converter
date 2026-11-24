@@ -75,6 +75,44 @@
         });
     });
 
+    describe('Company code lookup (reads properties, writes nothing)', function() {
+        var company = new global.BulkAppCompany();
+
+        it('cleans, lowercases and splits keys', function() {
+            expect(company._split(' ABC, def;x-y  ')).toEqual(['abc', 'def', 'xy']);
+            expect(company._split('')).toEqual([]);
+            expect(company._split(null)).toEqual([]);
+        });
+
+        it('builds prefixes that end with an underscore and a matching filter', function() {
+            var info = company.get();
+            expect(info.prefixes.length).toBe(info.codes.length);
+            for (var i = 0; i < info.codes.length; i++) {
+                expect(info.prefixes[i]).toBe('x_' + info.codes[i] + '_');
+            }
+            expect(company.getFilter().split('^OR').length).toBe(Math.max(1, info.prefixes.length));
+        });
+
+        it('keeps an explicit filter and reports its source', function() {
+            var opts = { filter: 'name=abc' };
+            expect(finder._resolveFilter(opts)).toBe('option');
+            expect(opts.filter).toBe('name=abc');
+        });
+
+        it('builds the filter from the company code, or throws and names the properties', function() {
+            var info = company.get();
+            var opts = { filter: '' };
+            var err = thrown(function() { finder._resolveFilter(opts); });
+            if (info.prefixes.length) {
+                expect(err).toBe('');
+                expect(opts.filter).toBe(company.getFilter());
+            } else {
+                expect(err).toContain('glide.appcreator.company.code');
+                expect(err).toContain('sn_appauthor.all_company_keys');
+            }
+        });
+    });
+
     describe('MultiScopeHistoryFinder constants and helpers', function() {
         it('exposes the four patterns', function() {
             expect(finder.PATTERNS).toEqual({

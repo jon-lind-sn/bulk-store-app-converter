@@ -1,22 +1,25 @@
 // Find files whose version history spans two or more scopes, and optionally fix them.
 // Status goes to the system log (source "MultiScopeHistory"). Change OPTIONS and run.
 var OPTIONS = {
-    // Encoded query on sys_update_version. Add conditions one at a time, e.g.
-    //   'application.scopeSTARTSWITHx_snc^state=history'
-    //   'application.scopeSTARTSWITHx_snc^source_table=sys_store_app'
-    //   'application.scopeSTARTSWITHx_snc^nameSTARTSWITHsc_cat_item'
-    filter: 'application.scopeSTARTSWITHx_snc',
+    // Encoded query on sys_update_version. Empty uses your company's app scopes: x_<company code>_, where the
+    // company code comes from the glide.appcreator.company.code system property (plus sn_appauthor.all_company_keys).
+    // To narrow it, add conditions one at a time, e.g.
+    //   'application.scopeSTARTSWITHx_<company code>_^state=history'
+    //   'application.scopeSTARTSWITHx_<company code>_^source_table=sys_store_app'
+    //   'application.scope=x_<company code>_myapp^nameSTARTSWITHsc_cat_item'
+    filter: '',
     // Fixes run in this order, each optional:
     revert: false,      // 1. revert to the newest row when it is not current (e.g. 'history')
     normalize: false,   // 2. move each file's version rows into the target scope
     updateXml: 'none',  // 3. 'none', 'normalize' (move XML rows to the target scope) or 'delete_new' (delete XML rows outside it created by this run)
-    limit: 3            // max files to check. Any fix needs a limit (e.g. 100). To fix more, narrow the filter and run again.
+    limit: 0            // 0 = no cap for reports. Any fix needs a limit of 1 or more. Start with 1, then widen.
 };
 
 var finder = new MultiScopeHistoryFinder();
 var r = finder.run(OPTIONS);
 
-gs.print('Run ' + r.runId + ' (' + r.fixes + '), filter: ' + r.filter);
+gs.print('Filter: ' + r.filter + ' (from ' + r.filterSource + ')');
+gs.print('Run ' + r.runId + ' (' + r.fixes + ')');
 gs.print(r.checked + ' files checked, ' + r.found + ' span two or more scopes.');
 if (r.fixes !== 'report') {
     gs.print('Reverted ' + r.revertedFiles + ', normalized ' + r.normalizedFiles + ' files (' + r.normalizedRows +

@@ -143,6 +143,10 @@ declare global {
                         table: 'sys_module'
                         id: '5d50fcfe27094e1c9d11f4bee5507bec'
                     }
+                    'bulk-app-company': {
+                        table: 'sys_script_include'
+                        id: '12669c24259d4f0b86a4baa1b0784a08'
+                    }
                     'bulk-app-console': {
                         table: 'sys_script_include'
                         id: 'a0b9328e4d2b48e890224089b908d683'

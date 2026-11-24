@@ -61,9 +61,9 @@ An optional admin tool for files whose version history spans more than one scope
 
 It runs on the instance as the `MultiScopeHistoryFinder` script include, driven by the fix script **Find multi-scope history files**. It adds no tables, and it logs every change to the system log (source `MultiScopeHistory`).
 
-1. Open the fix script and edit `OPTIONS` at the top. The defaults only report.
+1. Open the fix script and edit `OPTIONS` at the top. The defaults only report, and the empty `filter` covers your company's app scopes (`x_<company code>_`), where the company code comes from the `glide.appcreator.company.code` system property. The run stops with an error that names the property when it is not set.
 2. Run it and review the counts and patterns per file.
-3. To repair, set `revert` and `normalize` to `true`, narrow the `filter` to one file, set `limit: 1`, and run it again. Widen the filter once the one-file result looks right. A repair requires a `limit` (e.g. 100), so a wrong filter cannot change every file in one run.
+3. To repair, set `revert` and `normalize` to `true`, narrow the `filter` to one file, set `limit: 1`, and run it again. Widen the filter once the one-file result looks right. A repair requires a `limit` of 1 or more, so a wrong filter cannot change every file in one run.
 
 Run it on a test instance first. A repair reverts the record to its newest version and moves every version row into the app scope.
 

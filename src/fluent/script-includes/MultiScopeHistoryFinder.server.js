@@ -24,15 +24,19 @@
  *
  * Usage (see the "Find multi-scope history files" fix script):
  *   var result = new MultiScopeHistoryFinder().run({
- *       filter: 'application.scopeSTARTSWITHx_snc',  // encoded query on sys_update_version
+ *       filter: '',          // encoded query on sys_update_version. Empty uses your company scopes (x_<company code>_)
  *       revert: false,
  *       normalize: false,
  *       updateXml: 'none',
- *       limit: 0             // max files to check; any fix needs a limit (e.g. 100)
+ *       limit: 0             // max files to check; any fix needs a limit (start with 1)
  *   });
  *
- * A fix always needs a limit (e.g. 100), so a wrong filter cannot change every
+ * A fix always needs a limit (start with 1), so a wrong filter cannot change every
  * file in one run. Narrow the filter and run again to work through more.
+ *
+ * An empty filter is built from the company code (BulkAppCompany): the
+ * glide.appcreator.company.code system property plus any keys in
+ * sn_appauthor.all_company_keys. With no filter and no company code, run() throws.
  */
 var MultiScopeHistoryFinder = Class.create();
 MultiScopeHistoryFinder.prototype = {
@@ -56,10 +60,12 @@ MultiScopeHistoryFinder.prototype = {
 
     run: function (options) {
         var opts = this._options(options || {});
+        var filterSource = this._resolveFilter(opts);
         var runId = 'MSH-' + String(new GlideDateTime().getValue()).replace(/[^0-9]/g, '');
         var result = {
             runId: runId,
             filter: opts.filter,
+            filterSource: filterSource,
             fixes: this._fixLabel(opts),
             checked: 0,
             found: 0,
@@ -104,7 +110,7 @@ MultiScopeHistoryFinder.prototype = {
             versions: this.getListUrls('sys_update_version', result.files.map(function (f) { return f.name; })),
             log: this.getLogUrl(runId)
         };
-        this._log(runId + ' | done | filter=' + opts.filter + ' | fixes=' + result.fixes +
+        this._log(runId + ' | done | filter=' + opts.filter + ' | filterSource=' + filterSource + ' | fixes=' + result.fixes +
             ' | checked=' + result.checked + ' | found=' + result.found +
             ' | reverted=' + result.revertedFiles + ' | normalizedFiles=' + result.normalizedFiles +
             ' | normalizedRows=' + result.normalizedRows + ' | xmlRows=' + result.xmlRows + ' | failed=' + result.failedFiles +
@@ -199,7 +205,7 @@ MultiScopeHistoryFinder.prototype = {
     _options: function (o) {
         var xml = String(o.updateXml || 'none');
         return {
-            filter: String(o.filter === undefined || o.filter === null ? 'application.scopeSTARTSWITHx_snc' : o.filter),
+            filter: String(o.filter === undefined || o.filter === null ? '' : o.filter),
             revert: o.revert === true,
             normalize: o.normalize === true,
             updateXml: xml === 'normalize' || xml === 'delete_new' ? xml : 'none',
@@ -217,6 +223,19 @@ MultiScopeHistoryFinder.prototype = {
         if (opts.normalize) parts.push('normalize');
         if (opts.updateXml !== 'none') parts.push('xml_' + opts.updateXml);
         return parts.length ? parts.join('+') : 'report';
+    },
+
+    // An empty filter uses the company scopes. Returns where the filter came from. Throws when there is no company code.
+    _resolveFilter: function (opts) {
+        if (opts.filter) return 'option';
+        var company = new global.BulkAppCompany();
+        var info = company.get();
+        if (!info.prefixes.length) {
+            throw 'MultiScopeHistoryFinder: ' + company.MISSING_MESSAGE +
+                ' Or pass a `filter` such as `application.scopeSTARTSWITHx_<company code>_`.';
+        }
+        opts.filter = company.getFilter();
+        return info.source;
     },
 
     _validate: function (opts) {

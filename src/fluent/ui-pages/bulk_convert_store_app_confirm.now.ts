@@ -39,6 +39,7 @@ UiPage({
           .bac-summary { margin: 0 0 14px; }
         </style>
         <div id="prereq-strip" class="alert alert-info" style="display: none;"></div>
+        <div id="company-strip" style="display: none;"></div>
         <ul class="nav nav-tabs" style="margin-bottom: 10px;">
           <li id="tab-save"><a href="#" data-tab="save">Before Clone: Save Work</a></li>
           <li id="tab-restore"><a href="#" data-tab="restore">After Clone: Restore</a></li>
@@ -601,6 +602,27 @@ function renderPrereqs() {
         return;
     }
     el.innerHTML = '<button type="button" class="close" data-action="dismissPrereq" title="Dismiss" aria-label="Dismiss">&times;</button>Scope changed to Global';
+    el.style.display = '';
+}
+
+// Company code from the instance (BulkAppCompany). Shown as a note when found, and as an error that stays until it is fixed when not.
+function renderCompany() {
+    var el = byId('company-strip');
+    var c = BAC.prereq && BAC.prereq.company;
+    if (!el || !c) { return; }
+    if (c.prefixes && c.prefixes.length > 0) {
+        el.className = 'text-muted';
+        el.style.marginBottom = '12px';
+        el.innerHTML = 'Company code: <strong>' + esc(c.codes.join(', ')) + '</strong> (scopes ' + esc(c.prefixes.join(', ')) + '), from ' + esc(c.source) + '.';
+    } else {
+        el.className = 'alert alert-danger';
+        el.style.marginBottom = '18px';
+        el.innerHTML = '<strong>No company code found.</strong> The company code is the vendor key in your app scopes (the <code>abc</code> in <code>x_abc_myapp</code>). ' +
+            'It is read from the system property <code>glide.appcreator.company.code</code>, plus any extra keys in <code>sn_appauthor.all_company_keys</code>. ' +
+            'Without it, the Scope Normalizer has no default filter, and the app lists may be incomplete. ' +
+            '<a href="sys_properties_list.do?sysparm_query=' + encodeURIComponent('name=glide.appcreator.company.code^ORname=sn_appauthor.all_company_keys') + '" target="_blank">Open both properties</a>' +
+            ' &middot; <a href="#" data-action="recheckCompany">Check again</a>';
+    }
     el.style.display = '';
 }
 
@@ -1184,6 +1206,11 @@ function onClick(ev) {
         BAC.prereq.switched = false;
         byId('prereq-strip').style.display = 'none';
     }
+    else if (action === 'recheckCompany') {
+        callConsole('getPrereqs', {}, function(p) {
+            if (p.ok) { BAC.prereq.company = p.company; renderCompany(); }
+        });
+    }
     else if (action === 'dismissSummary') { setSummary('', ''); }
     else if (action === 'dismissSync') {
         BAC.sync.state = '';
@@ -1282,6 +1309,7 @@ function initPage() {
         BAC.prereq = p;
         function start() {
             renderPrereqs();
+            renderCompany();
             function load() {
                 loadApps(BAC.tab, function(ok) {
                     if (ok && BAC.tab === 'restore' && getUrlParam('sysparm_saved') === 'true') { onLoadSaved(); }
