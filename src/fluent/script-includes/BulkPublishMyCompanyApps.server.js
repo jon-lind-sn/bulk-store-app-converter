@@ -63,7 +63,9 @@ BulkPublishMyCompanyApps.prototype = Object.extendsObject(global.AbstractAjaxPro
         };
     }
 
-    function getNextPublishVersion(appId) {
+    // knownVersion is optional: a next version the caller already verified against the App Repo (the save status check).
+    // When it is a plain x.y.z version, the verify_version calls are skipped. The permission check always runs.
+    function getNextPublishVersion(appId, knownVersion) {
         var result = {
             ok: false,
             appName: '',
@@ -71,7 +73,6 @@ BulkPublishMyCompanyApps.prototype = Object.extendsObject(global.AbstractAjaxPro
             nextVersion: '',
             lastAttemptedVersion: '',
             publishable: false,
-            isConverted: false,
             error: ''
         };
 
@@ -94,6 +95,12 @@ BulkPublishMyCompanyApps.prototype = Object.extendsObject(global.AbstractAjaxPro
             return result;
         }
 
+        if (/^\d+\.\d+\.\d+$/.test(String(knownVersion || ''))) {
+            result.nextVersion = knownVersion;
+            result.ok = true;
+            return result;
+        }
+
         var next = findNextPublishableVersion(appId, result.currentVersion);
         if (!next.version) {
             result.lastAttemptedVersion = next.lastAttempted;
@@ -113,8 +120,9 @@ BulkPublishMyCompanyApps.prototype = Object.extendsObject(global.AbstractAjaxPro
          * getNextPublishVersion
          * Computes the next version of a development mode app that My Application Repository will accept.
          * Call as GlideAjax with sysparm_name=getNextPublishVersion and sysparm_sys_id=<sys_app sys_id>.
+         * Optional sysparm_next_version (x.y.z): a version the caller already checked with the App Repo. It is used as is, and only the permission check runs.
          *
-         * @returns {String} JSON: { ok, appName, currentVersion, nextVersion, lastAttemptedVersion, publishable, isConverted, error }
+         * @returns {String} JSON: { ok, appName, currentVersion, nextVersion, lastAttemptedVersion, publishable, error }
          */
         getNextPublishVersion: function() {
             var appId = '';
@@ -123,7 +131,7 @@ BulkPublishMyCompanyApps.prototype = Object.extendsObject(global.AbstractAjaxPro
             }
             try {
                 appId = this.getParameter('sysparm_sys_id');
-                return JSON.stringify(getNextPublishVersion(appId));
+                return JSON.stringify(getNextPublishVersion(appId, this.getParameter('sysparm_next_version')));
             } catch (e) {
                 gs.error('BulkPublishMyCompanyApps.getNextPublishVersion failed for ' + appId + ': ' + e);
                 return JSON.stringify({ ok: false, error: 'Server error while finding the next version for ' + appId + ': ' + e });

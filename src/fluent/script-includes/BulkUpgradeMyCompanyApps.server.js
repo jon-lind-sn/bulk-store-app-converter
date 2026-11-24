@@ -155,7 +155,7 @@ BulkUpgradeMyCompanyApps.prototype = Object.extendsObject(global.AbstractAjaxPro
          * upgradeByFilter
          * Batch upgrades company apps matching the provided encoded query.
          * 
-         * @param {String} encodedQuery - Encoded query to filter sys_store_app records. You may also calls this as GlideAjax with ga.addParam('encoded_query', '...');
+         * @param {String} encodedQuery - Encoded query to filter sys_store_app records. Call it from server scripts only. This script include is not client callable.
          * @returns {Object} { candidates, packages, batchId, trackerId }
          * 
          * Example queries:
@@ -171,8 +171,7 @@ BulkUpgradeMyCompanyApps.prototype = Object.extendsObject(global.AbstractAjaxPro
          * Inspired by The ServiceNow Wizard: https://snwizard.com/update-apps/
          */
 		upgradeByFilter: function(encodedQuery) {
-			var query = encodedQuery || this.getParameter('sysparm_encoded_query');
-			return upgradeByFilter(query);
+			return upgradeByFilter(encodedQuery);
 		},
 
 		/**

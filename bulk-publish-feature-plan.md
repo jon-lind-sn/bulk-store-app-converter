@@ -1,8 +1,12 @@
 # Feature Plan: Bulk Publish (increment version & publish to My App Repo)
 
-> Status: **Design complete, not yet implemented.** This document captures all
-> research findings and the implementation plan so a new session can build it
-> without re-investigating.
+> Status: **Implemented.** Publishing ships in the Before Clone tab. This document
+> is kept as the original research (sections 1 to 5). Sections 6 to 9 are the first
+> plan and differ from what shipped: the page drives `sn_appauthor.ScopedAppUploaderAJAX`
+> directly and polls its progress tracker (no `hierarchical_progress_viewer` modal),
+> there is no `applyVersionAndPrepare` method, and the save status and next version
+> logic lives in `BulkAppConsole` (`getPublishState`) and `BulkPublishMyCompanyApps`.
+> Read the code for current behavior.
 
 ## 1. Goal (as requested)
 

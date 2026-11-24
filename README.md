@@ -19,7 +19,7 @@ Choose one option.
 
 ## Use
 
-Open **System Applications > Bulk App Clone Assistant**. The page has two tabs.
+Open **System Applications > Bulk App Clone Assistant**. The page has two tabs. Add `?sysparm_tab=save` to the page URL (`bulk_convert_store_app_confirm.do`) to open Before Clone, or `?sysparm_tab=restore` to open After Clone. Without it, the page opens the tab you used last in that browser, and After Clone the first time.
 
 ### Before Clone: Save Work
 
@@ -55,13 +55,6 @@ Apps at `0.0.0-CONVERTED` with no App Repo version are skipped by the upgrade ac
 
 **Save selection** writes the checked apps to the `bulk_convert_store_app.convertible_apps` system property (a comma-separated list of scopes, such as `x_myapp_1,x_myapp_2`). **Load saved list** checks them again, for example on a fresh clone.
 
-## Bulk upgrade modules
-
-Two modules under **System Applications** upgrade store apps without opening the page. Refresh **My Company Applications** afterward to see the new versions.
-
-1. **Bulk Upgrade ALL My Company Apps** upgrades every company-owned app.
-2. **Bulk Upgrade My Company Apps from Property** upgrades only the scopes in `bulk_convert_store_app.convertible_apps`.
-
 ## Scope Normalizer
 
 An optional admin tool for files whose version history spans more than one scope. A common cause is a record customized in `global` through update sets and later shipped inside a scoped app: the app install writes a newer version in the app scope but leaves the current flag on an older `global` version, so the install skips the record. The Scope Normalizer finds these files and repairs them so every version sits in the app scope with the newest version current. See [SCOPE-NORMALIZER.md](SCOPE-NORMALIZER.md) for the detection patterns, options and test results.
@@ -73,6 +66,15 @@ It runs on the instance as the `MultiScopeHistoryFinder` script include, driven 
 3. To repair, set `revert` and `normalize` to `true`, narrow the `filter` to one file, set `limit: 1`, and run it again. Widen the filter once the one-file result looks right. A repair requires a `limit` (e.g. 100), so a wrong filter cannot change every file in one run.
 
 Run it on a test instance first. A repair reverts the record to its newest version and moves every version row into the app scope.
+
+## Tests
+
+The app ships 12 Automated Test Framework (ATF) tests in one suite, **Bulk App Clone Assistant: non-destructive tests**. The source is in `src/fluent/atf/`. They read and check but never publish to the App Repo, install, upgrade or convert an app, save the saved list, or run a Scope Normalizer fix.
+
+1. **Server tests (7).** Scope Normalizer classification, option parsing, links and report-only runs, the bulk upgrade version comparison, and the page server API as an admin and as a user with no roles.
+2. **Page tests (5).** The layout and tabs, search, filters and selection on both tabs, the page helper functions, and the page being hidden from non-admins. The filter tests replace the app list in the page with made-up apps, so they need no particular data on the instance.
+
+Run the suite from **Automated Test Framework > Test Suites**, or with `npx @servicenow/sdk cicd testsuite run --test-suite-name "Bulk App Clone Assistant: non-destructive tests" -a <alias>`. The server tests run on their own. The page tests need a browser signed in to the instance with the Client Test Runner open (**Automated Test Framework > Run Test Runner**), unless the instance has the ATF Cloud Runner. Opening the After Clone tab refreshes versions from the App Repo, as it does for any user.
 
 ## Contributing
 

@@ -109,7 +109,9 @@ Filter examples, added one condition at a time:
 
 ## Testing
 
-Tests run on a test instance (now-sdk credential alias `{test-instance}`). Each test touches one file or one scope.
+Four Automated Test Framework (ATF) tests in `src/fluent/atf/` cover the finder without changing any file: `classify()` patterns and flags, option parsing and validation, the link builders, and report-only runs including the guards that make every fix throw without a limit. See the README Tests section for how to run them. The manual steps below cover the fixes themselves.
+
+Manual tests run on a test instance (now-sdk credential alias `{test-instance}`). Each test touches one file or one scope.
 
 1. **Report first.** Run the fix script with the default options (report only) and check the counts and patterns against the version rows.
 2. **Unit test `classify()` offline.** Load the script include in Node with a stub `Class.create`, feed it rows pulled from the test instance with `npx @servicenow/sdk query`, and check pattern, target scope and the rows to move. This also covered the case where a revert lands in `global` (the target is still the app scope).

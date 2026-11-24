@@ -466,11 +466,6 @@ function targetHtml(tab, app) {
     return esc(app.version) + ' &rarr; ' + esc(s.nextVersion);
 }
 
-function installedHtml(tab, app) {
-    var html = esc(app.version);
-    return html;
-}
-
 function pad2(n) {
     return (n < 10 ? '0' : '') + n;
 }
@@ -527,7 +522,7 @@ function rowHtml(tab, app) {
         (tab === 'restore' && app.upgradeAvailable && !app.gone ? ' <span class="label label-info">Upgrade</span>' : '') +
         '<br/><span class="text-muted">' + esc(app.scope) + '</span>' +
         ' <a href="sys_scope.do?sys_id=' + app.sys_id + '" target="_blank" title="Open record"><span class="glyphicon glyphicon-new-window"></span></a></td>' +
-        '<td id="installed-' + tab + '-' + app.sys_id + '">' + installedHtml(tab, app) + '</td>' +
+        '<td id="installed-' + tab + '-' + app.sys_id + '">' + esc(app.version) + '</td>' +
         '<td id="target-' + tab + '-' + app.sys_id + '">' + targetHtml(tab, app) + '</td>';
     if (tab === 'save') {
         html += '<td id="save-' + app.sys_id + '">' + saveCellHtml(app) + '</td></tr>';
@@ -879,14 +874,6 @@ function convertNext(kind, tab, rows, index, run, done) {
     });
 }
 
-function convertStoreNext(rows, index, run, done) {
-    convertNext('dev', 'restore', rows, index, run, done);
-}
-
-function convertDevNext(rows, index, run, done) {
-    convertNext('store', 'save', rows, index, run, done);
-}
-
 /* ---------- After Clone: restore ---------- */
 
 function waitForBatch(res, onDone) {
@@ -959,7 +946,7 @@ function onRestoreRun(mode) {
                     setRowStatus('restore', rows[j].sys_id, 'Skipped', 'Not eligible to convert to dev mode.');
                 }
             }
-            convertStoreNext(todo, 0, run, finishRestore);
+            convertNext('dev', 'restore', todo, 0, run, finishRestore);
         });
     }
     function finishRestore() { endQueue(run, 'restore'); }
@@ -1025,6 +1012,10 @@ function publishApp(rows, index, run) {
     var ga = new GlideAjax('BulkPublishMyCompanyApps');
     ga.addParam('sysparm_name', 'getNextPublishVersion');
     ga.addParam('sysparm_sys_id', appId);
+    // The save status check already found the next version. Pass it on so the server skips the App Repo calls (it still checks permission).
+    // A state set right after a publish only estimates the next version, so it is not passed.
+    var known = BAC.saveState[appId];
+    if (known && known.ok && known.nextVersion && !known.estimated) { ga.addParam('sysparm_next_version', known.nextVersion); }
     ga.getXMLAnswer(function(answer) {
         var info = null;
         try {
@@ -1075,7 +1066,7 @@ function startPublish(appId, info, run, onDone) {
             pollTracker(trackerId, function() {
                 run.published++;
                 setRowStatus('save', appId, 'Published', 'Published v' + info.nextVersion + ' (was v' + info.currentVersion + ')');
-                BAC.saveState[appId] = { saveStatus: 'saved', nextVersion: nextMinorVersion(info.nextVersion), currentVersion: info.nextVersion };
+                BAC.saveState[appId] = { saveStatus: 'saved', estimated: true, nextVersion: nextMinorVersion(info.nextVersion), currentVersion: info.nextVersion };
                 var app = findApp('save', appId);
                 if (app) { app.version = info.nextVersion; }
                 var cell = byId('save-' + appId);
@@ -1123,7 +1114,7 @@ function onConvertStore() {
         setRowStatus('save', skipped[s1].sys_id, 'Skipped', 'Publish this app first so it can be restored by upgrading after conversion.');
     }
     for (var p = 0; p < ok.length; p++) { setRowStatus('save', ok[p].sys_id, 'Pending', ''); }
-    convertDevNext(ok, 0, run, function() { endQueue(run, 'save'); });
+    convertNext('store', 'save', ok, 0, run, function() { endQueue(run, 'save'); });
 }
 
 /* ---------- saved list (Phase 3) ---------- */
