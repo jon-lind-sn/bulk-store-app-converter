@@ -180,7 +180,7 @@ const uiRestore = Test(
         $id: Now.ID['atf_ui_restore'],
         name: 'Clone Assistant page: After Clone selection and filters',
         description:
-            'Opens the After Clone tab (which refreshes versions from the App Repo), replaces the list with four made up apps, and asserts the target column, the Upgrade label, locked rows, the selected count, search, the Upgrade available filter, and when the three action buttons enable. No action button is clicked.',
+            'Opens the After Clone tab (which refreshes versions from the App Repo), replaces the list with four made up apps, and asserts the target column, the Upgrade label, locked rows, the selected count, search, the Upgrades available filter and its count, the No upgrade available status, and when the three action buttons enable. No action button is clicked.',
         active: true,
     },
     (atf) => {

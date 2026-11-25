@@ -91,6 +91,7 @@
                 expect(info.prefixes[i]).toBe('x_' + info.codes[i] + '_');
             }
             expect(company.getFilter().split('^OR').length).toBe(Math.max(1, info.prefixes.length));
+            expect(info.storeKeys).toEqual(company._split(gs.getProperty('sn_appauthor.all_company_keys', '')));
         });
 
         it('keeps an explicit filter and reports its source', function() {

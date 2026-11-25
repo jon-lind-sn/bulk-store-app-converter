@@ -94,7 +94,8 @@ var STATUS_CLASSES = {
     'Upgraded': 'label-success',
     'Published': 'label-primary',
     'Failed': 'label-danger',
-    'Skipped': 'label-default'
+    'Skipped': 'label-default',
+    'No upgrade available': 'label-default'
 };
 
 var SAVE_LABELS = {
@@ -441,9 +442,29 @@ function isRowSelectable(tab, app) {
     return !app.gone && (app.upgradeAvailable || app.convertible);
 }
 
+// True when sn_appauthor.all_company_keys is empty, so the platform converts no scoped store app to dev mode.
+function noStoreKeys() {
+    var c = BAC.prereq && BAC.prereq.company;
+    return !!c && (!c.storeKeys || c.storeKeys.length === 0);
+}
+
+function convertReason(app) {
+    if (app.scope !== 'global' && noStoreKeys()) {
+        return 'Cannot convert to dev mode: the system property sn_appauthor.all_company_keys is empty.';
+    }
+    return 'The platform cannot convert this app to dev mode.';
+}
+
 function unselectableReason(app) {
     if (app.gone) { return 'Converted to dev mode. Reload the page to refresh the list.'; }
-    return 'Nothing to upgrade, and the platform cannot convert this app to dev mode.';
+    return 'No upgrade available. ' + convertReason(app);
+}
+
+// After Clone status when no run has touched the row: say why there is nothing to upgrade, and why it cannot be converted.
+function restoreStatusHtml(app) {
+    var st = BAC.status.restore[app.sys_id];
+    if (st || app.gone || app.upgradeAvailable) { return statusHtml(st); }
+    return statusHtml({ label: 'No upgrade available', note: app.convertible ? '' : convertReason(app) });
 }
 
 function getCheckedRows(tab) {
@@ -532,7 +553,7 @@ function rowHtml(tab, app) {
     if (tab === 'save') {
         html += '<td id="save-' + app.sys_id + '">' + saveCellHtml(app) + '</td></tr>';
     } else {
-        html += '<td id="status-' + tab + '-' + app.sys_id + '">' + statusHtml(BAC.status[tab][app.sys_id]) + '</td></tr>';
+        html += '<td id="status-' + tab + '-' + app.sys_id + '">' + restoreStatusHtml(app) + '</td></tr>';
     }
     return html;
 }
@@ -618,6 +639,13 @@ function renderCompany() {
         el.className = 'text-muted';
         el.style.marginBottom = '12px';
         el.innerHTML = 'Company code: <strong>' + esc(c.codes.join(', ')) + '</strong> (scopes ' + esc(c.prefixes.join(', ')) + '), from ' + esc(c.source) + '.';
+        if (noStoreKeys()) {
+            el.innerHTML += '<div class="alert alert-warning" style="margin: 8px 0 0;"><strong>Scoped apps cannot be converted to dev mode.</strong> ' +
+                'The platform converts a scoped store app only when the system property <code>sn_appauthor.all_company_keys</code> lists your company key, and it is empty on this instance. ' +
+                'The daily job "Check Scoped App Author Config Changes" fills it from your App Repo vendor record, so an instance with no vendor keys there keeps it empty. ' +
+                '<a href="sys_properties_list.do?sysparm_query=' + encodeURIComponent('name=sn_appauthor.all_company_keys') + '" target="_blank">Open the property</a>' +
+                ' &middot; <a href="#" data-action="recheckCompany">Check again</a></div>';
+        }
     } else {
         el.className = 'alert alert-danger';
         el.style.marginBottom = '18px';
@@ -680,7 +708,7 @@ function paneHtml(tab) {
             '<button type="button" id="btnUpgradeOnly" class="btn btn-default btn-sm" data-action="upgradeOnly">Upgrade</button> ' +
             '<button type="button" id="btnConvertDevOnly" class="btn btn-default btn-sm" data-action="convertDevOnly">Convert to Dev</button> ' +
             '<input type="text" class="bac-search input-sm" data-tab="restore" placeholder="Search apps"/> ' +
-            '<label class="checkbox-inline"><input type="checkbox" class="bac-chip" data-tab="restore" data-chip="upgrade"/> Upgrade available</label> ' +
+            '<label class="checkbox-inline"><input type="checkbox" class="bac-chip" data-tab="restore" data-chip="upgrade"/> Upgrades available <span class="text-muted" id="chipcount-upgrade"></span></label> ' +
             '<span id="count-restore" class="text-muted"></span> ' +
             '<a href="#" id="btnLoadSaved" data-action="loadSaved">Load saved list</a> ' +
             '<a href="#" id="btnSaveSelection" data-action="saveSelection">Save selection</a>' +
@@ -702,6 +730,16 @@ function paneHtml(tab) {
 }
 
 /* ---------- loading ---------- */
+
+function renderUpgradeCount() {
+    var el = byId('chipcount-upgrade');
+    if (!el) { return; }
+    var n = 0;
+    for (var i = 0; i < BAC.apps.restore.length; i++) {
+        if (BAC.apps.restore[i].upgradeAvailable && !BAC.apps.restore[i].gone) { n++; }
+    }
+    el.textContent = '(' + n + ')';
+}
 
 function loadApps(tab, done) {
     callConsole('getApps', { sysparm_list: tab }, function(res) {
@@ -738,6 +776,7 @@ function loadApps(tab, done) {
         }
         BAC.apps[tab] = apps;
         BAC.loaded[tab] = true;
+        if (tab === 'restore') { renderUpgradeCount(); }
         renderTable(tab);
         if (tab === 'save') { renderBanner(); loadSaveStates(); }
         if (done) { done(true); }
@@ -1214,7 +1253,12 @@ function onClick(ev) {
     }
     else if (action === 'recheckCompany') {
         callConsole('getPrereqs', {}, function(p) {
-            if (p.ok) { BAC.prereq.company = p.company; renderCompany(); }
+            if (p.ok) {
+                BAC.prereq.company = p.company;
+                renderCompany();
+                // Convertibility comes from the server, so reload the After Clone list to pick up a changed property.
+                if (!BAC.busy && BAC.loaded.restore) { loadApps('restore'); }
+            }
         });
     }
     else if (action === 'dismissSummary') { setSummary('', ''); }

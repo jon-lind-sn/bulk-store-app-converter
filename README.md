@@ -45,7 +45,7 @@ The page switches the application picker per app while publishing, shows a "Scop
 
 ![Bulk App Clone Assistant, After Clone: Restore tab](images/after-clone-restore.jpg)
 
-Run this on the cloned instance. Opening the tab refreshes My Company Applications from the App Repo so the Target Version column is current. Apps with a newer target show an **Upgrade** badge, and the **Upgrade available** checkbox filters to them.
+Run this on the cloned instance. Opening the tab refreshes My Company Applications from the App Repo so the Target Version column is current. Apps with a newer target show an **Upgrade** badge, and the **Upgrades available** checkbox filters to them. Apps with nothing to upgrade show **No upgrade available**, with the reason when they cannot be converted either. When `sn_appauthor.all_company_keys` is empty, the page warns that the platform converts no scoped app to dev mode.
 
 1. **Upgrade and Convert**: upgrades each selected app, then converts it to development mode.
 2. **Upgrade**: upgrades each selected app and leaves it in store mode.

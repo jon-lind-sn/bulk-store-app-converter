@@ -87,7 +87,7 @@ expect(o.note.other).toBe('')
 // row selection and the After Clone target column
 expect(o.selectable).toEqual([true, false, true, true, false])
 expect(o.reasonGone).toContain('Converted to dev mode')
-expect(o.reasonOther).toContain('Nothing to upgrade')
+expect(o.reasonOther).toContain('No upgrade available')
 expect(o.targetNotInRepo).toContain('Not in App Repo, cannot restore automatically')
 expect(o.targetLatest).toBe('1.2.0')
 expect(o.targetConvertOnly).toContain('convert only')

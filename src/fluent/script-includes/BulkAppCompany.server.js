@@ -7,7 +7,9 @@
  *   glide.appcreator.company.code     main source
  *   sn_appauthor.all_company_keys     extra keys, when a company has more than one
  *
- * get() returns { codes: ['abc'], prefixes: ['x_abc_'], source: '<property name(s)>' }.
+ * get() returns { codes: ['abc'], prefixes: ['x_abc_'], source: '<property name(s)>', storeKeys: ['abc'] }.
+ * storeKeys are the keys in sn_appauthor.all_company_keys alone. The platform converts a scoped store app to dev mode
+ * only when that property lists a key, so an empty list means no scoped app can be converted.
  * Each prefix ends with an underscore, so x_abc_ never matches x_abcd_.
  * getFilter() returns an encoded query on sys_update_version for those prefixes, or '' when none are found.
  */
@@ -39,7 +41,8 @@ BulkAppCompany.prototype = {
         return {
             codes: codes,
             prefixes: codes.map(function (c) { return 'x_' + c + '_'; }),
-            source: sources.join(' and ')
+            source: sources.join(' and '),
+            storeKeys: this._split(gs.getProperty(this.PROP_KEYS, ''))
         };
     },
 

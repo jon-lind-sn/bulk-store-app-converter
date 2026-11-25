@@ -34,6 +34,9 @@ await sn_atf.evaluate(function () {
     BAC.touched.restore = false
     BAC.filters.restore = { q: '', upgrade: false, failed: false }
     BAC.loaded.restore = true
+    // A store key, so the locked row reason does not depend on this instance's sn_appauthor.all_company_keys.
+    BAC.prereq.company.storeKeys = ['demo']
+    renderUpgradeCount()
     renderTable('restore')
 })
 
@@ -62,7 +65,9 @@ const r3 = await screen.findBySelector('input.bac-check[data-id="atf_r3"]')
 const r4 = await screen.findBySelector('input.bac-check[data-id="atf_r4"]')
 expect(r3).toBeDisabled()
 expect(r4).toBeDisabled()
-expect(r4).toHaveAttribute('title', 'Nothing to upgrade, and the platform cannot convert this app to dev mode.')
+expect(r4).toHaveAttribute('title', 'No upgrade available. The platform cannot convert this app to dev mode.')
+expect((await screen.findBySelector('#status-restore-atf_r4')).textContent).toContain('No upgrade available')
+expect((await screen.findBySelector('#chipcount-upgrade')).textContent).toBe('(1)')
 expect(await screen.findBySelector('input.bac-check[data-id="atf_r1"]')).toBeEnabled()
 
 // Only the selectable, checked rows count
