@@ -574,11 +574,16 @@ function renderTable(tab) {
         return;
     }
     var allChecked = true;
+    var anySelectable = false;
     for (var c = 0; c < vis.length; c++) {
-        if (isRowSelectable(tab, vis[c]) && !BAC.checked[tab][vis[c].sys_id]) { allChecked = false; }
+        if (!isRowSelectable(tab, vis[c])) { continue; }
+        anySelectable = true;
+        if (!BAC.checked[tab][vis[c].sys_id]) { allChecked = false; }
     }
+    // With no selectable row, the check all box is cleared and locked.
+    if (!anySelectable) { allChecked = false; }
     var html = '<table id="tbl-' + tab + '" class="table table-condensed table-hover bac-table' + (BAC.run.tab === tab ? ' bac-running' : '') + '"><thead><tr>' +
-        '<th style="width: 30px;"><input type="checkbox" class="bac-all" data-tab="' + tab + '"' + (allChecked ? ' checked="checked"' : '') + ' title="Check all visible"/></th>' +
+        '<th style="width: 30px;"><input type="checkbox" class="bac-all" data-tab="' + tab + '"' + (allChecked ? ' checked="checked"' : '') + (anySelectable ? ' title="Check all visible"' : ' disabled="disabled" title="No row can be selected"') + '/></th>' +
         '<th>App</th>' + (tab === 'restore' ? '<th>Local</th><th>Published</th>' : '<th>Local Version</th><th>Target Version</th>') +
         '<th>Status</th></tr></thead><tbody>';
     for (var i = 0; i < vis.length; i++) {
