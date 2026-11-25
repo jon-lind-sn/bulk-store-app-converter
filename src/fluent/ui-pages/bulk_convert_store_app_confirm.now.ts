@@ -1100,12 +1100,8 @@ function startPublish(appId, info, run, onDone) {
                 var cell = byId('save-' + appId);
                 if (cell && app) { cell.innerHTML = saveCellHtml(app); }
                 renderBanner();
-                // publishNext made the published app the current application. The platform refuses a property
-                // update from another app, so switch back to global before recording the publish.
-                switchApplication('global', function() {
-                    callConsole('recordPublish', { sysparm_sys_id: appId }, function() {
-                        onDone();
-                    });
+                callConsole('recordPublish', { sysparm_sys_id: appId }, function() {
+                    onDone();
                 });
             }, function(tracker) {
                 fail(tracker && tracker.message ? 'Tracker said: ' + tracker.message : '');

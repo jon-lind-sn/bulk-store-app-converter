@@ -154,6 +154,7 @@ declare global {
                     'bulk-convert-store-app-publish-log': {
                         table: 'sys_properties'
                         id: 'feac1a896aa94524b6f9264722e899f9'
+                        deleted: true
                     }
                     'bulk-publish-my-company-apps': {
                         table: 'sys_script_include'

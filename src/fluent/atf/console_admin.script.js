@@ -114,12 +114,10 @@
             expect(r).toEqual({ ok: true, packages: [], batchId: '', trackerId: '' });
         });
 
-        it('recordPublish refuses an unknown app without touching the publish log', function() {
-            var before = gs.getProperty('bulk_convert_store_app.publish_log', '');
+        it('recordPublish refuses an unknown app', function() {
             var expected = { ok: false, error: 'Application not found in sys_app.' };
             expect(call('BulkAppConsole', 'recordPublish', { sysparm_sys_id: NONE })).toEqual(expected);
             expect(call('BulkAppConsole', 'recordPublish', {})).toEqual(expected);
-            expect(gs.getProperty('bulk_convert_store_app.publish_log', '')).toBe(before);
         });
     });
 

@@ -49,7 +49,7 @@ Working notes for agents on the Bulk Store App Converter. Read `docs/ui-refactor
 3. Trackers: "Publish to the Application Repository", "Packaging application", "Uploading application". They carry no app reference.
 4. `sys_update_xml` and `sys_update_version` for the app record (`sys_app_<id>`) and for the plan item. Exclude both when looking for local edits.
 5. Publishes through now-sdk or the CI/CD API are believed not to create `sys_upgrade_plan_item` (not verified). Those apps fall back to "In App Repo".
-6. The `bulk_convert_store_app.publish_log` property only exists on the instance that wrote it and is replaced by a clone. It is a weak fallback.
+6. Each page driven publish also writes an info line to the system log with source `bulk-store-app-converter`. It is a record of the run only; the save status does not read it.
 7. Page driven publish test on 2026-10-14: Automate Pro Integration, Change Management Customizations and Indian Food Truck each went 1.0.0 to 1.1.0 (REPOAPP0000001055 to 1057). All three came back as Published with target 1.1.0 to 1.2.0.
 
 ## Before Clone tab (getPublishState)

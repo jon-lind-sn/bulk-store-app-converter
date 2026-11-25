@@ -2,7 +2,7 @@ var BulkAppConsole = Class.create();
 BulkAppConsole.prototype = Object.extendsObject(global.AbstractAjaxProcessor, (function() {
 
     var SAVED_LIST_PROPERTY = 'bulk_convert_store_app.convertible_apps';
-    var PUBLISH_LOG_PROPERTY = 'bulk_convert_store_app.publish_log';
+    var LOG_SOURCE = 'bulk-store-app-converter';
     var NOT_ADMIN = JSON.stringify({ ok: false, error: 'admin role required' });
 
     function isConvertedVersion(version) {
@@ -115,25 +115,15 @@ BulkAppConsole.prototype = Object.extendsObject(global.AbstractAjaxProcessor, (f
         return latest;
     }
 
-    function getLastPublished(appId, scope, version) {
-        // 1. Each publish creates a sys_upgrade_plan_item with id = app sys_id and the published version (spiked on the dev instance).
+    function getLastPublished(appId, version) {
+        // Each publish creates a sys_upgrade_plan_item with id = app sys_id and the published version.
         var gr = new GlideRecord('sys_upgrade_plan_item');
         gr.addQuery('id', appId);
         gr.addQuery('version', version);
         gr.orderByDesc('sys_created_on');
         gr.setLimit(1);
         gr.query();
-        if (gr.next()) {
-            return gr.getValue('sys_created_on');
-        }
-        // 2. Timestamp written by this page after a publish.
-        try {
-            var log = JSON.parse(gs.getProperty(PUBLISH_LOG_PROPERTY, '{}'));
-            if (log && log[scope]) return log[scope];
-        } catch (e) {
-            // fall through to in_repo
-        }
-        return '';
+        return gr.next() ? gr.getValue('sys_created_on') : '';
     }
 
     function repoHost() {
@@ -217,7 +207,7 @@ BulkAppConsole.prototype = Object.extendsObject(global.AbstractAjaxProcessor, (f
                 step = 'read the latest local change (getLastChanged)';
                 result.lastChanged = getLastChanged(appId);
                 step = 'read the publish record (getLastPublished)';
-                result.lastPublished = getLastPublished(appId, scope, result.currentVersion);
+                result.lastPublished = getLastPublished(appId, result.currentVersion);
                 if (result.lastPublished && result.lastChanged) {
                     result.saveStatus = numeric(result.lastChanged) > numeric(result.lastPublished) ? 'changed' : 'saved';
                 } else if (result.lastPublished) {
@@ -313,20 +303,13 @@ BulkAppConsole.prototype = Object.extendsObject(global.AbstractAjaxProcessor, (f
             });
         },
 
-        /** sysparm_sys_id. Records a publish time for the app scope in the publish_log property. */
+        /** sysparm_sys_id. Writes an info line to the system log (source bulk-store-app-converter) for a publish from the page. */
         recordPublish: function() {
             var appId = String(this.getParameter('sysparm_sys_id') || '');
             return guarded('recordPublish', function() {
                 var gr = new GlideRecord('sys_app');
                 if (!appId || !gr.get(appId)) return { ok: false, error: 'Application not found in sys_app.' };
-                var log = {};
-                try {
-                    log = JSON.parse(gs.getProperty(PUBLISH_LOG_PROPERTY, '{}')) || {};
-                } catch (e) {
-                    log = {};
-                }
-                log[gr.getValue('scope')] = new GlideDateTime().getValue();
-                gs.setProperty(PUBLISH_LOG_PROPERTY, JSON.stringify(log));
+                gs.log('Published ' + gr.getValue('name') + ' (' + gr.getValue('scope') + ') v' + gr.getValue('version') + ' to the App Repo.', LOG_SOURCE);
                 return { ok: true };
             });
         },
