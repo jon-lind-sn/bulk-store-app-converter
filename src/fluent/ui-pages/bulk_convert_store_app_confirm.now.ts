@@ -464,7 +464,9 @@ function unselectableReason(app) {
 function restoreStatusHtml(app) {
     var st = BAC.status.restore[app.sys_id];
     if (st || app.gone || app.upgradeAvailable) { return statusHtml(st); }
-    return statusHtml({ label: 'No upgrade available', note: app.convertible ? '' : convertReason(app) });
+    // An empty sn_appauthor.all_company_keys is explained once, in the company strip, not on every row.
+    var keyCause = app.scope !== 'global' && noStoreKeys();
+    return statusHtml({ label: 'No upgrade available', note: app.convertible || keyCause ? '' : convertReason(app) });
 }
 
 function getCheckedRows(tab) {
