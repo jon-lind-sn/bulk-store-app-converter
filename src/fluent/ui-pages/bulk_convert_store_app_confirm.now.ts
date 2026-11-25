@@ -1053,7 +1053,8 @@ function onRestoreRun(mode) {
             for (var k = 0; k < upRows.length; k++) {
                 if (ok) {
                     run.upgraded++;
-                    setRowStatus('restore', upRows[k].sys_id, 'Upgraded', 'Now at ' + upRows[k].latest_version, 'sys_batch_install_plan.do?sys_id=' + res.batchId);
+                    // The Local column shows the new version and the run summary links the batch install plan, so no note.
+                    setRowStatus('restore', upRows[k].sys_id, 'Upgraded', '');
                 } else {
                     run.failed++;
                     setRowStatus('restore', upRows[k].sys_id, 'Failed', message, 'sys_batch_install_plan.do?sys_id=' + res.batchId);
