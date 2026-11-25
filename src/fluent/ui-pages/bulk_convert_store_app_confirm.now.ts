@@ -577,7 +577,7 @@ function renderTable(tab) {
     }
     var html = '<table id="tbl-' + tab + '" class="table table-condensed table-hover bac-table' + (BAC.run.tab === tab ? ' bac-running' : '') + '"><thead><tr>' +
         '<th style="width: 30px;"><input type="checkbox" class="bac-all" data-tab="' + tab + '"' + (allChecked ? ' checked="checked"' : '') + ' title="Check all visible"/></th>' +
-        '<th>App</th><th>Local Version</th><th>Target Version</th>' +
+        '<th>App</th>' + (tab === 'restore' ? '<th>Local</th><th>Published</th>' : '<th>Local Version</th><th>Target Version</th>') +
         '<th>Status</th></tr></thead><tbody>';
     for (var i = 0; i < vis.length; i++) {
         html += rowHtml(tab, vis[i]);
