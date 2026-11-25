@@ -1,0 +1,62 @@
+name: Deploy to production
+
+# Runs when a pull request that changes the published app is merged into
+# main (a push to main; README, docs, tools and workflow changes do not deploy). Validates the
+# merged code on the test instance, publishes it to the App Repo, waits for
+# approval on the "production" environment, then installs the published version
+# on production.
+#
+# Credentials, one auth scope each:
+#   test instance: "ServiceNow SDK CICD"  (validate, publish)
+#   production:    "App Repo Deployer"    (install from the App Repo only)
+#
+# Repository variables: SN_SDK_TEST_INSTANCE_URL, SN_SDK_PROD_INSTANCE_URL
+# Repository secrets:   SN_SDK_TEST_OAUTH_CLIENT_ID, SN_SDK_TEST_OAUTH_CLIENT_SECRET,
+#                       SN_SDK_PROD_OAUTH_CLIENT_ID, SN_SDK_PROD_OAUTH_CLIENT_SECRET
+# App Repo versions are immutable, so bump package.json version in every PR.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'now.config.json'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-main
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    uses: ./.github/workflows/_validate.yml
+    secrets: inherit
+
+  publish:
+    name: Publish to the App Repo
+    needs: validate
+    runs-on: ubuntu-latest
+    env:
+      SN_SDK_INSTANCE_URL: ${{ vars.SN_SDK_TEST_INSTANCE_URL }}
+      SN_SDK_OAUTH_CLIENT_ID: ${{ secrets.SN_SDK_TEST_OAUTH_CLIENT_ID }}
+      SN_SDK_OAUTH_CLIENT_SECRET: ${{ secrets.SN_SDK_TEST_OAUTH_CLIENT_SECRET }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Publish the version in package.json
+        run: ./tools/now-sdk2.sh cicd publish --dev-notes "Published by ${{ github.repository }} run ${{ github.run_number }}"
+
+  install-prod:
+    name: Install on production
+    needs: publish
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      SN_SDK_INSTANCE_URL: ${{ vars.SN_SDK_PROD_INSTANCE_URL }}
+      SN_SDK_OAUTH_CLIENT_ID: ${{ secrets.SN_SDK_PROD_OAUTH_CLIENT_ID }}
+      SN_SDK_OAUTH_CLIENT_SECRET: ${{ secrets.SN_SDK_PROD_OAUTH_CLIENT_SECRET }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install the published version from the App Repo
+        run: ./tools/now-sdk2.sh cicd install

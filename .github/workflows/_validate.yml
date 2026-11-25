@@ -1,0 +1,33 @@
+name: Validate (build, install, ATF)
+
+# Reusable job, called by pr-validation.yml and deploy-main.yml.
+# Builds the app, installs it on the test instance through now_sdk/install,
+# and runs the ATF suite, all with the test instance's "ServiceNow SDK CICD"
+# client credentials.
+
+on:
+  workflow_call:
+
+jobs:
+  validate:
+    name: Build, install and test (test instance)
+    runs-on: ubuntu-latest
+    env:
+      SN_SDK_INSTANCE_URL: ${{ vars.SN_SDK_TEST_INSTANCE_URL }}
+      SN_SDK_OAUTH_CLIENT_ID: ${{ secrets.SN_SDK_TEST_OAUTH_CLIENT_ID }}
+      SN_SDK_OAUTH_CLIENT_SECRET: ${{ secrets.SN_SDK_TEST_OAUTH_CLIENT_SECRET }}
+      TEST_SUITE: Bulk Store App Converter Suite
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - run: npm ci
+      - name: Build (keys.ts must already be committed)
+        run: ./tools/now-sdk2.sh build --frozenKeys
+      - name: Check the credential
+        run: ./tools/now-sdk2.sh auth
+      - name: Install on the test instance
+        run: ./tools/now-sdk2.sh install
+      - name: Run the ATF suite
+        run: ./tools/now-sdk2.sh cicd testsuite run --test-suite-name "$TEST_SUITE" --run-in-cloud true

@@ -1,0 +1,60 @@
+name: PR validation
+
+# Runs on every pull request to main (when it opens and on every new push to it).
+# Only validates on the test instance: nothing is published and production is
+# never touched. The main branch ruleset requires the "PR validation gate" check
+# to pass before merge.
+#
+# The build, install and ATF run only when the pull request changes the app or
+# its pipeline (src, tools, workflows, package files, now.config.json). A README
+# or docs change skips the validation and the gate still passes. The path filter
+# lives here, in a job, because a "paths:" filter on the trigger would leave the
+# required check pending forever on a PR that matches no path.
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: pr-validation-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: Detect app changes
+    runs-on: ubuntu-latest
+    outputs:
+      app: ${{ steps.diff.outputs.app }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+      - id: diff
+        run: |
+          files=$(git diff --name-only "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}")
+          echo "$files"
+          if echo "$files" | grep -qE '^(src/|tools/|\.github/workflows/|package\.json$|package-lock\.json$|now\.config\.json$)'; then
+            echo "app=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "app=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  validate:
+    needs: changes
+    if: needs.changes.outputs.app == 'true'
+    uses: ./.github/workflows/_validate.yml
+    secrets: inherit
+
+  gate:
+    name: PR validation gate
+    needs: [changes, validate]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pass when validation passed or was skipped
+        run: |
+          echo "changes: ${{ needs.changes.result }}"
+          echo "validate: ${{ needs.validate.result }}"
+          [ "${{ needs.changes.result }}" = "success" ]
+          [ "${{ needs.validate.result }}" = "success" ] || [ "${{ needs.validate.result }}" = "skipped" ]
