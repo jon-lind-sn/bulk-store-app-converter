@@ -97,3 +97,15 @@ await waitFor(() => expect(both).toBeDisabled())
 expect(upgrade).toBeDisabled()
 expect(convert).toBeDisabled()
 expect(both).toHaveAttribute('title', 'Check at least one app.')
+
+// With only an app that cannot be converted checked, Upgrade stays on and both convert actions turn off
+await sn_atf.evaluate(function () {
+    findApp('restore', 'atf_r1').convertible = false
+    BAC.checked.restore = { atf_r1: true }
+    renderTable('restore')
+})
+await waitFor(() => expect(text('#count-restore')).toBe('1 selected'))
+await waitFor(() => expect(upgrade).toBeEnabled())
+expect(both).toBeDisabled()
+expect(convert).toBeDisabled()
+expect(convert).toHaveAttribute('title', 'None of the checked apps can be converted to dev mode.')

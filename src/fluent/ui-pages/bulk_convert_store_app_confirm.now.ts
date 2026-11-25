@@ -680,9 +680,15 @@ function updateControls() {
     var saveSel = getCheckedRows('save');
     var restoreMsg = blocked || (restoreSel.length === 0 ? 'Check at least one app.' : '');
     var saveMsg = blocked || (saveSel.length === 0 ? 'Check at least one app.' : '');
-    setButton('btnRestoreAll', !restoreMsg, restoreMsg);
+    var anyConvertible = false;
+    for (var r = 0; r < restoreSel.length; r++) {
+        if (restoreSel[r].convertible) { anyConvertible = true; }
+    }
+    // Both convert actions need at least one checked app the platform can convert. Upgrade does not.
+    var convertMsg = restoreMsg || (anyConvertible ? '' : 'None of the checked apps can be converted to dev mode.');
+    setButton('btnRestoreAll', !convertMsg, convertMsg);
     setButton('btnUpgradeOnly', !restoreMsg, restoreMsg);
-    setButton('btnConvertDevOnly', !restoreMsg, restoreMsg);
+    setButton('btnConvertDevOnly', !convertMsg, convertMsg);
     setButton('btnPublishAll', !saveMsg, saveMsg);
     var anySaved = false;
     for (var i = 0; i < saveSel.length; i++) {
