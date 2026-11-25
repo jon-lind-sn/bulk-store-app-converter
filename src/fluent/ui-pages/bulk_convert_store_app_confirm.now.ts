@@ -65,6 +65,8 @@ var BAC = {
     tab: 'restore',
     sync: { state: '', time: '' },
     run: { tab: '', ids: {} },
+    // Apps from the last run stay listed after it ends, whatever the filters say, until a filter or the search changes.
+    keep: { save: {}, restore: {} },
     busy: false,
     loader: false,
     apps: { save: [], restore: [] },
@@ -169,7 +171,8 @@ function saveNote(s) {
         return 'Changed ' + shortDate(s.lastChanged) + ', published ' + shortDate(s.lastPublished) + '.';
     }
     if (s.saveStatus === 'saved') {
-        return 'Published ' + shortDate(s.lastPublished) + '.';
+        // Right after a publish the time is not known until the list reloads.
+        return s.lastPublished ? 'Published ' + shortDate(s.lastPublished) + '.' : '';
     }
     if (s.saveStatus === 'check_failed') {
         return s.error || 'The App Repo check did not return a result.';
@@ -398,6 +401,7 @@ function isAtRisk(app) {
 }
 
 function isVisible(tab, app) {
+    if (BAC.keep[tab][app.sys_id]) { return true; }
     var f = BAC.filters[tab];
     if (f.q) {
         var hay = (app.name + ' ' + app.scope + ' ' + (app.version || '')).toLowerCase();
@@ -810,6 +814,7 @@ function applyDefaultSaveSelection() {
 function beginQueue(tab) {
     BAC.busy = true;
     BAC.run = { tab: tab, ids: {} };
+    BAC.keep[tab] = {};
     var tbl = byId('tbl-' + tab);
     if (tbl) { tbl.classList.add('bac-running'); }
     window.onbeforeunload = function() { return 'A bulk run is still in progress.'; };
@@ -829,6 +834,7 @@ function uncheckPublished() {
 
 function endQueue(run, tab) {
     BAC.busy = false;
+    BAC.keep[tab] = BAC.run.ids;
     // Fade the dimming and highlight out before the list reloads.
     BAC.run = { tab: '', ids: {} };
     var tbl = byId('tbl-' + tab);
@@ -1094,8 +1100,12 @@ function startPublish(appId, info, run, onDone) {
                 var cell = byId('save-' + appId);
                 if (cell && app) { cell.innerHTML = saveCellHtml(app); }
                 renderBanner();
-                callConsole('recordPublish', { sysparm_sys_id: appId }, function() {
-                    onDone();
+                // publishNext made the published app the current application. The platform refuses a property
+                // update from another app, so switch back to global before recording the publish.
+                switchApplication('global', function() {
+                    callConsole('recordPublish', { sysparm_sys_id: appId }, function() {
+                        onDone();
+                    });
                 });
             }, function(tracker) {
                 fail(tracker && tracker.message ? 'Tracker said: ' + tracker.message : '');
@@ -1239,6 +1249,7 @@ function onClick(ev) {
     else if (action === 'reloadSave') { if (!BAC.busy) { loadApps('save'); } }
     else if (action === 'showFailures') {
         BAC.filters[BAC.tab].failed = true;
+        BAC.keep[BAC.tab] = {};
         renderTable(BAC.tab);
     }
 }
@@ -1264,6 +1275,7 @@ function onChange(ev) {
         } else {
             BAC.filters[tab][target.getAttribute('data-chip')] = target.checked;
         }
+        BAC.keep[tab] = {};
         renderTable(tab);
         if (tab === 'save') { renderBanner(); }
     }
@@ -1274,6 +1286,7 @@ function onInput(ev) {
     if (/bac-search/.test(target.className || '')) {
         var tab = target.getAttribute('data-tab');
         BAC.filters[tab].q = target.value;
+        BAC.keep[tab] = {};
         renderTable(tab);
     }
 }
