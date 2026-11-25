@@ -2,6 +2,8 @@
 await sn_atf.navigate('/bulk_convert_store_app_confirm.do?sysparm_tab=save')
 await screen.findByRole('heading', { name: 'Bulk App Clone Assistant', timeout: 20000 })
 
+// The install decodes HTML entities in this script, so the ampersand is built from its character code.
+const AMP = String.fromCharCode(38)
 const r = await sn_atf.evaluate(function () {
     var out = {}
     out.esc = esc('<a href="x" t=' + "'" + 'y' + "'" + '>&</a>')
@@ -53,7 +55,7 @@ const r = await sn_atf.evaluate(function () {
 const o = JSON.parse(r)
 
 // esc
-expect(o.esc).toBe('&lt;a href=&quot;x&quot; t=&#39;y&#39;&gt;&amp;&lt;/a&gt;')
+expect(o.esc).toBe(AMP + 'lt;a href=' + AMP + 'quot;x' + AMP + 'quot; t=' + AMP + '#39;y' + AMP + '#39;' + AMP + 'gt;' + AMP + 'amp;' + AMP + 'lt;/a' + AMP + 'gt;')
 expect(o.escNull).toBe('')
 expect(o.escUndef).toBe('')
 expect(o.escNum).toBe('0')
@@ -93,9 +95,9 @@ expect(o.targetConvertOnly).toContain('convert only')
 // status labels
 expect(o.statusNone).toBe('')
 expect(o.statusFailed).toContain('label-danger')
-expect(o.statusFailed).toContain('x&lt;y')
+expect(o.statusFailed).toContain('x' + AMP + 'lt;y')
 expect(o.statusLink).toContain('label-success')
-expect(o.statusLink).toContain('href="a.do?x=1&amp;y=2"')
+expect(o.statusLink).toContain('href="a.do?x=1' + AMP + 'amp;y=2"')
 expect(o.statusUnknown).toContain('label-default')
 
 // URL parameters
