@@ -69,12 +69,12 @@ Run it on a test instance first. A repair reverts the record to its newest versi
 
 ## Tests
 
-The app ships 12 Automated Test Framework (ATF) tests in one suite, **Bulk App Clone Assistant: non-destructive tests**. The source is in `src/fluent/atf/`. They read and check but never publish to the App Repo, install, upgrade or convert an app, save the saved list, or run a Scope Normalizer fix.
+The app ships 12 Automated Test Framework (ATF) tests in one suite, **Bulk Store App Converter Suite**. The source is in `src/fluent/atf/`. They read and check but never publish to the App Repo, install, upgrade or convert an app, save the saved list, or run a Scope Normalizer fix.
 
 1. **Server tests (7).** Scope Normalizer classification, option parsing, links and report-only runs, the bulk upgrade version comparison, and the page server API as an admin and as a user with no roles.
 2. **Page tests (5).** The layout and tabs, search, filters and selection on both tabs, the page helper functions, and the page being hidden from non-admins. The filter tests replace the app list in the page with made-up apps, so they need no particular data on the instance.
 
-Run the suite from **Automated Test Framework > Test Suites**, or with `npx @servicenow/sdk cicd testsuite run --test-suite-name "Bulk App Clone Assistant: non-destructive tests" -a <alias>`. The server tests run on their own. The page tests need a browser signed in to the instance with the Client Test Runner open (**Automated Test Framework > Run Test Runner**), unless the instance has the ATF Cloud Runner. Opening the After Clone tab refreshes versions from the App Repo, as it does for any user.
+Run the suite from **Automated Test Framework > Test Suites**, or with `npx @servicenow/sdk cicd testsuite run --test-suite-name "Bulk Store App Converter Suite" -a <alias>`. The server tests run on their own. The page tests need a browser signed in to the instance with the Client Test Runner open (**Automated Test Framework > Run Test Runner**), unless the instance has the ATF Cloud Runner. Opening the After Clone tab refreshes versions from the App Repo, as it does for any user.
 
 ## Contributing
 
